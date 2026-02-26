@@ -1,14 +1,28 @@
+import { Link } from "react-router-dom";
+
 const Navbar = () => {
   return (
     <>
-    <nav className = "container mx-auto flex item-center justify-betweem py-4 px-6">
-        {
+    <nav className = "container mx-auto flex items-center justify-between py-4 px-6">
             <div>
-                <link to = "/" className = "text-2xl font-medium">
+                <Link to = "/" className = "text-2xl font-medium">
                 AURELLE
-                </link>
+                </Link>
             </div>
-        }
+            <div className ="hidden md:flex space-x-6">
+                  <Link to="#" className = "text-gray-700 hover:text-black text-sm font-medium uppercase">
+                  Men
+                  </Link>
+                  <Link to="#" className = "text-gray-700 hover:text-black text-sm font-medium uppercase">
+                  Women
+                  </Link>
+                  <Link to="#" className = "text-gray-700 hover:text-black text-sm font-medium uppercase">
+                  Top Wear
+                  </Link>
+                  <Link to="#" className = "text-gray-700 hover:text-black text-sm font-medium uppercase">
+                  Bottom Wear
+                  </Link>
+            </div>    
     </nav>
     </>
   )
