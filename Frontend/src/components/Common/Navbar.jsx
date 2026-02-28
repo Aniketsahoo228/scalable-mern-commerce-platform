@@ -7,6 +7,11 @@ import { useState } from "react";
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [navDrawerOpen, setNavDrawerOpen] = useState(false);
+
+   const toggleNavDrawer = () => {
+    setNavDrawerOpen(!navDrawerOpen)
+   }  
 
     const toggleCartDrawer = () => {
      setDrawerOpen(!drawerOpen)
