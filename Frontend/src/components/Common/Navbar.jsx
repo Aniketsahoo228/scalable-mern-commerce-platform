@@ -75,7 +75,7 @@ const Navbar = () => {
         </div>
         <div className = "p-4">  
            <h2 className = "text-xl font-semibold mb-4">Menu</h2>
-           <nav>
+           <nav className ="space-y-4">
             <Link to="#" 
             onClick={toggleNavDrawer} 
             className="block text-gray-600 hover:text-black">
