@@ -4,6 +4,9 @@ import { Link } from "react-router-dom";
 
 const NewArrivals = () => {
   const scrollRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
@@ -87,6 +90,32 @@ const NewArrivals = () => {
     container.scrollBy({ left: amount, behavior: "smooth" });
   };
 
+  const handleMouseDown = (e) => {
+    const container = scrollRef.current;
+    if (!container) return;
+    setIsDragging(true);
+    setStartX(e.pageX - container.offsetLeft);
+    setScrollLeft(container.scrollLeft);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const container = scrollRef.current;
+    if (!container) return;
+    e.preventDefault();
+    const x = e.pageX - container.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    container.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
   useEffect(() => {
     const container = scrollRef.current;
     if (!container) return;
@@ -125,7 +154,13 @@ const NewArrivals = () => {
         </div>
       </div>
 
-      <div ref={scrollRef} className="container mx-auto overflow-x-auto flex space-x-6 relative">
+      <div ref={scrollRef} 
+      className="container mx-auto overflow-x-auto flex space-x-6 relative" 
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
+      >
         {newArrivals.map((product) => (
           <div key={product._id} className="min-w-[100%] sm:min-w-[50%] lg:min-w-[30%] relative">
             <img
