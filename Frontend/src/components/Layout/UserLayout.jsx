@@ -5,6 +5,9 @@ const UserLayout = () => {
   return (
     <>
     <Header />
+    <main>
+      Loorem1
+    </main>
     <Footer />
     </>
   );
