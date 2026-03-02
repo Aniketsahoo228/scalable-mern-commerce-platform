@@ -10,175 +10,138 @@ const NewArrivals = () => {
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
 
-  const newArrivals = [
-    {
-      _id: "1",
-      name: "Stylish Jacket",
-      price: 120,
-      images: [{ url: "https://picsum.photos/500/500?random=1", altText: "Stylish Jacket" }],
-    },
-    {
-      _id: "2",
-      name: "Stylish Jacket",
-      price: 120,
-      images: [{ url: "https://picsum.photos/500/500?random=2", altText: "Stylish Jacket" }],
-    },
-    {
-      _id: "3",
-      name: "Stylish Jacket",
-      price: 120,
-      images: [{ url: "https://picsum.photos/500/500?random=3", altText: "Stylish Jacket" }],
-    },
-    {
-      _id: "4",
-      name: "Stylish Jacket",
-      price: 120,
-      images: [{ url: "https://picsum.photos/500/500?random=4", altText: "Stylish Jacket" }],
-    },
-    {
-      _id: "5",
-      name: "Stylish Jacket",
-      price: 120,
-      images: [{ url: "https://picsum.photos/500/500?random=5", altText: "Stylish Jacket" }],
-    },
-    {
-      _id: "6",
-      name: "Stylish Jacket",
-      price: 120,
-      images: [{ url: "https://picsum.photos/500/500?random=6", altText: "Stylish Jacket" }],
-    },
-    {
-      _id: "7",
-      name: "Stylish Jacket",
-      price: 120,
-      images: [{ url: "https://picsum.photos/500/500?random=7", altText: "Stylish Jacket" }],
-    },
-    {
-      _id: "8",
-      name: "Stylish Jacket",
-      price: 120,
-      images: [{ url: "https://picsum.photos/500/500?random=8", altText: "Stylish Jacket" }],
-    },
-    {
-      _id: "9",
-      name: "Stylish Jacket",
-      price: 120,
-      images: [{ url: "https://picsum.photos/500/500?random=9", altText: "Stylish Jacket" }],
-    },
-    {
-      _id: "10",
-      name: "Stylish Jacket",
-      price: 120,
-      images: [{ url: "https://picsum.photos/500/500?random=10", altText: "Stylish Jacket" }],
-    },
-  ];
+  const newArrivals = Array.from({ length: 10 }, (_, i) => ({
+    _id: String(i + 1),
+    name: "Stylish Jacket",
+    price: 120,
+    images: [{ url: `https://picsum.photos/500/500?random=${i + 1}`, altText: "Stylish Jacket" }],
+  }));
 
   const updateScrollButtons = () => {
-    const container = scrollRef.current;
-    if (!container) return;
-
-    const left = container.scrollLeft;
-    const maxLeft = container.scrollWidth - container.clientWidth;
-    setCanScrollLeft(left > 0);
-    setCanScrollRight(left < maxLeft - 1);
+    const c = scrollRef.current;
+    if (!c) return;
+    setCanScrollLeft(c.scrollLeft > 0);
+    setCanScrollRight(c.scrollLeft < c.scrollWidth - c.clientWidth - 1);
   };
 
-  const scroll = (direction) => {
-    const container = scrollRef.current;
-    if (!container) return;
-    const amount = direction === "left" ? -320 : 320;
-    container.scrollBy({ left: amount, behavior: "smooth" });
+  const scroll = (dir) => {
+    scrollRef.current?.scrollBy({ left: dir === "left" ? -320 : 320, behavior: "smooth" });
   };
 
   const handleMouseDown = (e) => {
-    const container = scrollRef.current;
-    if (!container) return;
     setIsDragging(true);
-    setStartX(e.pageX - container.offsetLeft);
-    setScrollLeft(container.scrollLeft);
+    setStartX(e.pageX - scrollRef.current.offsetLeft);
+    setScrollLeft(scrollRef.current.scrollLeft);
   };
 
   const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    const container = scrollRef.current;
-    if (!container) return;
+    if (!isDragging || !scrollRef.current) return;
     e.preventDefault();
-    const x = e.pageX - container.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    container.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
-
-  const handleMouseLeave = () => {
-    setIsDragging(false);
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    scrollRef.current.scrollLeft = scrollLeft - (x - startX) * 1.5;
   };
 
   useEffect(() => {
-    const container = scrollRef.current;
-    if (!container) return;
-
+    const c = scrollRef.current;
+    if (!c) return;
     updateScrollButtons();
-    container.addEventListener("scroll", updateScrollButtons);
-    return () => container.removeEventListener("scroll", updateScrollButtons);
+    c.addEventListener("scroll", updateScrollButtons);
+    return () => c.removeEventListener("scroll", updateScrollButtons);
   }, []);
 
   return (
-    <section className="py-16 px-4 lg:px-0">
-      <div className="container mx-auto text-center mb-10 relative">
-        <h2 className="text-3xl font-bold mb-4">Explore New Arrivals</h2>
-        <p className="text-lg text-gray-600 mb-8">
-          Discover the latest styles straight off the runway, freshly added to keep your wardrobe on the cutting edge of fashion.
-        </p>
-        <div className="absolute right-0 bottom-[-30px] flex space-x-2">
-          <button
-            onClick={() => scroll("left")}
-            disabled={!canScrollLeft}
-            className={`p-2 rounded border ${
-              canScrollLeft ? "bg-white text-black" : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}
-          >
-            <FiChevronLeft className="text-2xl" />
-          </button>
-          <button
-            onClick={() => scroll("right")}
-            disabled={!canScrollRight}
-            className={`p-2 rounded border ${
-              canScrollRight ? "bg-white text-black" : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}
-          >
-            <FiChevronRight className="text-2xl" />
-          </button>
-        </div>
-      </div>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap');
+        .na-brand { font-family: 'Cormorant Garamond', serif; }
+        .na-body  { font-family: 'Montserrat', sans-serif; }
 
-      <div ref={scrollRef} 
-      className={`container mx-auto overflow-x-auto flex space-x-6 relative ${isDragging ? "cursor-dragging" : "cursor-grab"}`}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
-      >
-        {newArrivals.map((product) => (
-          <div key={product._id} className="min-w-[100%] sm:min-w-[50%] lg:min-w-[30%] relative">
-            <img
-            draggable = "false"
-              src={product.images[0]?.url}
-              alt={product.images[0]?.altText || product.name}
-              className="w-full h-[500px] object-cover rounded-lg"
-            />
-            <div className="absolute bottom-0 left-0 right-0 bg-black/50 backdrop-blur-md text-white p-4 rounded-b-lg">
-              <Link to={`/product/${product._id}`} className="block">
-                <h4 className="font-medium">{product.name}</h4>
-                <p className="mt-1">${product.price}</p>
-              </Link>
+        .na-scroll::-webkit-scrollbar { display: none; }
+        .na-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .na-card { position: relative; overflow: hidden; }
+        .na-card img { transition: transform 6s ease; display: block; }
+        .na-card:hover img { transform: scale(1.05); }
+
+        .na-card-overlay {
+          position: absolute; inset: 0;
+          background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+        }
+
+        .na-scroll-btn {
+          width: 40px; height: 40px;
+          border-radius: 50%;
+          display: flex; align-items: center; justify-content: center;
+          border: 1px solid rgba(201,169,110,0.3);
+          background: transparent;
+          color: rgba(255,255,255,0.5);
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        .na-scroll-btn:hover:not(:disabled) {
+          border-color: #c9a96e;
+          color: #c9a96e;
+          background: rgba(201,169,110,0.08);
+        }
+        .na-scroll-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+      `}</style>
+
+      <section className="na-body py-20 px-4 lg:px-0"
+        style={{ background: 'linear-gradient(180deg, #111 0%, #1a1a1a 100%)' }}>
+        <div className="container mx-auto">
+
+          {/* Header */}
+          <div className="flex items-end justify-between mb-10">
+            <div>
+              <p className="text-[9px] font-semibold tracking-[0.4em] uppercase mb-3" style={{ color: '#c9a96e' }}>
+                Just Landed
+              </p>
+              <h2 className="na-brand text-5xl font-light text-white">New Arrivals</h2>
+              <div style={{ width: 32, height: 1, background: '#c9a96e', marginTop: 12 }} />
+            </div>
+            <div className="flex gap-2">
+              <button className="na-scroll-btn" onClick={() => scroll("left")} disabled={!canScrollLeft}>
+                <FiChevronLeft size={18} />
+              </button>
+              <button className="na-scroll-btn" onClick={() => scroll("right")} disabled={!canScrollRight}>
+                <FiChevronRight size={18} />
+              </button>
             </div>
           </div>
-        ))}
-      </div>
-    </section>
+
+          {/* Scroll Track */}
+          <div
+            ref={scrollRef}
+            className={`na-scroll flex gap-4 overflow-x-auto ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={() => setIsDragging(false)}
+            onMouseLeave={() => setIsDragging(false)}
+          >
+            {newArrivals.map((product) => (
+              <div key={product._id} className="na-card min-w-[90%] sm:min-w-[45%] lg:min-w-[28%]">
+                <img
+                  draggable="false"
+                  src={product.images[0].url}
+                  alt={product.images[0].altText}
+                  className="w-full h-[480px] object-cover"
+                />
+                <div className="na-card-overlay" />
+                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '28px 24px' }}>
+                  <Link to={`/product/${product._id}`}>
+                    <p className="text-[9px] tracking-[0.3em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                      New Arrival
+                    </p>
+                    <h4 className="na-brand text-2xl font-light text-white mb-1">{product.name}</h4>
+                    <p className="text-[11px] tracking-widest" style={{ color: '#c9a96e' }}>${product.price}</p>
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 
