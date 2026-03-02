@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { toast } from "sonner";
+import ProductGrid from "./ProductGrid";
 
 const selectedProduct = {
   name: "Stylish Jacket",
@@ -21,6 +22,30 @@ const selectedProduct = {
     },
   ],
 };
+
+const similarProducts = [
+    {
+   _id: 1,
+   name : "Product 1",
+   price: 1000,
+   images: [{url: "https://picsum.photos/500/500?random=3"}]
+},{
+   _id: 2,
+   name : "Product 1",
+   price: 1000,
+   images: [{url: "https://picsum.photos/500/500?random=4"}]
+},{
+   _id: 3,
+   name : "Product 1",
+   price: 1000,
+   images: [{url: "https://picsum.photos/500/500?random=5"}]
+},{
+   _id: 4,
+   name : "Product 1",
+   price: 1000,
+   images: [{url: "https://picsum.photos/500/500?random=6"}]
+},
+];
 
 const ProductDetails = () => {
   const [mainImage, setMainImage] = useState(selectedProduct.images[0]);
@@ -152,14 +177,14 @@ const ProductDetails = () => {
 
            <button
                 onClick={handleAddCart}
-                disabled={isButtonDisabled}
+                disabled={isProcessing}
                 className={`bg-black text-white py-2 px-6 rounded w-full mb-4 ${
                     isButtonDisabled
                     ? "cursor-not-allowed opacity-50"
                     : "hover:bg-gray-900"
                 }`}
                 >
-                {isButtonDisabled ? "Adding..." : "ADD TO CART"}
+                {isProcessing ? "Adding..." : "ADD TO CART"}
             </button>
 
             <div className="mt-10 text-gray-700">
@@ -178,6 +203,12 @@ const ProductDetails = () => {
               </table>
             </div>
           </div>
+        </div>
+        <div className = "mt-20">
+          <h2 className="text-2xl text-center font-bold mb-4">
+            You May Also Like
+          </h2>
+          <ProductGrid products = {similarProducts}/>
         </div>
       </div>
     </div>
