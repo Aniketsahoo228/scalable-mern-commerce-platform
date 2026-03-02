@@ -5,6 +5,7 @@ import {Toaster} from "sonner";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
+import CollectionPages from "./pages/CollectionPages";
 
 const App = () => {
   return (
@@ -15,7 +16,8 @@ const App = () => {
         <Route index element={<Home />} />
         <Route path="login" element={<Login/>} />
         <Route path="register" element={<Register />} />
-        <Route path="Profile" element={<Profile />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="collections/:collection" element={<CollectionPages />} />
         </Route>
         <Route>{/* Admin Layout */}</Route>
       </Routes>
@@ -24,4 +26,3 @@ const App = () => {
 }
 
 export default App;
-

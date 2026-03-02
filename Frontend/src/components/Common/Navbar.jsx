@@ -97,7 +97,7 @@ const Navbar = () => {
           {/* Desktop Links */}
           <div className="hidden md:flex items-center space-x-8">
             {["Men", "Women", "Top Wear", "Bottom Wear"].map((item) => (
-              <Link key={item} to="#" className="nav-link">{item}</Link>
+              <Link key={item} to="/collections/all" className="nav-link">{item}</Link>
             ))}
           </div>
 

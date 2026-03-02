@@ -198,7 +198,7 @@ const ProductDetails = () => {
               </div>
 
               {/* Add to Cart */}
-              <button className="pd-add-btn" onClick={handleAddCart} disabled={isProcessing}>
+              <button className="pd-add-btn" onClick={handleAddCart} disabled={isButtonDisabled}>
                 <span>{isProcessing ? "Adding..." : "Add to Cart"}</span>
               </button>
 
