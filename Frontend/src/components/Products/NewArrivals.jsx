@@ -155,7 +155,7 @@ const NewArrivals = () => {
       </div>
 
       <div ref={scrollRef} 
-      className="container mx-auto overflow-x-auto flex space-x-6 relative" 
+      className={`container mx-auto overflow-x-auto flex space-x-6 relative ${isDragging ? "cursor-dragging" : "cursor-grab"}`}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -164,6 +164,7 @@ const NewArrivals = () => {
         {newArrivals.map((product) => (
           <div key={product._id} className="min-w-[100%] sm:min-w-[50%] lg:min-w-[30%] relative">
             <img
+            draggable = "false"
               src={product.images[0]?.url}
               alt={product.images[0]?.altText || product.name}
               className="w-full h-[500px] object-cover rounded-lg"
