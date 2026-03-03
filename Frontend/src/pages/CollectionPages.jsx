@@ -9,9 +9,7 @@ const CollectionPages = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const sidebarRef = useRef(null);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen(!isSidebarOpen);
-  };
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   const handleClickOutside = (e) => {
     if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
@@ -21,9 +19,7 @@ const CollectionPages = () => {
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -37,66 +33,181 @@ const CollectionPages = () => {
         { _id: 6, name: "Product 6", price: 1000, images: [{ url: "https://picsum.photos/500/500?random=8" }] },
         { _id: 7, name: "Product 7", price: 1000, images: [{ url: "https://picsum.photos/500/500?random=9" }] },
         { _id: 8, name: "Product 8", price: 1000, images: [{ url: "https://picsum.photos/500/500?random=10" }] },
+        { _id: 9, name: "Product 9", price: 1000, images: [{ url: "https://picsum.photos/500/500?random=11" }] },
       ];
       setProducts(fetchedProducts);
     }, 1000);
   }, []);
 
   return (
-    // ✅ Fix 1 — added min-h-screen
-    <div className="flex flex-col lg:flex-row min-h-screen">
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap');
+        .cp-brand { font-family: 'Cormorant Garamond', serif; }
+        .cp-body  { font-family: 'Montserrat', sans-serif; }
 
-      {/* Mobile Filter Button */}
-      <button
-        onClick={toggleSidebar}
-        className="lg:hidden border p-2 flex justify-center items-center"
-      >
-        <FaFilter className="mr-2" /> Filters
-      </button>
+        .cp-filter-btn {
+          display: flex; align-items: center; gap: 8px;
+          padding: 10px 18px;
+          font-family: 'Montserrat', sans-serif;
+          font-size: 10px; font-weight: 600;
+          letter-spacing: 0.25em; text-transform: uppercase;
+          background: transparent;
+          border: 1px solid rgba(201,169,110,0.3);
+          color: rgba(255,255,255,0.5);
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+        .cp-filter-btn:hover {
+          border-color: #c9a96e;
+          color: #c9a96e;
+        }
 
-      {/* Sidebar — ✅ Fix 2 — added lg:min-w-[256px] */}
+        .cp-sidebar {
+          width: 260px;
+          min-width: 260px;
+          background: #1a1a1a;
+          border-right: 1px solid rgba(201,169,110,0.1);
+          overflow-y: auto;
+          transition: transform 0.3s ease;
+        }
+        .cp-sidebar::-webkit-scrollbar { width: 3px; }
+        .cp-sidebar::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.2); }
+
+        .cp-loading {
+          display: flex; flex-direction: column;
+          align-items: center; justify-content: center;
+          height: 300px; gap: 16px;
+        }
+        .cp-spinner {
+          width: 36px; height: 36px; border-radius: 50%;
+          border: 1px solid rgba(201,169,110,0.2);
+          border-top-color: #c9a96e;
+          animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+      `}</style>
+
       <div
-        ref={sidebarRef}
-        className={`${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } fixed inset-y-0 z-50 left-0 w-64 bg-white overflow-y-auto transition-transform duration-300 lg:static lg:translate-x-0 lg:min-w-[256px]`}
+        className="cp-body flex min-h-screen"
+        style={{ background: '#111' }}
       >
-        <FilterSidebar />
-      </div>
 
-      {/* Main Content — ✅ Fix 3 — added min-w-0 */}
-      <div className="flex-grow p-4 min-w-0">
-        <h2 className="text-2xl uppercase mb-4">All Collections</h2>
+        {/* Overlay */}
+        {isSidebarOpen && (
+          <div
+            onClick={toggleSidebar}
+            style={{
+              position: 'fixed', inset: 0,
+              background: 'rgba(0,0,0,0.5)',
+              backdropFilter: 'blur(4px)',
+              zIndex: 40,
+            }}
+          />
+        )}
 
-        <div className="flex items-center mb-4">
-          <FaFilter />
-          <span className="ml-2 text-sm text-gray-600">
-            {products.length} items
-          </span>
+        {/* Sidebar */}
+        <div
+          ref={sidebarRef}
+          className="cp-sidebar"
+          style={{
+            position: 'fixed', top: 0, left: 0, bottom: 0,
+            zIndex: 50,
+            transform: isSidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
+          }}
+          // Desktop static
+        >
+          {/* Sidebar Header */}
+          <div
+            className="px-6 py-5 flex items-center justify-between"
+            style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+          >
+            <div>
+              <p className="text-[9px] font-semibold tracking-[0.4em] uppercase" style={{ color: '#c9a96e' }}>
+                Refine
+              </p>
+              <p className="cp-brand text-2xl font-light text-white mt-0.5">Filters</p>
+            </div>
+            <button
+              onClick={toggleSidebar}
+              className="lg:hidden text-[18px]"
+              style={{ color: 'rgba(255,255,255,0.3)', background: 'none', border: 'none', cursor: 'pointer' }}
+            >
+              ✕
+            </button>
+          </div>
+          <FilterSidebar />
         </div>
 
-        {products.length === 0 ? (
-          <p className="text-gray-400 text-sm">Loading products...</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {products.map((product) => (
-              <div key={product._id} className="bg-white rounded-lg p-4">
-                <img
-                  src={product.images?.[0]?.url || "https://picsum.photos/500/500?grayscale"}
-                  alt={product.name}
-                  className="w-full h-64 object-cover rounded-lg mb-3"
-                />
-                <h3 className="text-sm">{product.name}</h3>
-                <p className="text-gray-500">₹{product.price}</p>
-              </div>
-            ))}
+        {/* Desktop static sidebar */}
+        <div
+          className="cp-sidebar hidden lg:block flex-shrink-0"
+          style={{ position: 'sticky', top: 0, height: '100vh' }}
+        >
+          <div
+            className="px-6 py-5"
+            style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+          >
+            <p className="text-[9px] font-semibold tracking-[0.4em] uppercase" style={{ color: '#c9a96e' }}>
+              Refine
+            </p>
+            <p className="cp-brand text-2xl font-light text-white mt-0.5">Filters</p>
           </div>
-        )}
-        <SortOptions />
-        <ProductGrid  products={products}/>
-      </div>
+          <FilterSidebar />
+        </div>
 
-    </div>
+        {/* Main Content */}
+        <div className="flex-1 min-w-0 flex flex-col">
+
+          {/* Top Bar */}
+          <div
+            className="flex items-center justify-between px-6 py-4"
+            style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+          >
+            <div className="flex items-center gap-4">
+              {/* Mobile filter toggle */}
+              <button onClick={toggleSidebar} className="cp-filter-btn lg:hidden">
+                <FaFilter style={{ fontSize: 10 }} />
+                Filters
+              </button>
+
+              <div>
+                <p className="text-[9px] font-semibold tracking-[0.4em] uppercase" style={{ color: '#c9a96e' }}>
+                  Browse
+                </p>
+                <h2 className="cp-brand text-3xl font-light text-white">All Collections</h2>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <span className="text-[10px] tracking-widest uppercase" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                {products.length} items
+              </span>
+              <div style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.1)' }} />
+              <SortOptions />
+            </div>
+          </div>
+
+          {/* Gold line */}
+          <div style={{ height: 1, background: 'linear-gradient(90deg, #c9a96e, transparent)' }} />
+
+          {/* Products */}
+          <div className="flex-1 p-6">
+            {products.length === 0 ? (
+              <div className="cp-loading">
+                <div className="cp-spinner" />
+                <p className="text-[10px] tracking-[0.3em] uppercase" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                  Loading Collection...
+                </p>
+              </div>
+            ) : (
+              <ProductGrid products={products} />
+            )}
+          </div>
+
+        </div>
+      </div>
+    </>
   );
 };
 
