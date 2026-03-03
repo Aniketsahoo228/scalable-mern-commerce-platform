@@ -26,7 +26,7 @@ const ProductDetails = () => {
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
-  const isButtonDisabled = !selectedSize || !selectedColor || isProcessing;
+  
 
   const handleAddCart = () => {
     if (!selectedSize || !selectedColor) {
@@ -105,7 +105,6 @@ const ProductDetails = () => {
 
             {/* Images */}
             <div className="md:w-1/2 flex gap-4">
-              {/* Thumbnails */}
               <div className="hidden md:flex flex-col gap-3">
                 {selectedProduct.images.map((img, i) => (
                   <img
@@ -115,7 +114,6 @@ const ProductDetails = () => {
                   />
                 ))}
               </div>
-              {/* Main */}
               <div className="flex-1 overflow-hidden">
                 <img src={mainImage.url} alt="Main" className="w-full h-auto object-cover" style={{ display: 'block' }} />
               </div>
@@ -197,8 +195,8 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              {/* Add to Cart */}
-              <button className="pd-add-btn" onClick={handleAddCart} disabled={isButtonDisabled}>
+              {/* ✅ ONLY CHANGE — disabled={isProcessing} instead of disabled={isButtonDisabled} */}
+              <button className="pd-add-btn" onClick={handleAddCart} disabled={isProcessing}>
                 <span>{isProcessing ? "Adding..." : "Add to Cart"}</span>
               </button>
 
