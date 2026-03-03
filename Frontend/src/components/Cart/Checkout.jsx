@@ -164,6 +164,7 @@ const Checkout = () => {
                     <button type="submit" className="w-full bg-black text-white py-3 rounded">Continue The Payment</button>
                 ):(
                     <div>
+                        {/*PayPal*/}
                         <h3 className="text-lg mb-4">Pay with Paypal</h3>
                     </div> 
                 )}
