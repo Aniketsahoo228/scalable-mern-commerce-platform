@@ -79,8 +79,12 @@ const Profile = () => {
             ))}
           </div>
 
-          {/* Orders Tab — MyOrdersPage integrated */}
-          {activeTab === "orders" && <MyOrdersPage />}
+          {/* ✅ Only change — added wrapper div */}
+          {activeTab === "orders" && (
+            <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", padding: "24px" }}>
+              <MyOrdersPage />
+            </div>
+          )}
 
           {/* Details Tab */}
           {activeTab === "details" && (
