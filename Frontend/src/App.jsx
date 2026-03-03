@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
 import UserLayout from "./components/Layout/UserLayout";
 import Home from "./pages/Home";
 import {Toaster} from "sonner";
@@ -8,6 +8,9 @@ import Profile from "./pages/Profile";
 import CollectionPages from "./pages/CollectionPages";
 import ProductDetails from "./components/Products/ProductDetails";
 import Checkout from "./components/Cart/Checkout";
+import OrderConfirmationPage from "./pages/OrderConfirmationPage";
+import OrderDetailsPage from "./pages/OrderDetailsPage";
+import MyOrdersPage from "./components/Products/MyOrderPage";
 
 const App = () => {
   return (
@@ -22,6 +25,9 @@ const App = () => {
         <Route path="collections/:collection" element={<CollectionPages />} />
         <Route path ="product/:id" element={<ProductDetails />} />
         <Route path ="checkout" element={<Checkout />} />
+        <Route path ="order-confirmations" element ={<OrderConfirmationPage />} /> 
+        <Route path ="order/:id" element ={<OrderDetailsPage />} />
+        <Route path ="my-order" element ={<MyOrdersPage />} />
         </Route>
         <Route>{/* Admin Layout */}</Route>
       </Routes>

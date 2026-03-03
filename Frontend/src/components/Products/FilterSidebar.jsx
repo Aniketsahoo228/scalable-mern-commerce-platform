@@ -39,14 +39,14 @@ const FilterSidebar = () => {
     setSearchParams(params);
   };
 
-  const updateSingle = (key, value) => {
+  const _updateSingle = (key, value) => {
     const nextFilters = { ...filters, [key]: value };
     setFilters(nextFilters);
     updateQuery({ [key]: value });
     console.log(nextFilters);
   };
 
-  const toggleArray = (key, value) => {
+  const _toggleArray = (key, value) => {
     const exists = filters[key].includes(value);
     const nextArray = exists ? filters[key].filter((v) => v !== value) : [...filters[key], value];
     const nextFilters = { ...filters, [key]: nextArray };
