@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Router, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import UserLayout from "./components/Layout/UserLayout";
 import Home from "./pages/Home";
 import {Toaster} from "sonner";
@@ -11,6 +11,12 @@ import Checkout from "./components/Cart/Checkout";
 import OrderConfirmationPage from "./pages/OrderConfirmationPage";
 import OrderDetailsPage from "./pages/OrderDetailsPage";
 import MyOrdersPage from "./components/Products/MyOrderPage";
+import AdminLayout from "./components/Admin/AdminLayout";
+import AdminHomePage from "./pages/AdminHomePage";
+import UserManagement from "./components/Admin/UserManagement";
+import ProductManagement from "./components/Admin/ProductManagement";
+import EditProductPage from "./components/Admin/EditProductPage";
+import OrderManagement from "./components/Admin/OrderManagement";
 
 const App = () => {
   return (
@@ -24,12 +30,20 @@ const App = () => {
         <Route path="profile" element={<Profile />} />
         <Route path="collections/:collection" element={<CollectionPages />} />
         <Route path ="product/:id" element={<ProductDetails />} />
+        <Route path="products/:id" element={<ProductDetails />} />
         <Route path ="checkout" element={<Checkout />} />
         <Route path ="order-confirmations" element ={<OrderConfirmationPage />} /> 
         <Route path ="order/:id" element ={<OrderDetailsPage />} />
         <Route path ="my-order" element ={<MyOrdersPage />} />
         </Route>
-        <Route>{/* Admin Layout */}</Route>
+        <Route path="admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="users" replace />} />
+          <Route path="home" element={<AdminHomePage/>} />
+          <Route path="users" element={<UserManagement />} />
+          <Route path="products" element={<ProductManagement />} />
+          <Route path="products/:id/edit" element={<EditProductPage /> } />
+          <Route path="orders" element={<OrderManagement />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
