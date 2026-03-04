@@ -104,11 +104,13 @@ const Navbar = () => {
           {/* Right Icons */}
           <div className="flex items-center space-x-3">
 
+            {/* ✅ Only change — fixed to= and className */}
+            <Link to="/admin" className="nav-link">Admin</Link>
+
             <Link to="/profile" className="user-icon-btn">
               <HiOutlineUser className="w-4 h-4" />
             </Link>
 
-            {/* Cart — UNTOUCHED as requested */}
             <button
               onClick={toggleCartDrawer}
               className="relative py-2 px-2 rounded-full text-white font-semibold tracking-wide bg-gradient-to-r from-indigo-500 via-purple-600 via-orange-500 to-yellow-400 bg-[length:300%_300%] bg-left shadow-lg shadow-purple-500/20 hover:bg-right hover:scale-105 hover:shadow-purple-500/40 transition-all duration-700 ease-out group"
