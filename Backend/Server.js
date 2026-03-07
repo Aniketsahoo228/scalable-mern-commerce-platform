@@ -2,12 +2,15 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
+const userRoutes = require("./routes/userRoutes");
 
 dotenv.config(); // ✅ moved to top — must be first!
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+// API Routes
+app.use("/api/users", userRoutes);
 
 connectDB(); // ✅ now MONGO_URI is available
 

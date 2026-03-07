@@ -91,7 +91,7 @@ const Navbar = () => {
 
           {/* Brand */}
           <Link to="/" className="nav-brand text-3xl font-light tracking-[0.2em] text-[#1a1a1a]">
-            AURELLE
+            AZURELLE
           </Link>
 
           {/* Desktop Links */}
