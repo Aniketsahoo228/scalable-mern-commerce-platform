@@ -1,3 +1,7 @@
+# Env files (secrets)
 .env
+.env.*
 Backend/.env
+Backend/.env.*
 Frontend/.env
+Frontend/.env.*
