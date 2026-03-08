@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
@@ -73,7 +74,7 @@ router.post("/login", async (req, res) => {
     }
 });
 
-router.get("/profile",Process, async (req, res) => {
+router.get("/profile", protect, async (req, res) => {
     res.json(req.user);
 });
 
