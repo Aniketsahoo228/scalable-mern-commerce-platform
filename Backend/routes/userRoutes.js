@@ -73,4 +73,8 @@ router.post("/login", async (req, res) => {
     }
 });
 
+router.get("/profile",Process, async (req, res) => {
+    res.json(req.user);
+});
+
 module.exports = router;
