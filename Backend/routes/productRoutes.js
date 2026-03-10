@@ -22,7 +22,10 @@ router.post("/", protect, async (req, res) => {
       images,
       isFeatured,
       isPublished,
-      tags
+      tags,
+      dimensions,
+      weight,
+      sku,
     } = req.body;
 
     const product = new Product({
@@ -42,6 +45,9 @@ router.post("/", protect, async (req, res) => {
       isFeatured,
       isPublished,
       tags,
+      dimensions,
+      weight,
+      sku,
       user: req.user._id,
     });
 
