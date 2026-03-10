@@ -2,18 +2,23 @@ const mongoose = require("mongoose")
 
 const productSchema = new mongoose.Schema({
     name: {
-        tyoe: String,
+        type: String,
         required: true,
         trim: true,
     },
     description: {
-        tyoe: String,
+        type: String,
         required: true,
     },
     price : {
         type: Number,
+        required: true,
     },
-    couterInStock : {
+    discountPrice: {
+        type: Number,
+        default: 0,
+    },
+    countInStock : {
         type : Number,
         required: true,
         default: 0,
@@ -75,5 +80,37 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
-  }
+    numReviews: {
+        type: Number,
+        default: 0,
+    },
+    tags: [String],
+
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
+
+    metaTitle: {
+        type: String,
+    },
+
+    metaDescription: {
+        type: String,
+    },
+
+    metaKeywords: {
+        type: String,
+    },
+    dimensions: {
+        length : Number,
+        width: Number,
+        height: Number,
+    },
+    weight: Number,
+  },
+  { timestamps: true }
 );
+
+module.exports = mongoose.model("Product", productSchema);
