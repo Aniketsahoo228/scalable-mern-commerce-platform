@@ -28,6 +28,25 @@ router.post("/", protect, async (req, res) => {
       sku,
     } = req.body;
 
+    if (
+      !name ||
+      !description ||
+      price === undefined ||
+      countInStock === undefined ||
+      !category ||
+      !sku ||
+      !Array.isArray(sizes) ||
+      sizes.length === 0 ||
+      !Array.isArray(colors) ||
+      colors.length === 0 ||
+      !collections
+    ) {
+      return res.status(400).json({
+        message:
+          "Missing required fields: name, description, price, countInStock, category, sku, sizes, colors, collections",
+      });
+    }
+
     const product = new Product({
       name,
       description,
@@ -55,6 +74,15 @@ router.post("/", protect, async (req, res) => {
     return res.status(201).json(createdProduct);
   } catch (error) {
     console.error("Error creating product:", error);
+
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
+
+    if (error.code === 11000) {
+      return res.status(400).json({ message: "SKU must be unique" });
+    }
+
     return res.status(500).json({ message: "Server Error" });
   }
 });
