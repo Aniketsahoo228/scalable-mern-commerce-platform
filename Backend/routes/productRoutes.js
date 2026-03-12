@@ -1,10 +1,10 @@
 const express = require("express");
 const Product = require("../models/Product");
-const { protect } = require("../middleware/authMiddleware");
+const { protect, admin } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
-router.post("/", protect, async (req, res) => {
+router.post("/", protect, admin, async (req, res) => {
   try {
     const {
       name,
