@@ -21,6 +21,10 @@ app.get("/", (req, res) => {
     res.send("Welcome to Azurelle!");
 });
 
+app.use((req, res) => {
+    return res.status(404).json({ message: `Route not found: ${req.originalUrl}` });
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
