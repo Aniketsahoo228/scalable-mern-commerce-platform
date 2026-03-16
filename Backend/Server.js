@@ -5,24 +5,21 @@ const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 
-dotenv.config();
-connectDB();
+dotenv.config(); // ✅ moved to top — must be first!
 
 const app = express();
 app.use(express.json());
 app.use(cors());
-
+// API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 
-const PORT = process.env.PORT || 3000;
+connectDB(); // ✅ now MONGO_URI is available
+
+const PORT = process.env.PORT || 9000;
 
 app.get("/", (req, res) => {
     res.send("Welcome to Azurelle!");
-});
-
-app.use((req, res) => {
-    return res.status(404).json({ message: `Route not found: ${req.originalUrl}` });
 });
 
 app.listen(PORT, () => {

@@ -21,9 +21,16 @@ router.post("/register", async (req, res) => {
         await user.save();
 
         const payload = { user: { id: user._id, role: user.role } };
-        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "40h" });
 
-        res.status(201).json({
+        let token;
+        try {
+            token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "40h" });
+        } catch (jwtError) {
+            console.log("JWT ERROR:", jwtError.message);
+            return res.status(500).json({ message: "Token generation failed", error: jwtError.message });
+        }
+
+        return res.status(201).json({
             user: {
                 _id: user._id,
                 name: user.name,
@@ -34,8 +41,29 @@ router.post("/register", async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error);
-        return res.status(500).send("Server Error");
+        console.log("REGISTER ERROR:", error.message);
+        console.log("ERROR CODE:", error.code);
+
+        if (error.name === "ValidationError") {
+            return res.status(400).json({
+                message: error.message,
+                error: error.message,
+            });
+        }
+
+        if (error.code === 11000) {
+            return res.status(400).json({
+                message: "User already exists",
+                error: error.message,
+                code: error.code,
+            });
+        }
+
+        return res.status(500).json({ 
+            message: "Server Error",
+            error: error.message,
+            code: error.code
+        });
     }
 });
 
@@ -58,7 +86,7 @@ router.post("/login", async (req, res) => {
         const payload = { user: { id: user._id, role: user.role } };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "40h" });
 
-        res.status(200).json({
+        return res.status(200).json({
             user: {
                 _id: user._id,
                 name: user.name,
@@ -69,8 +97,19 @@ router.post("/login", async (req, res) => {
         });
 
     } catch (error) {
-        console.log(error);
-        return res.status(500).send("Server Error");
+        console.log("LOGIN ERROR:", error.message);
+
+        if (error.name === "JsonWebTokenError") {
+            return res.status(500).json({
+                message: "Token generation failed",
+                error: error.message,
+            });
+        }
+
+        return res.status(500).json({ 
+            message: "Server Error",
+            error: error.message
+        });
     }
 });
 
