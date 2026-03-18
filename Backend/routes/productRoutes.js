@@ -5,12 +5,129 @@ const { protect, admin } = require("../middleware/authMiddleware");
 const router = express.Router();
 
 // @route GET /api/products
-// @desc Get all products
+// @desc Get a single product ID
+// @access Public
+router.get("/:id", async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    return res.status(200).json(product);
+
+  } catch (error) {
+    console.error("Error fetching product:", error);
+
+    if (error.name === "CastError") {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    return res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// @route GET /api/products/similar/:id
+// @desc Retrieve similar products based on the current product's gender and category
+// @access Public
+router.get("/similar/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    console.log(id);
+  } catch (error) {
+    
+  }
+});
+
+
+// @route GET /api/products
+// @desc Get all products with filters
 // @access Public
 router.get("/", async (req, res) => {
   try {
-    const products = await Product.find({}).sort({ createdAt: -1 });
-    return res.status(200).json(products);
+    const {
+      collection,
+      size,
+      color,
+      gender,
+      minPrice,
+      maxPrice,
+      sortBy,
+      search,
+      category,
+      material,
+      brand,
+      limit
+    } = req.query;
+
+    let query = {};
+    let sort = { createdAt: -1 };
+
+    if (collection && collection.toLowerCase() !== "all") {
+      query.collections = collection;
+    }
+
+    if (category && category.toLowerCase() !== "all") {
+      query.category = category;
+    }
+
+    if (material) {
+      query.material = { $in: material.split(",") };
+    }
+
+    if (brand) {
+      query.brand = { $in: brand.split(",") };
+    }
+
+    if (size) {
+      query.sizes = { $in: size.split(",") };
+    }
+
+    if (color) {
+      query.colors = { $in: [color] };
+    }
+
+    if (gender) {
+      query.gender = gender;
+    }
+
+    if (minPrice || maxPrice) {
+      query.price = {};
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
+    }
+
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { description: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    if (sortBy) {
+      switch (sortBy) {
+        case "priceAsc":
+          sort = { price: 1 };
+          break;
+        case "priceDesc":
+          sort = { price: -1 };
+          break;
+        case "popularity":
+          sort = { rating: -1 };
+          break;
+        default:
+          sort = { createdAt: -1 };
+          break;
+      }
+    }
+
+    let products = await Product.find(query)
+      .sort(sort)
+      .limit(Number(limit) || 0);
+
+    res.json(products);
+
   } catch (error) {
     console.error("Error fetching products:", error);
     return res.status(500).json({ message: "Server Error" });
