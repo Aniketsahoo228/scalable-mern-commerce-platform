@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
+const cartRoutes = require("./routes/cartRouter");
 
 dotenv.config(); // ✅ moved to top — must be first!
 
@@ -13,6 +14,7 @@ app.use(cors());
 // API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/cart", cartRoutes);
 
 connectDB(); // ✅ now MONGO_URI is available
 
