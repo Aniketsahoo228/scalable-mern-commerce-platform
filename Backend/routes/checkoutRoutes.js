@@ -61,6 +61,23 @@ router.put("/:id/pay", protect, async (req, res) => {
         res.status(400).json({message : "Invalid Payment Status"});
     }
 
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({message : "Server Error"});
+  }
+});
+
+// @route POST /api/checkout/:id/finalize
+// @desc Finalize checkout and convert to an order after payment confirmation
+// @access Private
+router.post("/:id/finalize", protect, async (req, res) => {
+  try {
+    const checkout = await Checkout.findById(req.params.id);
+
+    if (!checkout) {
+      return res.status(404).json({ message: "Checkout not found" });
+    }
+
   } catch (error) {}
 });
 module.exports = router; // ✅ added missing export
