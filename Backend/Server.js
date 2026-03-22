@@ -8,6 +8,8 @@ const cartRoutes = require("./routes/cartRouter");
 const checkoutRoutes = require("./routes/checkoutRoutes");
 const orderRoutes = require("./routes/orderRouter");
 const uploadRoutes = require("./routes/uploadRoutes");
+const subscribeRoutes = require("./routes/subscriberRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 dotenv.config();
 
@@ -22,6 +24,11 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/checkout", checkoutRoutes);
 app.use("/api/orders", orderRoutes); // ✅ fixed /api/order → /api/orders
 app.use("/api/upload", uploadRoutes);
+app.use("/api", subscribeRoutes);
+
+//Admin
+app.use("/api/admin/users", adminRoutes);
+
 connectDB();
 
 const PORT = process.env.PORT || 9000;
