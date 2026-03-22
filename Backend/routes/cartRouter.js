@@ -186,7 +186,7 @@ router.post("/merge", protect, async (req, res) => {
   try {
     // Find the guest cart and user cart
     const guestCart = await Cart.findOne({ guestId });
-    const userCart = await Cart.findOne({ user: req.user });
+    const userCart = await Cart.findOne({ user: req.user._id });
     if (guestCart) {
       if (guestCart.products.length === 0) {
         return res.status(400).json({ message: "Guest cart is empty" });

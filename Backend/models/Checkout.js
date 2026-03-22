@@ -18,6 +18,9 @@ const checkoutItemSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    quantity: { type: Number, required: true },  
+    size: String,                                
+    color: String,                               
   },
    {_id : false }
 );
@@ -62,10 +65,10 @@ const checkoutSchema = new mongoose.Schema({
         default: false, 
     },
     finalizedAt: {
-        type: Data,
+        type: Date,
     },
 },
 {timestamps: true}
 );
 
-module.exports = mongoose("Checkout", checkoutSchema);   
+module.exports = mongoose.model("Checkout", checkoutSchema);   

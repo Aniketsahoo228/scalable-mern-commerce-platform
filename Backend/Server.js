@@ -5,18 +5,24 @@ const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRouter");
+const checkoutRoutes = require("./routes/checkoutRoutes");
+const orderRoutes = require("./routes/orderRouter");
+const uploadRoutes = require("./routes/uploadRoutes");
 
-dotenv.config(); // ✅ moved to top — must be first!
+dotenv.config();
 
 const app = express();
 app.use(express.json());
 app.use(cors());
+
 // API Routes
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
-
-connectDB(); // ✅ now MONGO_URI is available
+app.use("/api/checkout", checkoutRoutes);
+app.use("/api/orders", orderRoutes); // ✅ fixed /api/order → /api/orders
+app.use("/api/upload", uploadRoutes);
+connectDB();
 
 const PORT = process.env.PORT || 9000;
 
