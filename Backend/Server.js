@@ -10,6 +10,8 @@ const orderRoutes = require("./routes/orderRouter");
 const uploadRoutes = require("./routes/uploadRoutes");
 const subscribeRoutes = require("./routes/subscriberRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const productAdminRoutes = require("./routes/productAdminRoutes");
+const adminOrderRoutes = require("./routes/adminOrderRoutes");
 
 dotenv.config();
 
@@ -26,8 +28,11 @@ app.use("/api/orders", orderRoutes); // ✅ fixed /api/order → /api/orders
 app.use("/api/upload", uploadRoutes);
 app.use("/api", subscribeRoutes);
 
+
 //Admin
 app.use("/api/admin/users", adminRoutes);
+app.use("/api/admin/products", productAdminRoutes);
+app.use("/api/admin/orders", adminOrderRoutes);
 
 connectDB();
 
