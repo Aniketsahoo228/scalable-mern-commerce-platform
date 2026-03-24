@@ -1,44 +1,89 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import ProductGrid from "./ProductGrid";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import {
+  fetchProductDetails,
+  fetchSimilarProducts,
+} from "../../redux/slices/productsSlice";
+import { addToCart } from "../../redux/slices/cartSlice";
 
-const selectedProduct = {
-  name: "Stylish Jacket", price: 1200, originalPrice: 1500,
-  description: "This is a stylish jacket perfect for any occasion.",
-  brand: "FashionBrand", material: "Leather",
-  sizes: ["S", "M", "L", "XL"], color: ["Red", "Black"],
-  images: [
-    { url: "https://picsum.photos/500/500?random=1", altText: "Stylish Jacket 1" },
-    { url: "https://picsum.photos/500/500?random=2", altText: "Stylish Jacket 2" },
-  ],
-};
 
-const similarProducts = [
-  { _id: 1, name: "Product 1", price: 1000, images: [{ url: "https://picsum.photos/500/500?random=3" }] },
-  { _id: 2, name: "Product 2", price: 1000, images: [{ url: "https://picsum.photos/500/500?random=4" }] },
-  { _id: 3, name: "Product 3", price: 1000, images: [{ url: "https://picsum.photos/500/500?random=5" }] },
-  { _id: 4, name: "Product 4", price: 1000, images: [{ url: "https://picsum.photos/500/500?random=6" }] },
-];
 
-const ProductDetails = () => {
-  const [mainImage, setMainImage] = useState(selectedProduct.images[0]);
+const ProductDetails = ({ productId }) => {
+  const {id} = useParams();
+  const dispatch = useDispatch();
+  const {selectedProduct, loading, error, similarProducts} = useSelector(
+    (state) => state.products
+  );
+  const {user, guestId} = useSelector((state) => state.auth);
+  const [mainImage, setMainImage] = useState(null);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
   
+  const productFetchId = productId || id;
 
+  useEffect(() => {
+  if (productFetchId) {
+    dispatch(fetchProductDetails(productFetchId));
+    dispatch(fetchSimilarProducts({ id: productFetchId }));
+  }
+  }, [dispatch, productFetchId]);  
+  
+  useEffect(() => {
+  if (selectedProduct?.images?.length > 0) {
+    setMainImage(selectedProduct.images[0]);
+  }
+}, [selectedProduct]);
+ 
   const handleAddCart = () => {
     if (!selectedSize || !selectedColor) {
       toast.error("Please select a size and color", { duration: 1000 });
       return;
     }
     setIsProcessing(true);
-    setTimeout(() => {
-      toast.success("Added to cart!", { duration: 1000 });
+
+    dispatch(
+      addToCart({
+        productId: productFetchId,
+        quantity,
+        size: selectedSize,
+        color: selectedColor,
+        guestId,
+        userId: user?._id,
+      })
+    ).then(() => {
+      toast.success("Product added to cart!",{
+        duration: 1000,
+      });
+    })
+    .finally(() => {
       setIsProcessing(false);
-    }, 500);
+    });
   };
+
+  if(loading){
+    return <p>loading...</p>
+  }
+  if(error){
+    return <p>Error : {error}</p>
+  }
+
+  if (!selectedProduct) {
+    return null;
+  }
+
+  const productColors = selectedProduct.colors || selectedProduct.color || [];
+  const currentPrice = selectedProduct.discountPrice ?? selectedProduct.price;
+  const originalPrice = selectedProduct.originalPrice ?? selectedProduct.price;
+  const discountPercentage =
+    originalPrice > currentPrice
+      ? Math.round((1 - currentPrice / originalPrice) * 100)
+      : 0;
 
   return (
     <>
@@ -99,6 +144,7 @@ const ProductDetails = () => {
       `}</style>
 
       <div className="pd-body" style={{ background: '#111' }}>
+        { selectedProduct && ( 
         <div className="max-w-6xl mx-auto px-6 py-16">
 
           <div className="flex flex-col md:flex-row gap-12">
@@ -110,12 +156,12 @@ const ProductDetails = () => {
                   <img
                     key={i} src={img.url} alt={img.altText}
                     onClick={() => setMainImage(img)}
-                    className={`pd-thumb ${mainImage.url === img.url ? "active" : ""}`}
+                    className={`pd-thumb ${mainImage?.url === img.url ? "active" : ""}`}
                   />
                 ))}
               </div>
               <div className="flex-1 overflow-hidden">
-                <img src={mainImage.url} alt="Main" className="w-full h-auto object-cover" style={{ display: 'block' }} />
+                <img src={mainImage?.url || selectedProduct.images?.[0]?.url} alt="Main" className="w-full h-auto object-cover" style={{ display: 'block' }} />
               </div>
             </div>
 
@@ -123,7 +169,7 @@ const ProductDetails = () => {
             <div className="md:hidden flex gap-3 overflow-x-auto">
               {selectedProduct.images.map((img, i) => (
                 <img key={i} src={img.url} alt={img.altText} onClick={() => setMainImage(img)}
-                  className={`pd-thumb flex-shrink-0 ${mainImage.url === img.url ? "active" : ""}`} />
+                  className={`pd-thumb flex-shrink-0 ${mainImage?.url === img.url ? "active" : ""}`} />
               ))}
             </div>
 
@@ -136,11 +182,13 @@ const ProductDetails = () => {
               <div style={{ width: 32, height: 1, background: '#c9a96e', marginBottom: 16 }} />
 
               <div className="flex items-baseline gap-3 mb-6">
-                <span className="pd-brand text-3xl font-light text-white">₹{selectedProduct.price}</span>
-                <span className="text-sm line-through" style={{ color: 'rgba(255,255,255,0.25)' }}>₹{selectedProduct.originalPrice}</span>
-                <span className="text-[10px] tracking-widest" style={{ color: '#c9a96e' }}>
-                  {Math.round((1 - selectedProduct.price / selectedProduct.originalPrice) * 100)}% OFF
-                </span>
+                <span className="pd-brand text-3xl font-light text-white">₹{currentPrice}</span>
+                <span className="text-sm line-through" style={{ color: 'rgba(255,255,255,0.25)' }}>₹{originalPrice}</span>
+                {discountPercentage > 0 && (
+                  <span className="text-[10px] tracking-widest" style={{ color: '#c9a96e' }}>
+                    {discountPercentage}% OFF
+                  </span>
+                )}
               </div>
 
               <p className="text-[12px] leading-relaxed tracking-wide mb-8" style={{ color: 'rgba(255,255,255,0.45)' }}>
@@ -153,7 +201,7 @@ const ProductDetails = () => {
                   Color {selectedColor && <span style={{ color: '#c9a96e' }}>— {selectedColor}</span>}
                 </p>
                 <div className="flex gap-3">
-                  {selectedProduct.color.map((color) => (
+                  {productColors.map((color) => (
                     <button
                       key={color} onClick={() => setSelectedColor(color)}
                       style={{
@@ -195,7 +243,6 @@ const ProductDetails = () => {
                 </div>
               </div>
 
-              {/* ✅ ONLY CHANGE — disabled={isProcessing} instead of disabled={isButtonDisabled} */}
               <button className="pd-add-btn" onClick={handleAddCart} disabled={isProcessing}>
                 <span>{isProcessing ? "Adding..." : "Add to Cart"}</span>
               </button>
@@ -224,10 +271,11 @@ const ProductDetails = () => {
               <h2 className="pd-brand text-5xl font-light text-white">You May Also Like</h2>
               <div style={{ width: 32, height: 1, background: '#c9a96e', margin: '12px auto 0' }} />
             </div>
-            <ProductGrid products={similarProducts} />
+            <ProductGrid products={similarProducts} loading={loading} error={error}/>
           </div>
 
         </div>
+        )}
       </div>
     </>
   );
