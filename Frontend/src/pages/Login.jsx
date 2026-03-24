@@ -139,6 +139,8 @@ const Login = () => {
             <div className="fade-in fade-in-3 input-wrapper mb-8">
               <label className={`float-label ${email || focused === 'email' ? 'active' : ''}`}>Email Address</label>
               <input
+                id="login-email"
+                name="email"
                 className="input-field"
                 type="email"
                 value={email}
@@ -152,6 +154,8 @@ const Login = () => {
             <div className="fade-in fade-in-3 input-wrapper mb-12">
               <label className={`float-label ${password || focused === 'password' ? 'active' : ''}`}>Password</label>
               <input
+                id="login-password"
+                name="password"
                 className="input-field"
                 type="password"
                 value={password}

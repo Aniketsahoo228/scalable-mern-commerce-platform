@@ -96,8 +96,19 @@ const Navbar = () => {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center space-x-8">
-            {["Men", "Women", "Top Wear", "Bottom Wear"].map((item) => (
-              <Link key={item} to="/collections/all" className="nav-link">{item}</Link>
+            {[
+              { name: "Men", key: "gender" },
+              { name: "Women", key: "gender" },
+              { name: "Top Wear", key: "category" },
+              { name: "Bottom Wear", key: "category" }
+            ].map((item) => (
+              <Link 
+                key={item.name} 
+                to={`/collections/all?${item.key}=${encodeURIComponent(item.name)}`} 
+                className="nav-link"
+              >
+                {item.name}
+              </Link>
             ))}
           </div>
 
@@ -166,9 +177,20 @@ const Navbar = () => {
         <div className="px-6 py-8">
           <p className="text-[9px] font-semibold tracking-[0.3em] text-[#b0a499] uppercase mb-6">Navigation</p>
           <nav>
-            {["Men", "Women", "Top Wear", "Bottom Wear"].map((item) => (
-              <Link key={item} to="#" onClick={toggleNavDrawer} className="mobile-link">
-                {item}
+            {[
+              { name: "Men", query: "gender" },
+              { name: "Women", query: "gender" },
+              { name: "Top Wear", query: "category" },
+              { name: "Bottom Wear", query: "category" }
+            ].map((item) => (
+              <Link 
+                key={item.name} 
+                // Generates: /collections/all?gender=Men or /collections/all?category=Top%20Wear
+                to={`/collections/all?${item.query}=${encodeURIComponent(item.name)}`} 
+                onClick={toggleNavDrawer} 
+                className="mobile-link"
+              >
+                {item.name}
               </Link>
             ))}
           </nav>

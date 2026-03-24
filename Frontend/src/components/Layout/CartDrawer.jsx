@@ -1,13 +1,24 @@
 import { IoMdClose } from 'react-icons/io';
 import CartContents from '../Cart/CartContents';
 import { useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux";
 
 const CartDrawer = ({ drawerOpen, toggleCartDrawer }) => {
   const navigate = useNavigate();
-  const handleCheckout = () =>{
-    toggleCartDrawer
-    navigate("/Checkout")
-  }
+  const { user, guestId } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.auth);
+  const userId = user ? user._id : null;
+
+  const handleCheckout = () => {
+    toggleCartDrawer();
+    if (!user){
+      navigate("/login?redirect=checkout");
+    } else {
+      navigate("/checkout");
+    }
+    
+  };
+
   return (
     <>
       <style>{`
@@ -101,7 +112,8 @@ const CartDrawer = ({ drawerOpen, toggleCartDrawer }) => {
 
         {/* Cart Items */}
         <div className="cd-scroll flex-grow overflow-y-auto px-6 py-4">
-          <CartContents />
+          {cart && cart?.product?.length > 0 ? (<CartContents cart={cart} userId={userId} guestId={guestId}/>) : (<p> Your cart is empty.</p>)}
+          
         </div>
 
         {/* Footer */}
@@ -109,7 +121,9 @@ const CartDrawer = ({ drawerOpen, toggleCartDrawer }) => {
           className="px-6 py-5"
           style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
         >
-          <button 
+          {cart && cart?.product?.length > 0 && (
+            <>
+            <button 
           onClick={handleCheckout}
           className="cd-checkout-btn">
             <span>Checkout</span>
@@ -120,6 +134,9 @@ const CartDrawer = ({ drawerOpen, toggleCartDrawer }) => {
           >
             Shipping, taxes & discounts calculated at checkout
           </p>
+            </>
+          )}
+          
         </div>
 
       </div>

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const NewArrivals = () => {
   const scrollRef = useRef(null);
@@ -9,13 +10,21 @@ const NewArrivals = () => {
   const [scrollLeft, setScrollLeft] = useState(0);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [newArrivals, setNewArrivals] = useState([]);
 
-  const newArrivals = Array.from({ length: 10 }, (_, i) => ({
-    _id: String(i + 1),
-    name: "Stylish Jacket",
-    price: 120,
-    images: [{ url: `https://picsum.photos/500/500?random=${i + 1}`, altText: "Stylish Jacket" }],
-  }));
+  useEffect(() => {
+    const fetchNewArrivals = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/products/new-arrivals`
+        );
+        setNewArrivals(response.data);
+      } catch (error) {
+        console.error("Fetch error:", error);
+      }
+    };
+    fetchNewArrivals();
+  }, []);
 
   const updateScrollButtons = () => {
     const c = scrollRef.current;
@@ -43,11 +52,11 @@ const NewArrivals = () => {
 
   useEffect(() => {
     const c = scrollRef.current;
-    if (!c) return;
+    if (!c || newArrivals.length === 0) return;
     updateScrollButtons();
     c.addEventListener("scroll", updateScrollButtons);
     return () => c.removeEventListener("scroll", updateScrollButtons);
-  }, []);
+  }, [newArrivals]);
 
   return (
     <>
@@ -118,27 +127,32 @@ const NewArrivals = () => {
             onMouseUp={() => setIsDragging(false)}
             onMouseLeave={() => setIsDragging(false)}
           >
-            {newArrivals.map((product) => (
-              <div key={product._id} className="na-card min-w-[90%] sm:min-w-[45%] lg:min-w-[28%]">
-                <img
-                  draggable="false"
-                  src={product.images[0].url}
-                  alt={product.images[0].altText}
-                  className="w-full h-[480px] object-cover"
-                />
-                <div className="na-card-overlay" />
-                <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '28px 24px' }}>
-                  <Link to={`/product/${product._id}`}>
-                    <p className="text-[9px] tracking-[0.3em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                      New Arrival
-                    </p>
-                    <h4 className="na-brand text-2xl font-light text-white mb-1">{product.name}</h4>
-                    <p className="text-[11px] tracking-widest" style={{ color: '#c9a96e' }}>${product.price}</p>
-                  </Link>
+            {newArrivals.length === 0 ? (
+              <p className="text-white">Loading...</p>
+            ) : (
+              newArrivals.map((product) => (
+                <div key={product._id} className="na-card min-w-[90%] sm:min-w-[45%] lg:min-w-[28%]">
+                  <img
+                    draggable="false"
+                    src={product.images?.[0]?.url || "https://via.placeholder.com/500"}  // ✅ fixed
+                    alt={product.images?.[0]?.altText || product.name}                   // ✅ fixed
+                    className="w-full h-[480px] object-cover"
+                  />
+                  <div className="na-card-overlay" />
+                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '28px 24px' }}>
+                    <Link to={`/product/${product._id}`}>
+                      <p className="text-[9px] tracking-[0.3em] uppercase mb-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                        New Arrival
+                      </p>
+                      <h4 className="na-brand text-2xl font-light text-white mb-1">{product.name}</h4>
+                      <p className="text-[11px] tracking-widest" style={{ color: '#c9a96e' }}>${product.price}</p>
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
+
         </div>
       </section>
     </>

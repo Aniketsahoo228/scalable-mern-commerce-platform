@@ -145,21 +145,21 @@ const Register = () => {
 
             <div className="fade-in fade-in-2 input-wrapper mb-7">
               <label className={`float-label ${name || focused === 'name' ? 'active' : ''}`}>Full Name</label>
-              <input className="input-field" type="text" value={name}
+              <input id="register-name" name="name" className="input-field" type="text" value={name}
                 onFocus={() => setFocused('name')} onBlur={() => setFocused('')}
                 onChange={(e) => setName(e.target.value)} required />
             </div>
 
             <div className="fade-in fade-in-3 input-wrapper mb-7">
               <label className={`float-label ${email || focused === 'email' ? 'active' : ''}`}>Email Address</label>
-              <input className="input-field" type="email" value={email}
+              <input id="register-email" name="email" className="input-field" type="email" value={email}
                 onFocus={() => setFocused('email')} onBlur={() => setFocused('')}
                 onChange={(e) => setEmail(e.target.value)} required />
             </div>
 
             <div className="fade-in fade-in-4 input-wrapper mb-12">
               <label className={`float-label ${password || focused === 'password' ? 'active' : ''}`}>Password</label>
-              <input className="input-field" type="password" value={password}
+              <input id="register-password" name="password" className="input-field" type="password" value={password}
                 onFocus={() => setFocused('password')} onBlur={() => setFocused('')}
                 onChange={(e) => setPassword(e.target.value)} required />
             </div>

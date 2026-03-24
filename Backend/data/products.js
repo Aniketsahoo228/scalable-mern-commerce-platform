@@ -1,4 +1,3 @@
-
 const products = [
   {
     name: "Classic Oxford Button-Down Shirt",
@@ -16,17 +15,10 @@ const products = [
     material: "Cotton",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=39",
-        altText: "Classic Oxford Button-Down Shirt Front View",
-      },
-      {
-        url: "https://picsum.photos/500/500?random=40",
-        altText: "Classic Oxford Button-Down Shirt Back View",
-      },
+      { url: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=500&q=80", altText: "Classic Oxford Button-Down Shirt Front View" },
+      { url: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=500&q=80", altText: "Classic Oxford Button-Down Shirt Back View" },
     ],
-    rating: 4.5,
-    numReviews: 12,
+    rating: 4.5, numReviews: 12,
   },
   {
     name: "Slim-Fit Stretch Shirt",
@@ -44,17 +36,10 @@ const products = [
     material: "Cotton Blend",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=41",
-        altText: "Slim-Fit Stretch Shirt Front View",
-      },
-      {
-        url: "https://picsum.photos/500/500?random=42",
-        altText: "Slim-Fit Stretch Shirt Back View",
-      },
+      { url: "https://images.unsplash.com/photo-1607345366928-199ea26cfe3e?w=500&q=80", altText: "Slim-Fit Stretch Shirt Front View" },
+      { url: "https://images.unsplash.com/photo-1607345366928-199ea26cfe3e?w=500&q=80", altText: "Slim-Fit Stretch Shirt Back View" }
     ],
-    rating: 4.8,
-    numReviews: 15,
+    rating: 4.8, numReviews: 15,
   },
   {
     name: "Casual Denim Shirt",
@@ -72,17 +57,10 @@ const products = [
     material: "Denim",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=43",
-        altText: "Casual Denim Shirt Front View",
-      },
-      {
-        url: "https://picsum.photos/500/500?random=44",
-        altText: "Casual Denim Shirt Back View",
-      },
+      { url: "https://images.unsplash.com/photo-1603252109303-2751441dd157?w=500&q=80", altText: "Casual Denim Shirt Front View" },
+      { url: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=500&q=80", altText: "Casual Denim Shirt Back View" },
     ],
-    rating: 4.6,
-    numReviews: 8,
+    rating: 4.6, numReviews: 8,
   },
   {
     name: "Printed Resort Shirt",
@@ -100,17 +78,10 @@ const products = [
     material: "Viscose",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=45",
-        altText: "Printed Resort Shirt Front View",
-      },
-      {
-        url: "https://picsum.photos/500/500?random=1",
-        altText: "Printed Resort Shirt Back View",
-      },
+      { url: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80", altText: "Printed Resort Shirt Front View" },
+      { url: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=500&q=80", altText: "Printed Resort Shirt Back View" }
     ],
-    rating: 4.4,
-    numReviews: 10,
+    rating: 4.4, numReviews: 10,
   },
   {
     name: "Slim-Fit Easy-Iron Shirt",
@@ -128,17 +99,10 @@ const products = [
     material: "Cotton",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=47",
-        altText: "Slim-Fit Easy-Iron Shirt Front View",
-      },
-      {
-        url: "https://picsum.photos/500/500?random=2",
-        altText: "Slim-Fit Easy-Iron Shirt Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1541963463532-d68292c34b19?w=500&q=80", altText: "Slim-Fit Easy-Iron Shirt Front View" },
+      { url: "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=500&q=80", altText: "Slim-Fit Easy-Iron Shirt Back View" },
     ],
-    rating: 5,
-    numReviews: 14,
+    rating: 5, numReviews: 14,
   },
   {
     name: "Polo T-Shirt with Ribbed Collar",
@@ -156,17 +120,10 @@ const products = [
     material: "Cotton",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=3",
-        altText: "Polo T-Shirt Front View",
-      },
-      {
-        url: "https://picsum.photos/500/500?random=4",
-        altText: "Polo T-Shirt Back View",
-      },
+      { url: "https://images.unsplash.com/photo-1571945153237-4929e783af4a?w=500&q=80", altText: "Polo T-Shirt Front View" },
+      { url: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500&q=80", altText: "Polo T-Shirt Back View" },
     ],
-    rating: 4.3,
-    numReviews: 22,
+    rating: 4.3, numReviews: 22,
   },
   {
     name: "Oversized Graphic T-Shirt",
@@ -184,13 +141,9 @@ const products = [
     material: "Cotton",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=5",
-        altText: "Oversized Graphic T-Shirt Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=500&q=80", altText: "Oversized Graphic T-Shirt Front View" },
     ],
-    rating: 4.6,
-    numReviews: 30,
+    rating: 4.6, numReviews: 30,
   },
   {
     name: "Regular-Fit Henley Shirt",
@@ -208,13 +161,9 @@ const products = [
     material: "Cotton Blend",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=6",
-        altText: "Regular-Fit Henley Shirt Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=500&q=80", altText: "Regular-Fit Henley Shirt Front View" },
     ],
-    rating: 4.5,
-    numReviews: 25,
+    rating: 4.5, numReviews: 25,
   },
   {
     name: "Long-Sleeve Thermal Tee",
@@ -232,13 +181,9 @@ const products = [
     material: "Cotton",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=7",
-        altText: "Long-Sleeve Thermal Tee Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1614975059251-992f11792b9f?w=500&q=80", altText: "Long-Sleeve Thermal Tee Front View" },
     ],
-    rating: 4.4,
-    numReviews: 18,
+    rating: 4.4, numReviews: 18,
   },
   {
     name: "V-Neck Classic T-Shirt",
@@ -256,13 +201,9 @@ const products = [
     material: "Cotton",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=8",
-        altText: "V-Neck Classic T-Shirt Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=500&q=80", altText: "V-Neck Classic T-Shirt Front View" },
     ],
-    rating: 4.7,
-    numReviews: 28,
+    rating: 4.7, numReviews: 28,
   },
   {
     name: "Slim Fit Joggers",
@@ -280,13 +221,9 @@ const products = [
     material: "Cotton Blend",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=9",
-        altText: "Slim Fit Joggers Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1552902865-b72c031ac5ea?w=500&q=80", altText: "Slim Fit Joggers Front View" },
     ],
-    rating: 4.5,
-    numReviews: 12,
+    rating: 4.5, numReviews: 12,
   },
   {
     name: "Cargo Joggers",
@@ -304,13 +241,9 @@ const products = [
     material: "Cotton",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=10",
-        altText: "Cargo Joggers Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=500&q=80", altText: "Cargo Joggers Front View" },
     ],
-    rating: 4.7,
-    numReviews: 20,
+    rating: 4.7, numReviews: 20,
   },
   {
     name: "Tapered Sweatpants",
@@ -328,13 +261,9 @@ const products = [
     material: "Fleece",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=11",
-        altText: "Tapered Sweatpants Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=500&q=80", altText: "Tapered Sweatpants Front View" },
     ],
-    rating: 4.3,
-    numReviews: 18,
+    rating: 4.3, numReviews: 18,
   },
   {
     name: "Denim Jeans",
@@ -352,13 +281,9 @@ const products = [
     material: "Denim",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=12",
-        altText: "Denim Jeans Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1555689502-c4b22d76c56f?w=500&q=80", altText: "Denim Jeans Front View" },
     ],
-    rating: 4.6,
-    numReviews: 22,
+    rating: 4.6, numReviews: 22,
   },
   {
     name: "Chino Pants",
@@ -376,13 +301,9 @@ const products = [
     material: "Cotton",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=13",
-        altText: "Chino Pants Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=500&q=80", altText: "Chino Pants Front View" },
     ],
-    rating: 4.8,
-    numReviews: 15,
+    rating: 4.8, numReviews: 15,
   },
   {
     name: "Track Pants",
@@ -400,13 +321,9 @@ const products = [
     material: "Polyester",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=14",
-        altText: "Track Pants Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1519058082700-08a0b56da9b4?w=500&q=80", altText: "Track Pants Front View" },
     ],
-    rating: 4.2,
-    numReviews: 17,
+    rating: 4.2, numReviews: 17,
   },
   {
     name: "Slim Fit Trousers",
@@ -424,13 +341,9 @@ const products = [
     material: "Polyester",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=15",
-        altText: "Slim Fit Trousers Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=500&q=80", altText: "Slim Fit Trousers Front View" },
     ],
-    rating: 4.7,
-    numReviews: 10,
+    rating: 4.7, numReviews: 10,
   },
   {
     name: "Cargo Pants",
@@ -448,13 +361,9 @@ const products = [
     material: "Cotton",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=16",
-        altText: "Cargo Pants Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1517445312882-bc9910d016b7?w=500&q=80", altText: "Cargo Pants Front View" },
     ],
-    rating: 4.5,
-    numReviews: 13,
+    rating: 4.5, numReviews: 13,
   },
   {
     name: "Relaxed Fit Sweatpants",
@@ -472,13 +381,9 @@ const products = [
     material: "Fleece",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=17",
-        altText: "Relaxed Fit Sweatpants Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=500&q=80", altText: "Relaxed Fit Sweatpants Front View" },
     ],
-    rating: 4.3,
-    numReviews: 14,
+    rating: 4.3, numReviews: 14,
   },
   {
     name: "Formal Dress Pants",
@@ -496,13 +401,9 @@ const products = [
     material: "Polyester",
     gender: "Men",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=18",
-        altText: "Formal Dress Pants Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1594938298603-c8148c4b4f5e?w=500&q=80", altText: "Formal Dress Pants Front View" },
     ],
-    rating: 4.9,
-    numReviews: 8,
+    rating: 4.9, numReviews: 8,
   },
   {
     name: "High-Waist Skinny Jeans",
@@ -520,13 +421,9 @@ const products = [
     material: "Denim",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=19",
-        altText: "High-Waist Skinny Jeans",
-      },
+      { url: "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=500&q=80", altText: "High-Waist Skinny Jeans" },
     ],
-    rating: 4.8,
-    numReviews: 20,
+    rating: 4.8, numReviews: 20,
   },
   {
     name: "Wide-Leg Trousers",
@@ -544,13 +441,9 @@ const products = [
     material: "Polyester",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=20",
-        altText: "Wide-Leg Trousers Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500&q=80", altText: "Wide-Leg Trousers Front View" },
     ],
-    rating: 4.7,
-    numReviews: 15,
+    rating: 4.7, numReviews: 15,
   },
   {
     name: "Stretch Leggings",
@@ -568,13 +461,9 @@ const products = [
     material: "Cotton Blend",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=21",
-        altText: "Stretch Leggings Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=500&q=80", altText: "Stretch Leggings Front View" },
     ],
-    rating: 4.5,
-    numReviews: 30,
+    rating: 4.5, numReviews: 30,
   },
   {
     name: "Pleated Midi Skirt",
@@ -592,13 +481,9 @@ const products = [
     material: "Polyester",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=22",
-        altText: "Pleated Midi Skirt Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=500&q=80", altText: "Pleated Midi Skirt Front View" },
     ],
-    rating: 4.6,
-    numReviews: 18,
+    rating: 4.6, numReviews: 18,
   },
   {
     name: "Flared Palazzo Pants",
@@ -616,13 +501,9 @@ const products = [
     material: "Linen Blend",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=23",
-        altText: "Flared Palazzo Pants Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80", altText: "Flared Palazzo Pants Front View" },
     ],
-    rating: 4.4,
-    numReviews: 22,
+    rating: 4.4, numReviews: 22,
   },
   {
     name: "High-Rise Joggers",
@@ -640,13 +521,9 @@ const products = [
     material: "Cotton Blend",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=24",
-        altText: "High-Rise Joggers Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=500&q=80", altText: "High-Rise Joggers Front View" },
     ],
-    rating: 4.3,
-    numReviews: 25,
+    rating: 4.3, numReviews: 25,
   },
   {
     name: "Paperbag Waist Shorts",
@@ -664,13 +541,9 @@ const products = [
     material: "Cotton",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=25",
-        altText: "Paperbag Waist Shorts Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80", altText: "Paperbag Waist Shorts Front View" },
     ],
-    rating: 4.5,
-    numReviews: 19,
+    rating: 4.5, numReviews: 19,
   },
   {
     name: "Stretch Denim Shorts",
@@ -688,13 +561,9 @@ const products = [
     material: "Denim",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=26",
-        altText: "Stretch Denim Shorts Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1548286978-f218023f8d18?w=500&q=80", altText: "Stretch Denim Shorts Front View" },
     ],
-    rating: 4.7,
-    numReviews: 15,
+    rating: 4.7, numReviews: 15,
   },
   {
     name: "Culottes",
@@ -712,13 +581,9 @@ const products = [
     material: "Polyester",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=27",
-        altText: "Culottes Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=500&q=80", altText: "Culottes Front View" },
     ],
-    rating: 4.6,
-    numReviews: 23,
+    rating: 4.6, numReviews: 23,
   },
   {
     name: "Classic Pleated Trousers",
@@ -736,13 +601,9 @@ const products = [
     material: "Wool Blend",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=28",
-        altText: "Classic Pleated Trousers Front View",
-      },
+      { url: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=500&q=80", altText: "Classic Pleated Trousers Front View" }
     ],
-    rating: 4.8,
-    numReviews: 20,
+    rating: 4.8, numReviews: 20,
   },
   {
     name: "Knitted Cropped Top",
@@ -760,13 +621,9 @@ const products = [
     material: "Cotton Blend",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=29",
-        altText: "Knitted Cropped Top",
-      },
+      { url: "https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=500&q=80", altText: "Knitted Cropped Top" },
     ],
-    rating: 4.6,
-    numReviews: 15,
+    rating: 4.6, numReviews: 15,
   },
   {
     name: "Boho Floral Blouse",
@@ -784,13 +641,9 @@ const products = [
     material: "Viscose",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=30",
-        altText: "Boho Floral Blouse",
-      },
+      { url: "https://images.unsplash.com/photo-1485462537746-965f33f7f6a7?w=500&q=80", altText: "Boho Floral Blouse" },
     ],
-    rating: 4.7,
-    numReviews: 20,
+    rating: 4.7, numReviews: 20,
   },
   {
     name: "Casual T-Shirt",
@@ -808,13 +661,9 @@ const products = [
     material: "Cotton",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=31",
-        altText: "Casual T-Shirt",
-      },
+      { url: "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=500&q=80", altText: "Casual T-Shirt" },
     ],
-    rating: 4.5,
-    numReviews: 25,
+    rating: 4.5, numReviews: 25,
   },
   {
     name: "Off-Shoulder Top",
@@ -832,13 +681,9 @@ const products = [
     material: "Polyester",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=32",
-        altText: "Off-Shoulder Top",
-      },
+      { url: "https://images.unsplash.com/photo-1554568218-0f1715e72254?w=500&q=80", altText: "Off-Shoulder Top" },
     ],
-    rating: 4.7,
-    numReviews: 18,
+    rating: 4.7, numReviews: 18,
   },
   {
     name: "Lace-Trimmed Cami Top",
@@ -856,13 +701,9 @@ const products = [
     material: "Silk Blend",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=33",
-        altText: "Lace-Trimmed Cami Top",
-      },
+      { url: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=500&q=80", altText: "Lace-Trimmed Cami Top" },
     ],
-    rating: 4.8,
-    numReviews: 22,
+    rating: 4.8, numReviews: 22,
   },
   {
     name: "Graphic Print Tee",
@@ -880,13 +721,9 @@ const products = [
     material: "Cotton",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=34",
-        altText: "Graphic Print Tee",
-      },
+      { url: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=500&q=80", altText: "Graphic Print Tee" },
     ],
-    rating: 4.6,
-    numReviews: 30,
+    rating: 4.6, numReviews: 30,
   },
   {
     name: "Ribbed Long-Sleeve Top",
@@ -904,13 +741,9 @@ const products = [
     material: "Cotton Blend",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=35",
-        altText: "Ribbed Long-Sleeve Top",
-      },
+      { url: "https://images.unsplash.com/photo-1485462537746-965f33f7f6a7?w=500&q=80", altText: "Ribbed Long-Sleeve Top" },
     ],
-    rating: 4.7,
-    numReviews: 26,
+    rating: 4.7, numReviews: 26,
   },
   {
     name: "Ruffle-Sleeve Blouse",
@@ -928,13 +761,9 @@ const products = [
     material: "Viscose",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=36",
-        altText: "Ruffle-Sleeve Blouse",
-      },
+      { url: "https://images.unsplash.com/photo-1551163943-3f6a855d1153?w=500&q=80", altText: "Ruffle-Sleeve Blouse" },
     ],
-    rating: 4.5,
-    numReviews: 19,
+    rating: 4.5, numReviews: 19,
   },
   {
     name: "Classic Button-Up Shirt",
@@ -952,13 +781,9 @@ const products = [
     material: "Cotton",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=37",
-        altText: "Classic Button-Up Shirt",
-      },
+      { url: "https://images.unsplash.com/photo-1598554747436-c9293d6a588f?w=500&q=80", altText: "Classic Button-Up Shirt" },
     ],
-    rating: 4.8,
-    numReviews: 25,
+    rating: 4.8, numReviews: 25,
   },
   {
     name: "V-Neck Wrap Top",
@@ -976,13 +801,9 @@ const products = [
     material: "Polyester",
     gender: "Women",
     images: [
-      {
-        url: "https://picsum.photos/500/500?random=38",
-        altText: "V-Neck Wrap Top",
-      },
+      { url: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=500&q=80", altText: "V-Neck Wrap Top" },
     ],
-    rating: 4.7,
-    numReviews: 22,
+    rating: 4.7, numReviews: 22,
   },
 ];
 

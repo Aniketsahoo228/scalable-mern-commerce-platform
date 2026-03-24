@@ -17,10 +17,11 @@ export const createCheckout = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Checkout failed" });
+      return rejectWithValue(error.response.data);
     }
   }
 );
+
 
 const checkoutSlice = createSlice({
   name: "checkout",

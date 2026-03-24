@@ -1,10 +1,29 @@
 import { RiDeleteBin3Line } from "react-icons/ri";
+import { useDispatch } from "react-redux";
+import { removeFromCart, updateCartItemQuantity } from "../../redux/slices/cartSlice"
 
-const CartContents = () => {
-  const cartProducts = [
-    { productId: 1, name: "T-shirt", size: "M", color: "Red",  quantity: 1, price: 1599, image: "https://picsum.photos/200?random=1" },
-    { productId: 2, name: "Jeans",   size: "L", color: "Red",  quantity: 1, price: 1266, image: "https://picsum.photos/200?random=2" },
-  ];
+const CartContents = ({cart, userId, guestId}) => {
+  const dispatch = useDispatch(); 
+
+  // Handle adding or substracting to cart
+const  handleAddToCart = (productId, delta, quantity , size , color ) => {
+  const newQuantity = quantity + delta;
+  if (newQuantity >= 1){
+    dispatch(updateCartItemQuantity({
+         productId,
+         quantity: newQuantity,
+         guestId,
+         userId,
+         size,
+         color,
+    })
+  );
+  }
+};
+
+const handleRemoveFromCart = (productId , size, color) => {
+  dispatch(removeFromCart({productId , guestId , userId , size , color}));
+}
 
   return (
     <>
@@ -56,7 +75,7 @@ const CartContents = () => {
       `}</style>
 
       <div className="cc-body">
-        {cartProducts.map((product, index) => (
+        {cart.products.map((product, index) => (
           <div key={index} className="cc-row">
 
             {/* Left */}

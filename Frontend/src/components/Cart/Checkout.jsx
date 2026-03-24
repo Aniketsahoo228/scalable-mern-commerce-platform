@@ -54,6 +54,8 @@ const Checkout = () => {
             <div className="mb-4">
                 <label className="block text-gray-700">Email</label>
                 <input
+                 id="checkout-email"
+                 name="email"
                  type="email"
                  value="user@example.com"
                  className="w-full p-2 border rounded" 
@@ -64,6 +66,8 @@ const Checkout = () => {
                 <div>
                 <label className="block text-gray-700">First Name</label>
                 <input 
+                  id="checkout-first-name"
+                  name="firstName"
                   type = "text"
                   value={shippingAddress.firstName}
                   onChange={(e) =>
@@ -78,6 +82,8 @@ const Checkout = () => {
                 <div>
                 <label className="block text-gray-700">Last Name</label>
                 <input 
+                  id="checkout-last-name"
+                  name="lastName"
                   type = "text"
                   value={shippingAddress.lastName}
                   onChange={(e) =>
@@ -93,6 +99,8 @@ const Checkout = () => {
             <div className="mb-4">
                 <label className="block text-gray-700">Address</label>
                 <input 
+                id="checkout-address"
+                name="address"
                 type = "text"
                 value={shippingAddress.address}
                 onChange={(e) =>
@@ -108,6 +116,8 @@ const Checkout = () => {
                 <div>
                 <label className="block text-gray-700">City</label>
                 <input 
+                  id="checkout-city"
+                  name="city"
                   type = "text"
                   value={shippingAddress.city}
                   onChange={(e) =>
@@ -122,6 +132,8 @@ const Checkout = () => {
                 <div>
                 <label className="block text-gray-700">Postal Code</label>
                 <input 
+                  id="checkout-postal-code"
+                  name="postalCode"
                   type = "text"
                   value={shippingAddress.postalCode}
                   onChange={(e) =>
@@ -137,6 +149,8 @@ const Checkout = () => {
             <div className="mb-4">
                 <label className="block text-gray-700">Country</label>
                 <input 
+                id="checkout-country"
+                name="country"
                 type = "text"
                 value={shippingAddress.country}
                 onChange={(e) =>
@@ -151,6 +165,8 @@ const Checkout = () => {
             <div className="mb-4">
                 <label className="block text-gray-700">Phone</label>
                 <input 
+                id="checkout-phone"
+                name="phone"
                 type = "tel"
                 value={shippingAddress.phone}
                 onChange={(e) =>

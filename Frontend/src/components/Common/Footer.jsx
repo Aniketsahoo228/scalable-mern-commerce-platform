@@ -104,7 +104,7 @@ const Footer = () => {
                 Get 10% off your first order
               </p>
               <div className="flex">
-                <input className="footer-input" type="email" placeholder="Your email address" required />
+                <input id="footer-email" name="email" className="footer-input" type="email" placeholder="Your email address" required />
                 <button className="footer-btn" type="submit">Join</button>
               </div>
             </div>
