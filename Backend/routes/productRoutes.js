@@ -10,7 +10,6 @@ const router = express.Router();
 router.get("/best-seller", async (req, res) => {
   try {
     const bestSeller = await Product.findOne().sort({ rating: -1 });
-
     if (bestSeller) {
       res.json(bestSeller);
     } else {
@@ -27,10 +26,7 @@ router.get("/best-seller", async (req, res) => {
 // @access Public
 router.get("/new-arrivals", async (req, res) => {
   try {
-    const newArrivals = await Product.find()
-      .sort({ createdAt: -1 })
-      .limit(8);
-
+    const newArrivals = await Product.find().sort({ createdAt: -1 }).limit(8);
     res.json(newArrivals);
   } catch (error) {
     console.error(error);
@@ -45,17 +41,14 @@ router.get("/similar/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const product = await Product.findById(id);
-
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-
     const similarProducts = await Product.find({
       _id: { $ne: id },
       gender: product.gender,
       category: product.category,
     }).limit(4);
-
     res.json(similarProducts);
   } catch (error) {
     console.error(error);
@@ -80,7 +73,7 @@ router.get("/", async (req, res) => {
       category,
       material,
       brand,
-      limit
+      limit,
     } = req.query;
 
     let query = {};
@@ -107,17 +100,18 @@ router.get("/", async (req, res) => {
     }
 
     if (color) {
-      query.colors = { $in: [color] };
+      query.colors = { $in: color.split(",") };
     }
 
     if (gender) {
       query.gender = gender;
     }
 
-    if (minPrice || maxPrice) {
+    // FIXED: use strict checks so minPrice=0 or maxPrice=0 still works
+    if (minPrice !== undefined && minPrice !== "" || maxPrice !== undefined && maxPrice !== "") {
       query.price = {};
-      if (minPrice) query.price.$gte = Number(minPrice);
-      if (maxPrice) query.price.$lte = Number(maxPrice);
+      if (minPrice !== undefined && minPrice !== "") query.price.$gte = Number(minPrice);
+      if (maxPrice !== undefined && maxPrice !== "") query.price.$lte = Number(maxPrice);
     }
 
     if (search) {
@@ -144,7 +138,7 @@ router.get("/", async (req, res) => {
       }
     }
 
-    let products = await Product.find(query)
+    const products = await Product.find(query)
       .sort(sort)
       .limit(Number(limit) || 0);
 
@@ -162,19 +156,15 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-
     return res.status(200).json(product);
   } catch (error) {
     console.error("Error fetching product:", error);
-
     if (error.name === "CastError") {
       return res.status(404).json({ message: "Product not found" });
     }
-
     return res.status(500).json({ message: "Server Error" });
   }
 });
@@ -185,66 +175,28 @@ router.get("/:id", async (req, res) => {
 router.post("/", protect, admin, async (req, res) => {
   try {
     const {
-      name,
-      description,
-      price,
-      discountPrice,
-      countInStock,
-      category,
-      brand,
-      sizes,
-      colors,
-      collections,
-      material,
-      gender,
-      images,
-      isFeatured,
-      isPublished,
-      tags,
-      dimensions,
-      weight,
-      sku,
+      name, description, price, discountPrice, countInStock,
+      category, brand, sizes, colors, collections, material,
+      gender, images, isFeatured, isPublished, tags,
+      dimensions, weight, sku,
     } = req.body;
 
     if (
-      !name ||
-      !description ||
-      price === undefined ||
-      countInStock === undefined ||
-      !category ||
-      !sku ||
-      !Array.isArray(sizes) ||
-      sizes.length === 0 ||
-      !Array.isArray(colors) ||
-      colors.length === 0 ||
-      !collections
+      !name || !description || price === undefined ||
+      countInStock === undefined || !category || !sku ||
+      !Array.isArray(sizes) || sizes.length === 0 ||
+      !Array.isArray(colors) || colors.length === 0 || !collections
     ) {
       return res.status(400).json({
-        message:
-          "Missing required fields: name, description, price, countInStock, category, sku, sizes, colors, collections",
+        message: "Missing required fields: name, description, price, countInStock, category, sku, sizes, colors, collections",
       });
     }
 
     const product = new Product({
-      name,
-      description,
-      price,
-      discountPrice,
-      countInStock,
-      category,
-      brand,
-      sizes,
-      colors,
-      collections,
-      material,
-      gender,
-      images,
-      isFeatured,
-      isPublished,
-      tags,
-      dimensions,
-      weight,
-      sku,
+      name, description, price, discountPrice, countInStock,
+      category, brand, sizes, colors, collections, material,
+      gender, images, isFeatured, isPublished, tags,
+      dimensions, weight, sku,
       user: req.user._id,
     });
 
@@ -268,25 +220,10 @@ router.post("/", protect, admin, async (req, res) => {
 router.put("/:id", protect, admin, async (req, res) => {
   try {
     const {
-      name,
-      description,
-      price,
-      discountPrice,
-      countInStock,
-      category,
-      brand,
-      sizes,
-      colors,
-      collections,
-      material,
-      gender,
-      images,
-      isFeatured,
-      isPublished,
-      tags,
-      dimensions,
-      weight,
-      sku,
+      name, description, price, discountPrice, countInStock,
+      category, brand, sizes, colors, collections, material,
+      gender, images, isFeatured, isPublished, tags,
+      dimensions, weight, sku,
     } = req.body;
 
     const product = await Product.findById(req.params.id);
@@ -314,26 +251,15 @@ router.put("/:id", protect, admin, async (req, res) => {
 
       const updatedProduct = await product.save();
       return res.status(200).json(updatedProduct);
-
     } else {
       return res.status(404).json({ message: "Product not found" });
     }
 
   } catch (error) {
     console.error("Error updating product:", error);
-
-    if (error.name === "CastError") {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
-    if (error.name === "ValidationError") {
-      return res.status(400).json({ message: error.message });
-    }
-
-    if (error.code === 11000) {
-      return res.status(400).json({ message: "SKU must be unique" });
-    }
-
+    if (error.name === "CastError") return res.status(404).json({ message: "Product not found" });
+    if (error.name === "ValidationError") return res.status(400).json({ message: error.message });
+    if (error.code === 11000) return res.status(400).json({ message: "SKU must be unique" });
     return res.status(500).json({ message: "Server Error" });
   }
 });
@@ -344,21 +270,14 @@ router.put("/:id", protect, admin, async (req, res) => {
 router.delete("/:id", protect, admin, async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
-
     await product.deleteOne();
     return res.status(200).json({ message: "Product removed" });
-
   } catch (error) {
     console.error("Error deleting product:", error);
-
-    if (error.name === "CastError") {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
+    if (error.name === "CastError") return res.status(404).json({ message: "Product not found" });
     return res.status(500).json({ message: "Server Error" });
   }
 });

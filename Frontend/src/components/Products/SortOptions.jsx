@@ -2,22 +2,22 @@ import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 const sortOptions = [
-  { label: "Newest",             value: "newest"     },
-  { label: "Price: Low to High", value: "price_asc"  },
-  { label: "Price: High to Low", value: "price_desc" },
+  { label: "Newest",             value: "newest"   },
+  { label: "Price: Low to High", value: "priceAsc" },
+  { label: "Price: High to Low", value: "priceDesc" },
   { label: "Popularity",         value: "popularity" },
 ];
 
 const SortOptions = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selected, setSelected] = useState(searchParams.get("sort") || "");
+  const [selected, setSelected] = useState(searchParams.get("sortBy") || "");
 
   const handleSort = (e) => {
     const value = e.target.value;
     setSelected(value);
     const params = new URLSearchParams(searchParams);
-    if (value) params.set("sort", value);
-    else params.delete("sort");
+    if (value) params.set("sortBy", value);
+    else params.delete("sortBy");
     setSearchParams(params);
     console.log("Sort:", value);
   };
