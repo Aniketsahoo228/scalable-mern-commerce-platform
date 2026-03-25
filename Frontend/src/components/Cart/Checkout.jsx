@@ -1,29 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PayPalButton from "./PayPalButton";
-
-const cart = {
-  products: [
-    {
-      name: "stylish",
-      size: "M",
-      color: "Black",
-      price: 1200,
-      image: "https://picsum.photos/150?random=1",
-    },
-    {
-      name: "Casual stylish",
-      size: "42",
-      color: "White",
-      price: 1500,
-      image: "https://picsum.photos/150?random=2",
-    },
-  ],
-  totalPrice: 1950,
-};
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { createCheckout } from "../../redux/slices/checkoutSlice";
 
 const Checkout = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { cart, loading, error } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
+
   const [checkoutId, setCheckoutId] = useState(null)
   const [shippingAddress, setShippingAddress] = useState({
     firstName: "",
@@ -35,207 +23,332 @@ const Checkout = () => {
     phone: "",
   });
  
-  const handlePaymentSuccess = (details) => {
-    console.log("Payment Successful", details);
-    navigate("/order-confirmation");
-  }
+  const handlePaymentSuccess = async (details) => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/pay`,
+        { paymentStatus: "paid", paymentDetails: details },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        }
+      );
+      if (response.status === 200){
+        await handleFinalizeCheckout(checkoutId);
+      }else{
+        console.error(error);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+  useEffect(() =>{
+    if(!cart || !cart.products || cart.products.length === 0){
+      navigate("/")
+    }
+  }, [cart, navigate])
 
-  const handleCreateCheckout = (e) => {
+  const handleCreateCheckout = async (e) => {
     e.preventDefault();
-    setCheckoutId(123)
+    if (cart && cart.products.length > 0) {
+      const res = await dispatch(
+        createCheckout({
+          checkoutItems: cart.products,
+          shippingAddress,
+          paymentMethod: "Paypal",
+          totalPrice: cart.totalPrice,
+        })
+      );
+      if (res.payload && res.payload._id){
+        setCheckoutId(res.payload._id);
+      }
+    }
   }
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto py-10 px-6 tracking-tighter">
-      {/* Left Section */}
-      <div className="bg-white rounded-lg p-6">
-        <h2 className="text-2xl uppercase mb-6">Checkout</h2>
-        <form onSubmit={handleCreateCheckout}> 
-            <h3 className="text-lg mb-4">Contact Details</h3>
-            <div className="mb-4">
-                <label className="block text-gray-700">Email</label>
-                <input
-                 id="checkout-email"
-                 name="email"
-                 type="email"
-                 value="user@example.com"
-                 className="w-full p-2 border rounded" 
-                 disabled/>
-            </div>
-            <h3 className="text-lg mb-4">Delivery</h3>
-            <div className="mb-4 grid grid-cols-2 gap-2">
-                <div>
-                <label className="block text-gray-700">First Name</label>
-                <input 
-                  id="checkout-first-name"
-                  name="firstName"
-                  type = "text"
-                  value={shippingAddress.firstName}
-                  onChange={(e) =>
-                    setShippingAddress({
-                      ...shippingAddress,
-                      firstName: e.target.value,
-                    })
-                  }
-                  className = "w-full p-2 border rounded"
-                />
-                </div>
-                <div>
-                <label className="block text-gray-700">Last Name</label>
-                <input 
-                  id="checkout-last-name"
-                  name="lastName"
-                  type = "text"
-                  value={shippingAddress.lastName}
-                  onChange={(e) =>
-                    setShippingAddress({
-                      ...shippingAddress,
-                     lastName: e.target.value,
-                    })
-                  }
-                  className = "w-full p-2 border rounded"
-                />
-                </div>
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">Address</label>
-                <input 
-                id="checkout-address"
-                name="address"
-                type = "text"
-                value={shippingAddress.address}
-                onChange={(e) =>
-                    setShippingAddress({
-                      ...shippingAddress,
-                     address : e.target.value,
-                    })
-                }
-                    className = "w-full p-2 border rounded"
-                    required              />
-            </div>
-            <div className="mb-4 grid grid-cols-2 gap-4">
-                <div>
-                <label className="block text-gray-700">City</label>
-                <input 
-                  id="checkout-city"
-                  name="city"
-                  type = "text"
-                  value={shippingAddress.city}
-                  onChange={(e) =>
-                    setShippingAddress({
-                      ...shippingAddress,
-                      city: e.target.value,
-                    })
-                  }
-                  className = "w-full p-2 border rounded"
-                />
-                </div>
-                <div>
-                <label className="block text-gray-700">Postal Code</label>
-                <input 
-                  id="checkout-postal-code"
-                  name="postalCode"
-                  type = "text"
-                  value={shippingAddress.postalCode}
-                  onChange={(e) =>
-                    setShippingAddress({
-                      ...shippingAddress,
-                     postalCode: e.target.value,
-                    })
-                  }
-                  className = "w-full p-2 border rounded"
-                />
-                </div>
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">Country</label>
-                <input 
-                id="checkout-country"
-                name="country"
-                type = "text"
-                value={shippingAddress.country}
-                onChange={(e) =>
-                    setShippingAddress({
-                      ...shippingAddress,
-                     country : e.target.value,
-                    })
-                }
-                    className = "w-full p-2 border rounded"
-                    required                />
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700">Phone</label>
-                <input 
-                id="checkout-phone"
-                name="phone"
-                type = "tel"
-                value={shippingAddress.phone}
-                onChange={(e) =>
-                    setShippingAddress({
-                      ...shippingAddress,
-                     phone : e.target.value,
-                    })
-                }
-                    className = "w-full p-2 border rounded"
-                    required               
-                     />
-            </div>
-            <div className="mt-6">
-                {!checkoutId ?(
-                    <button type="submit" className="w-full bg-black text-white py-3 rounded">Continue The Payment</button>
-                ):(
-                    <div>
-                        {/*PayPal*/}
-                        <h3 className="text-lg mb-4">Pay with Paypal</h3>
-                        <PayPalButton 
-                        amount={100} 
-                        onSuccess={handlePaymentSuccess} 
-                        onError = {(err) => alert("Payment failed. Try again")}
-                        />
-                    </div> 
-                )}
-            </div>
-        </form>
-      </div>
-      <div className="bg-gray-50 p-6 rounded-lg">
-        <h3 className="text-lg mb-4">Order Summary</h3>
-        <div className="border-t py-4 mb-4">
-            {cart.products.map((product, index) => (
-            <div
-                key={index}
-                className="flex items-start justify-between py-2 border-b"
-            >
-                <div className="flex items-start">
-                    <img src={product.image} 
-                    alt={product.name} 
-                    className="w-20 h-24 object-cover mr-4" />
-                
-                <div>
-                <h3 className="text-md">{product.name}</h3>
-                <p className="text-gray-500">Size: {product.size}</p>
-                <p className="text-gray-500">Color: {product.color}</p>
-                </div>
-                </div>
-                <p className="text-xl">${product.price?.toLocaleString()}</p>
-            </div>
-            ))}
-        </div>
-        <div className="flex justify-between items-center text-lg mb-4">
-            <p>Subtotal</p>
-            <p>${cart.totalPrice?.toLocaleString()}</p>
-        </div>
 
-        <div className="flex justify-between items-center text-lg">
-            <p>Shipping</p>
-            <p>Free</p>
-        </div>
+  const handleFinalizeCheckout = async (checkoutId) => {
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkoutId}/finalize`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        }
+      );
+      if (response.status === 200){
+        navigate("/order-confirmation");
+      }else {
+        console.error(error);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-        {/* ✅ Fixed — was 4 items, totaleString typo fixed */}
-        <div className="flex justify-between items-center text-lg mt-4 border-t pt-4">
-            <p>Total</p>
-            <p>${cart.totalPrice?.toLocaleString()}</p>
-        </div>
-      </div>
+  if (loading) return (
+    <div style={{ background: '#111', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Montserrat', fontSize: 12, letterSpacing: '0.3em' }}>LOADING CART...</p>
     </div>
+  );
+  if (error) return (
+    <div style={{ background: '#111', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <p style={{ color: '#fca5a5', fontFamily: 'Montserrat', fontSize: 12, letterSpacing: '0.3em' }}>Error: {error}</p>
+    </div>
+  );
+  if (!cart || !cart.products || cart.products.length === 0) {
+    return (
+      <div style={{ background: '#111', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'Montserrat', fontSize: 12, letterSpacing: '0.3em' }}>YOUR CART IS EMPTY</p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap');
+        .co-brand { font-family: 'Cormorant Garamond', serif; }
+        .co-body  { font-family: 'Montserrat', sans-serif; }
+
+        .co-input {
+          width: 100%;
+          padding: 10px 14px;
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(255,255,255,0.08);
+          color: white;
+          font-family: 'Montserrat', sans-serif;
+          font-size: 12px;
+          letter-spacing: 0.05em;
+          outline: none;
+          transition: border-color 0.3s ease;
+        }
+        .co-input:focus { border-color: rgba(201,169,110,0.5); }
+        .co-input:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .co-label {
+          display: block;
+          font-size: 9px;
+          font-weight: 500;
+          letter-spacing: 0.25em;
+          text-transform: uppercase;
+          color: rgba(255,255,255,0.35);
+          margin-bottom: 6px;
+        }
+
+        .co-submit-btn {
+          width: 100%;
+          padding: 14px;
+          background: #c9a96e;
+          color: #111;
+          font-family: 'Montserrat', sans-serif;
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.3em;
+          text-transform: uppercase;
+          border: none;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          transition: all 0.3s ease;
+        }
+        .co-submit-btn::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: #1a1a1a;
+          transform: translateX(-100%);
+          transition: transform 0.4s ease;
+        }
+        .co-submit-btn:hover::after { transform: translateX(0); }
+        .co-submit-btn span { position: relative; z-index: 1; }
+        .co-submit-btn:hover span { color: #c9a96e; }
+      `}</style>
+
+      {/* Gold top line */}
+      <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, #c9a96e, transparent)' }} />
+
+      <div className="co-body" style={{ background: '#111', minHeight: '100vh', padding: '60px 24px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+
+          {/* Page Header */}
+          <div className="mb-10">
+            <p style={{ fontSize: 9, letterSpacing: '0.4em', color: '#c9a96e', textTransform: 'uppercase', marginBottom: 8 }}>Azurelle</p>
+            <h1 className="co-brand" style={{ fontSize: 48, fontWeight: 300, color: 'white', marginBottom: 12 }}>Checkout</h1>
+            <div style={{ width: 32, height: 1, background: '#c9a96e' }} />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }} className="grid grid-cols-1 lg:grid-cols-2">
+
+            {/* Left — Form */}
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', padding: 32 }}>
+              <form onSubmit={handleCreateCheckout}>
+
+                {/* Contact Details */}
+                <p style={{ fontSize: 9, letterSpacing: '0.3em', color: '#c9a96e', textTransform: 'uppercase', marginBottom: 16 }}>Contact Details</p>
+                <div style={{ marginBottom: 20 }}>
+                  <label className="co-label">Email</label>
+                  <input
+                    id="checkout-email"
+                    name="email"
+                    type="email"
+                    value={user?.email || ""}
+                    className="co-input"
+                    disabled />
+                </div>
+
+                {/* Delivery */}
+                <p style={{ fontSize: 9, letterSpacing: '0.3em', color: '#c9a96e', textTransform: 'uppercase', marginBottom: 16, marginTop: 28 }}>Delivery</p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
+                  <div>
+                    <label className="co-label">First Name</label>
+                    <input
+                      id="checkout-first-name"
+                      name="firstName"
+                      type="text"
+                      value={shippingAddress.firstName}
+                      onChange={(e) => setShippingAddress({ ...shippingAddress, firstName: e.target.value })}
+                      className="co-input" />
+                  </div>
+                  <div>
+                    <label className="co-label">Last Name</label>
+                    <input
+                      id="checkout-last-name"
+                      name="lastName"
+                      type="text"
+                      value={shippingAddress.lastName}
+                      onChange={(e) => setShippingAddress({ ...shippingAddress, lastName: e.target.value })}
+                      className="co-input" />
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: 20 }}>
+                  <label className="co-label">Address</label>
+                  <input
+                    id="checkout-address"
+                    name="address"
+                    type="text"
+                    value={shippingAddress.address}
+                    onChange={(e) => setShippingAddress({ ...shippingAddress, address: e.target.value })}
+                    className="co-input"
+                    required />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 20 }}>
+                  <div>
+                    <label className="co-label">City</label>
+                    <input
+                      id="checkout-city"
+                      name="city"
+                      type="text"
+                      value={shippingAddress.city}
+                      onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
+                      className="co-input" />
+                  </div>
+                  <div>
+                    <label className="co-label">Postal Code</label>
+                    <input
+                      id="checkout-postal-code"
+                      name="postalCode"
+                      type="text"
+                      value={shippingAddress.postalCode}
+                      onChange={(e) => setShippingAddress({ ...shippingAddress, postalCode: e.target.value })}
+                      className="co-input" />
+                  </div>
+                </div>
+
+                <div style={{ marginBottom: 20 }}>
+                  <label className="co-label">Country</label>
+                  <input
+                    id="checkout-country"
+                    name="country"
+                    type="text"
+                    value={shippingAddress.country}
+                    onChange={(e) => setShippingAddress({ ...shippingAddress, country: e.target.value })}
+                    className="co-input"
+                    required />
+                </div>
+
+                <div style={{ marginBottom: 28 }}>
+                  <label className="co-label">Phone</label>
+                  <input
+                    id="checkout-phone"
+                    name="phone"
+                    type="tel"
+                    value={shippingAddress.phone}
+                    onChange={(e) => setShippingAddress({ ...shippingAddress, phone: e.target.value })}
+                    className="co-input"
+                    required />
+                </div>
+
+                <div>
+                  {!checkoutId ? (
+                    <button type="submit" className="co-submit-btn">
+                      <span>Continue The Payment</span>
+                    </button>
+                  ) : (
+                    <div>
+                      <p style={{ fontSize: 9, letterSpacing: '0.3em', color: '#c9a96e', textTransform: 'uppercase', marginBottom: 16 }}>Pay with Paypal</p>
+                      <PayPalButton
+                        amount={cart.totalPrice}
+                        onSuccess={handlePaymentSuccess}
+                        onError={(err) => alert("Payment failed. Try again")}
+                      />
+                    </div>
+                  )}
+                </div>
+
+              </form>
+            </div>
+
+            {/* Right — Order Summary */}
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)', padding: 32 }}>
+              <p style={{ fontSize: 9, letterSpacing: '0.3em', color: '#c9a96e', textTransform: 'uppercase', marginBottom: 20 }}>Order Summary</p>
+
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 16, marginBottom: 16 }}>
+                {cart.products.map((product, index) => (
+                  <div key={index} style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', paddingBottom: 16, marginBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+                      <img
+                        src={product.image}
+                        alt={product.name}
+                        style={{ width: 72, height: 88, objectFit: 'cover', marginRight: 16 }} />
+                      <div>
+                        <p style={{ fontSize: 12, color: 'white', marginBottom: 4 }}>{product.name}</p>
+                        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>Size: {product.size}</p>
+                        <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>Color: {product.color}</p>
+                      </div>
+                    </div>
+                    <p style={{ fontSize: 14, color: '#c9a96e' }}>${product.price?.toLocaleString()}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Totals */}
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 16 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em' }}>Subtotal</p>
+                  <p style={{ fontSize: 11, color: 'white' }}>${cart.totalPrice?.toLocaleString()}</p>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em' }}>Shipping</p>
+                  <p style={{ fontSize: 11, color: '#6ee7b7' }}>Free</p>
+                </div>
+                <div style={{ height: 1, background: 'linear-gradient(90deg, #c9a96e, transparent)', margin: '16px 0' }} />
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <p style={{ fontSize: 13, color: 'white', letterSpacing: '0.1em' }}>Total</p>
+                  <p style={{ fontSize: 16, color: '#c9a96e', fontFamily: 'Cormorant Garamond, serif' }}>${cart.totalPrice?.toLocaleString()}</p>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

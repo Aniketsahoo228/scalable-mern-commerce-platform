@@ -1,19 +1,27 @@
 import { useState } from "react";
 import { HiMagnifyingGlass, HiMiniXMark } from "react-icons/hi2";
+import { useNavigate } from "react-router-dom";
 
 const SearchBar = () => {
   const [ searchTerm, setSearchTerm] = useState("");
    const [isOpen, setIsOpen] = useState(false);
+   const navigate = useNavigate();
    
    const handleSearchToggle = () => {
     setIsOpen(! isOpen);
    };
 
    const handleSearch = (e) => {
-    e.preventDefault();
-    console.log("Search Term:", searchTerm);
-    setIsOpen(false);
-    };
+  e.preventDefault();
+
+  const trimmedSearch = searchTerm.trim();
+  navigate(
+    trimmedSearch
+      ? `/collections/all?search=${encodeURIComponent(trimmedSearch)}`
+      : "/collections/all"
+  );
+  setIsOpen(false);
+ };
 
     return (
     <div

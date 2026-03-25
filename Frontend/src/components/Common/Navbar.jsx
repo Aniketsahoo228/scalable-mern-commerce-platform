@@ -1,14 +1,22 @@
 import { Link } from "react-router-dom";
 import { HiOutlineShoppingBag, HiOutlineUser } from "react-icons/hi";
 import { HiBars3BottomRight } from "react-icons/hi2";
-import { IoMdClose } from "react-icons/io";
 import SearchBar from "./SearchBar";
 import CartDrawer from "../Layout/CartDrawer";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { IoMdClose } from "react-icons/io";
 
 const Navbar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [navDrawerOpen, setNavDrawerOpen] = useState(false);
+
+  const { cart } = useSelector((state) => state.cart);
+
+  const cartItemCount = cart?.products?.reduce(
+    (total, product) => total + product.quantity,
+    0
+  );
 
   const toggleNavDrawer = () => setNavDrawerOpen(!navDrawerOpen);
   const toggleCartDrawer = () => setDrawerOpen(!drawerOpen);
@@ -127,9 +135,10 @@ const Navbar = () => {
               className="relative py-2 px-2 rounded-full text-white font-semibold tracking-wide bg-gradient-to-r from-indigo-500 via-purple-600 via-orange-500 to-yellow-400 bg-[length:300%_300%] bg-left shadow-lg shadow-purple-500/20 hover:bg-right hover:scale-105 hover:shadow-purple-500/40 transition-all duration-700 ease-out group"
             >
               <HiOutlineShoppingBag />
-              <span className="absolute -top-1 -right-1 bg-rabbit-red text-white text-xs rounded-full px-2 py-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                4
-              </span>
+              {cartItemCount > 0 && (<span className="absolute -top-1 -right-1 bg-rabbit-red text-white text-xs rounded-full px-2 py-0.5">
+                {cartItemCount}
+              </span>) }
+              
             </button>
 
             <div className="overflow-hidden">

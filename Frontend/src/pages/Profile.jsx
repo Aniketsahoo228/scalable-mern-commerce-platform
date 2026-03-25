@@ -1,8 +1,27 @@
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import MyOrdersPage from "../components/Products/MyOrderPage";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { logout } from "../redux/slices/authSlice";
+import { clearCart } from "../redux/slices/cartSlice";
 
 const Profile = () => {
+  const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [activeTab, setActiveTab] = useState("orders");
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+   const handleLogout = () => {
+     dispatch(logout());
+     dispatch(clearCart());
+     navigate("/login");
+   }
 
   return (
     <>
@@ -27,11 +46,11 @@ const Profile = () => {
               Member Profile
             </p>
             <h1 className="profile-brand text-6xl font-light text-white tracking-wide mb-2">
-              John Doe
+              {user?.name}
             </h1>
             <div style={{ width: 32, height: 1, background: "#c9a96e", margin: "12px auto" }} />
             <p className="text-[11px] tracking-[0.2em]" style={{ color: "rgba(255,255,255,0.35)" }}>
-              john@example.com
+               {user?.email}
             </p>
           </div>
 
@@ -129,6 +148,7 @@ const Profile = () => {
               e.currentTarget.style.borderColor = "rgba(239,68,68,0.25)";
               e.currentTarget.style.color = "rgba(239,68,68,0.6)";
             }}
+            onClick={handleLogout}
           >
             Logout
           </button>

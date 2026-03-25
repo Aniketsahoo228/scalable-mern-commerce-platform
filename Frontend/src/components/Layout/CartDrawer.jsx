@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 const CartDrawer = ({ drawerOpen, toggleCartDrawer }) => {
   const navigate = useNavigate();
   const { user, guestId } = useSelector((state) => state.auth);
-  const { cart } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart);
   const userId = user ? user._id : null;
 
   const handleCheckout = () => {
@@ -112,7 +112,7 @@ const CartDrawer = ({ drawerOpen, toggleCartDrawer }) => {
 
         {/* Cart Items */}
         <div className="cd-scroll flex-grow overflow-y-auto px-6 py-4">
-          {cart && cart?.product?.length > 0 ? (<CartContents cart={cart} userId={userId} guestId={guestId}/>) : (<p> Your cart is empty.</p>)}
+          {cart && cart?.products?.length > 0 ? (<CartContents cart={cart} userId={userId} guestId={guestId}/>) : (<p> Your cart is empty.</p>)}
           
         </div>
 
@@ -121,7 +121,7 @@ const CartDrawer = ({ drawerOpen, toggleCartDrawer }) => {
           className="px-6 py-5"
           style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
         >
-          {cart && cart?.product?.length > 0 && (
+          {cart && cart?.products?.length > 0 && (
             <>
             <button 
           onClick={handleCheckout}

@@ -87,15 +87,23 @@ const FilterSidebar = () => {
       nextFilters.maxPrice === "" ? MAX_PRICE : nextFilters.maxPrice,
     ]);
 
-    const normalizedParams = new URLSearchParams();
+    const normalizedParams = new URLSearchParams(searchParams);
     if (nextFilters.category) normalizedParams.set("category", nextFilters.category);
+    else normalizedParams.delete("category");
     if (nextFilters.gender) normalizedParams.set("gender", nextFilters.gender);
+    else normalizedParams.delete("gender");
     if (nextFilters.color) normalizedParams.set("color", nextFilters.color);
+    else normalizedParams.delete("color");
     if (nextFilters.size.length) normalizedParams.set("size", nextFilters.size.join(","));
+    else normalizedParams.delete("size");
     if (nextFilters.material.length) normalizedParams.set("material", nextFilters.material.join(","));
+    else normalizedParams.delete("material");
     if (nextFilters.brand.length) normalizedParams.set("brand", nextFilters.brand.join(","));
+    else normalizedParams.delete("brand");
     if (nextFilters.minPrice !== "") normalizedParams.set("minPrice", String(nextFilters.minPrice));
+    else normalizedParams.delete("minPrice");
     if (nextFilters.maxPrice !== "") normalizedParams.set("maxPrice", String(nextFilters.maxPrice));
+    else normalizedParams.delete("maxPrice");
 
     const current = searchParams.toString();
     const normalized = normalizedParams.toString();

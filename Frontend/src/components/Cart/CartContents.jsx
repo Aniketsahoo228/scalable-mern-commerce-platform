@@ -89,7 +89,17 @@ const handleRemoveFromCart = (productId , size, color) => {
                 </p>
                 {/* Qty */}
                 <div className="flex items-center">
-                  <button className="cc-qty-btn">−</button>
+                  <button 
+                  onClick={() =>
+                    handleAddToCart(
+                      product.productId,
+                      -1,
+                      product.quantity,
+                      product.size,
+                      product.color
+                    )
+                  }
+                  className="cc-qty-btn">−</button>
                   <span
                     className="text-[11px] text-white"
                     style={{
@@ -101,7 +111,17 @@ const handleRemoveFromCart = (productId , size, color) => {
                   >
                     {product.quantity}
                   </span>
-                  <button className="cc-qty-btn">+</button>
+                  <button 
+                  onClick={() =>
+                    handleAddToCart(
+                      product.productId,
+                      1,
+                      product.quantity,
+                      product.size,
+                      product.color
+                    )
+                  }
+                  className="cc-qty-btn">+</button>
                 </div>
               </div>
             </div>
@@ -111,7 +131,15 @@ const handleRemoveFromCart = (productId , size, color) => {
               <p className="cc-brand text-lg font-light" style={{ color: '#c9a96e' }}>
                 ₹{product.price.toLocaleString()}
               </p>
-              <button className="cc-delete-btn">
+              <button 
+              onClick={() =>
+                    handleRemoveFromCart(
+                      product.productId,
+                      product.size,
+                      product.color
+                    )
+                  }
+                  className="cc-delete-btn">
                 <RiDeleteBin3Line style={{ color: '#f87171', width: 14, height: 14 }} />
               </button>
             </div>

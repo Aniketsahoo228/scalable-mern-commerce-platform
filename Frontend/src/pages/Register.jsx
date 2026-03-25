@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import register from "../assets/register.webp";
 import { registerUser } from "../redux/slices/authSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { mergeCart } from "../redux/slices/cartSlice";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -10,10 +11,28 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [focused, setFocused] = useState("");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { guestId, loading, error } = useSelector((state) => state.auth);
+  const { cart } = useSelector((state) => state.cart);
 
-  const handleSubmit = (e) => {
+  const redirect = new URLSearchParams(location.search).get("redirect") || "/";
+  const isCheckoutRedirect = redirect.includes("checkout");
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(registerUser({ name, email, password }));
+
+    try {
+      const user = await dispatch(registerUser({ name, email, password })).unwrap();
+
+      if (cart?.products?.length > 0 && guestId) {
+        await dispatch(mergeCart({ guestId, user })).unwrap();
+      }
+
+      navigate(isCheckoutRedirect ? "/checkout" : "/", { replace: true });
+    } catch (err) {
+      // Error state is already handled in Redux/UI
+    }
   };
 
   return (
@@ -161,19 +180,25 @@ const Register = () => {
               <label className={`float-label ${password || focused === 'password' ? 'active' : ''}`}>Password</label>
               <input id="register-password" name="password" className="input-field" type="password" value={password}
                 onFocus={() => setFocused('password')} onBlur={() => setFocused('')}
-                onChange={(e) => setPassword(e.target.value)} required />
+                onChange={(e) => setPassword(e.target.value)} minLength={6} required />
             </div>
 
+            {error && (
+              <p className="fade-in fade-in-5 mb-6 text-[11px] tracking-wide text-red-500">
+                {error}
+              </p>
+            )}
+
             <div className="fade-in fade-in-5">
-              <button type="submit" className="reg-btn">
-                <span>Create Account</span>
+              <button type="submit" className="reg-btn" disabled={loading}>
+                <span>{loading ? "Creating Account..." : "Create Account"}</span>
               </button>
             </div>
           </form>
 
           <p className="fade-in fade-in-6 mt-10 text-[12px] text-[#b0a499] tracking-wide">
             Already a member?{" "}
-            <Link to="/login" className="text-[#1a1a1a] font-semibold border-b border-[#1a1a1a] pb-px hover:text-[#c9a96e] hover:border-[#c9a96e] transition-colors duration-300">
+            <Link to={`/login?redirect=${encodeURIComponent(redirect)}`} className="text-[#1a1a1a] font-semibold border-b border-[#1a1a1a] pb-px hover:text-[#c9a96e] hover:border-[#c9a96e] transition-colors duration-300">
               Sign In
             </Link>
           </p>
