@@ -1,0 +1,17 @@
+# Node Modules
+node_modules/
+Frontend/node_modules/
+Backend/node_modules/
+
+# Env files
+.env
+.env.*
+Frontend/.env
+Backend/.env
+
+# Logs
+logs
+*.log
+
+# System
+.DS_Store
