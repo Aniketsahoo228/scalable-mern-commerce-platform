@@ -1,170 +1,218 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom"; {/* ✅ added Link */}
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
+import { fetchOrderDetails } from "../redux/slices/orderSlice";
 
 const OrderDetailsPage = () => {
   const { id } = useParams();
-  const [orderDetails, setOrderDetails] = useState(null);
+  const dispatch = useDispatch();
+  const { orderDetails, loading, error } = useSelector((state) => state.order);
 
   useEffect(() => {
-    const mockOrderDetails = {
-      _id: id,
-      createdAt: new Date(),
-      isPaid: true,
-      isDelivered: false,
-      paymentMethod: "PayPal",
-      shippingMethod: "Standard",
-      shippingAddress: {
-        address: "123 Main Street",
-        city: "Bhubaneswar",
-        state: "Odisha",
-        postalCode: "751001",
-        country: "India",
-      },
-      orderItems: [
-        {
-          productId: "1",
-          name: "Jacket",
-          price: 120,
-          quantity: 1,
-          image: "https://picsum.photos/150?random=1",
-        },
-        {
-          productId: "2",
-          name: "Shoes",
-          price: 200,
-          quantity: 2,
-          image: "https://picsum.photos/150?random=2",
-        },
-      ],
-    };
+    dispatch(fetchOrderDetails(id));
+  }, [dispatch, id]);
 
-    const timer = setTimeout(() => {
-      setOrderDetails(mockOrderDetails);
-    }, 0);
-
-    return () => clearTimeout(timer);
-  }, [id]);
-
-  if (!orderDetails) {
-    return <div className="p-6">Loading...</div>;
+  if (loading) {
+    return (
+      <div style={{ background: "#111", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "rgba(255,255,255,0.4)", fontFamily: "Montserrat", fontSize: 12, letterSpacing: "0.3em" }}>LOADING ORDER...</p>
+      </div>
+    );
   }
 
+  if (error) {
+    return (
+      <div style={{ background: "#111", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "#fca5a5", fontFamily: "Montserrat", fontSize: 12, letterSpacing: "0.3em" }}>Error: {error}</p>
+      </div>
+    );
+  }
+
+  if (!orderDetails) {
+    return (
+      <div style={{ background: "#111", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "rgba(255,255,255,0.4)", fontFamily: "Montserrat", fontSize: 12, letterSpacing: "0.3em" }}>LOADING ORDER...</p>
+      </div>
+    );
+  }
+
+  const subtotal = orderDetails.orderItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
   return (
-    <div className="max-w-5xl mx-auto p-4 sm:p-6">
-      <h2 className="text-2xl md:text-3xl font-bold mb-6">
-        Order Details
-      </h2>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap');
+        .od-brand { font-family: 'Cormorant Garamond', serif; }
+        .od-body  { font-family: 'Montserrat', sans-serif; }
 
-      <div className="p-6 rounded-lg border">
+        .od-section-title {
+          font-size: 9px;
+          letter-spacing: 0.3em;
+          color: #c9a96e;
+          text-transform: uppercase;
+          margin-bottom: 16px;
+        }
 
-        {/* Order Info + Status */}
-        <div className="flex flex-col sm:flex-row justify-between mb-8">
-          <div>
-            <h3 className="text-lg md:text-xl font-semibold">
-              Order ID: #{orderDetails._id}
-            </h3>
+        .od-back-link {
+          font-size: 10px;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: #c9a96e;
+          text-decoration: none;
+          border-bottom: 1px solid rgba(201,169,110,0.3);
+          padding-bottom: 2px;
+          transition: border-color 0.3s ease;
+        }
+        .od-back-link:hover { border-color: #c9a96e; }
 
-            <p className="text-gray-600">
-              {new Date(orderDetails.createdAt).toLocaleDateString()}
-            </p>
+        .od-product-row {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          padding-bottom: 16px;
+          margin-bottom: 16px;
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+      `}</style>
 
-            <p className="text-gray-600">
-              Payment Method: {orderDetails.paymentMethod}
-            </p>
+      {/* Gold top line */}
+      <div style={{ height: 1, background: "linear-gradient(90deg, transparent, #c9a96e, transparent)" }} />
 
-            <p className="text-gray-600">
-              Shipping Method: {orderDetails.shippingMethod}
-            </p>
+      <div className="od-body" style={{ background: "#111", minHeight: "100vh", padding: "60px 24px" }}>
+        <div style={{ maxWidth: 1000, margin: "0 auto" }}>
+
+          {/* Page Header */}
+          <div className="mb-10">
+            <p style={{ fontSize: 9, letterSpacing: "0.4em", color: "#c9a96e", textTransform: "uppercase", marginBottom: 8 }}>Azurelle</p>
+            <h1 className="od-brand" style={{ fontSize: 48, fontWeight: 300, color: "white", marginBottom: 12 }}>Order Details</h1>
+            <div style={{ width: 32, height: 1, background: "#c9a96e" }} />
           </div>
 
-          {/* Status Badges */}
-          <div className="flex flex-col items-start sm:items-end mt-4 sm:mt-0">
-            <span
-              className={`${
-                orderDetails.isPaid
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              } px-3 py-1 rounded-full text-sm font-medium mb-2`}
-            >
-              {orderDetails.isPaid ? "Approved" : "Not Paid"}
-            </span>
+          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", padding: 32 }}>
 
-            <span
-              className={`${
-                orderDetails.isDelivered
-                  ? "bg-green-100 text-green-700"
-                  : "bg-yellow-100 text-yellow-700"
-              } px-3 py-1 rounded-full text-sm font-medium`}
-            >
-              {orderDetails.isDelivered ? "Delivered" : "Processing Delivery"}
-            </span>
-          </div>
-        </div>
+            {/* Order Meta + Badges */}
+            <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", marginBottom: 32, gap: 16 }}>
+              <div>
+                <p style={{ fontSize: 12, color: "white", marginBottom: 6 }}>
+                  <span style={{ color: "#c9a96e", letterSpacing: "0.1em" }}>Order ID:</span>{" "}
+                  <span style={{ color: "rgba(255,255,255,0.5)" }}>#{orderDetails._id}</span>
+                </p>
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em", marginBottom: 4 }}>
+                  {new Date(orderDetails.createdAt).toLocaleDateString()}
+                </p>
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em", marginBottom: 4 }}>
+                  Payment: {orderDetails.paymentMethod}
+                </p>
+                <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em" }}>
+                  Shipping: {orderDetails.shippingMethod}
+                </p>
+              </div>
 
-        {/* Shipping Address */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8">
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8 }}>
+                <span style={{
+                  background: orderDetails.isPaid ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)",
+                  color: orderDetails.isPaid ? "#6ee7b7" : "#fca5a5",
+                  border: `1px solid ${orderDetails.isPaid ? "rgba(110,231,183,0.2)" : "rgba(252,165,165,0.2)"}`,
+                  padding: "4px 14px",
+                  fontSize: 9,
+                  fontWeight: 500,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                }}>
+                  {orderDetails.isPaid ? "Approved" : "Not Paid"}
+                </span>
+                <span style={{
+                  background: orderDetails.isDelivered ? "rgba(34,197,94,0.1)" : "rgba(201,169,110,0.1)",
+                  color: orderDetails.isDelivered ? "#6ee7b7" : "#c9a96e",
+                  border: `1px solid ${orderDetails.isDelivered ? "rgba(110,231,183,0.2)" : "rgba(201,169,110,0.2)"}`,
+                  padding: "4px 14px",
+                  fontSize: 9,
+                  fontWeight: 500,
+                  letterSpacing: "0.2em",
+                  textTransform: "uppercase",
+                }}>
+                  {orderDetails.isDelivered ? "Delivered" : "Processing Delivery"}
+                </span>
+              </div>
+            </div>
 
-          {/* Payment Info */}
-          <div>
-            <h4 className="text-lg font-semibold mb-2">Payment Info</h4>
-            <p>Payment Method: {orderDetails.paymentMethod}</p>
-            <p>Status: {orderDetails.isPaid ? "Paid" : "Unpaid"}</p>
-          </div>
+            {/* Info Grid */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 24, marginBottom: 32 }}>
+              <div>
+                <p className="od-section-title">Payment Info</p>
+                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em", marginBottom: 4 }}>Method: {orderDetails.paymentMethod}</p>
+                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em" }}>Status: {orderDetails.isPaid ? "Paid" : "Unpaid"}</p>
+              </div>
+              <div>
+                <p className="od-section-title">Shipping Info</p>
+                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em", marginBottom: 4 }}>Method: {orderDetails.shippingMethod}</p>
+                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em" }}>
+                  {orderDetails.shippingAddress.city}, {orderDetails.shippingAddress.country}
+                </p>
+              </div>
+            </div>
 
-          {/* Shipping Info */}
-          <div>
-            <h4 className="text-lg font-semibold mb-2">Shipping Info</h4>
-            <p>Shipping Method: {orderDetails.shippingMethod}</p>
-            <p>
-              Address:{" "}
-              {orderDetails.shippingAddress.city},{" "}
-              {orderDetails.shippingAddress.country}
-            </p>
-          </div>
+            {/* Products */}
+            <p className="od-section-title">Order Summary</p>
 
-        </div>
-
-        {/* Product List */}
-        <div className="overflow-x-auto">
-          <h4 className="text-lg font-semibold mb-4">Products</h4>
-
-          <table className="min-w-full text-gray-600 mb-4">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="py-2 px-4 text-left">Name</th>
-                <th className="py-2 px-4 text-left">Unit Price</th>
-                <th className="py-2 px-4 text-left">Quantity</th>
-                <th className="py-2 px-4 text-left">Total</th>
-              </tr>
-            </thead>
-            <tbody>
+            <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16, marginBottom: 16 }}>
               {orderDetails.orderItems.map((item) => (
-                <tr key={item.productId} className="border-b">
-                  <td className="py-2 px-4 flex items-center">
+                <div key={item.productId} className="od-product-row">
+                  <div style={{ display: "flex", alignItems: "flex-start" }}>
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-12 h-12 object-cover rounded-lg mr-4"
+                      style={{ width: 72, height: 88, objectFit: "cover", marginRight: 16 }}
                     />
-                    <Link to={`/product/${item.productId}`}>
-                      {item.name}
-                    </Link>
-                  </td>
-                  {/* ✅ added missing cells */}
-                  <td className="py-2 px-4">${item.price}</td>
-                  <td className="py-2 px-4">{item.quantity}</td>
-                  <td className="py-2 px-4">${item.price * item.quantity}</td>
-                </tr>
+                    <div>
+                      <Link
+                        to={`/product/${item.productId}`}
+                        style={{ fontSize: 12, color: "white", textDecoration: "none", display: "block", marginBottom: 4 }}
+                      >
+                        {item.name}
+                      </Link>
+                      <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em", marginBottom: 2 }}>
+                        Qty: {item.quantity}
+                      </p>
+                      <p style={{ fontSize: 10, color: "rgba(255,255,255,0.3)", letterSpacing: "0.1em" }}>
+                        Unit: ${item.price}
+                      </p>
+                    </div>
+                  </div>
+                  <p style={{ fontSize: 14, color: "#c9a96e" }}>${item.price * item.quantity}</p>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+
+            {/* Totals */}
+            <div style={{ borderTop: "1px solid rgba(255,255,255,0.06)", paddingTop: 16 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em" }}>Subtotal</p>
+                <p style={{ fontSize: 11, color: "white" }}>${subtotal.toLocaleString()}</p>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "0.1em" }}>Shipping</p>
+                <p style={{ fontSize: 11, color: "#6ee7b7" }}>Free</p>
+              </div>
+              <div style={{ height: 1, background: "linear-gradient(90deg, #c9a96e, transparent)", margin: "16px 0" }} />
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <p style={{ fontSize: 13, color: "white", letterSpacing: "0.1em" }}>Total</p>
+                <p className="od-brand" style={{ fontSize: 16, color: "#c9a96e" }}>${subtotal.toLocaleString()}</p>
+              </div>
+            </div>
+
+            {/* Back Link */}
+            <div style={{ marginTop: 32, borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: 24 }}>
+              <Link to="/my-order" className="od-back-link">← Back to My Orders</Link>
+            </div>
+
+          </div>
         </div>
-        <Link to="/my-order" className="text-blue-500 hover:underline" >
-        
-          Back to My Order 
-       </Link>
       </div>
-    </div>
+    </>
   );
 };
 

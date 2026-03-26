@@ -20,6 +20,7 @@ import OrderManagement from "./components/Admin/OrderManagement";
 
 import {Provider}  from  "react-redux";
 import store from "./redux/store"
+import ProtectedRoute from "./components/Common/ProtectedRouter";
 
 const App = () => {
   return (
@@ -27,10 +28,17 @@ const App = () => {
     <BrowserRouter future={{ v7_startTransition: true , v7_relativeSplatPath : true}}>
     <Toaster position="top-right" />
       <Routes>
-        <Route path = "/" element = {<UserLayout />}>
-        <Route index element={<Home />} />
         <Route path="login" element={<Login/>} />
         <Route path="register" element={<Register />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <UserLayout />
+            </ProtectedRoute>
+          }
+        >
+        <Route index element={<Home />} />
         <Route path="profile" element={<Profile />} />
         <Route path="collections/:collection" element={<CollectionPages />} />
         <Route path ="product/:id" element={<ProductDetails />} />
@@ -40,8 +48,11 @@ const App = () => {
         <Route path ="order/:id" element ={<OrderDetailsPage />} />
         <Route path ="my-order" element ={<MyOrdersPage />} />
         </Route>
-        <Route path="admin" element={<AdminLayout />}>
-          <Route index element={<Navigate to="users" replace />} />
+        <Route path="admin" 
+        element={<ProtectedRoute role="admin">
+          <AdminLayout />
+          </ProtectedRoute>}>
+          <Route index element={<Navigate to="home" replace />} />
           <Route path="home" element={<AdminHomePage/>} />
           <Route path="users" element={<UserManagement />} />
           <Route path="products" element={<ProductManagement />} />

@@ -1,7 +1,18 @@
-# Env files (secrets)
+# Logs
+logs
+*.logs
+
+# Node Modules
+frontend/node_modules
+backend/node_modules
+
+# Environment variables
 .env
 .env.*
-Backend/.env
-Backend/.env.*
-Frontend/.env
-Frontend/.env.*
+frontend/.env
+frontend/.env.*
+backend/.env
+backend/.env.*
+
+# Mac system file
+.DS_Store

@@ -12,6 +12,7 @@ const Navbar = () => {
   const [navDrawerOpen, setNavDrawerOpen] = useState(false);
 
   const { cart } = useSelector((state) => state.cart);
+  const { user } = useSelector((state) => state.auth);
 
   const cartItemCount = cart?.products?.reduce(
     (total, product) => total + product.quantity,
@@ -124,8 +125,8 @@ const Navbar = () => {
           <div className="flex items-center space-x-3">
 
             {/* ✅ Only change — fixed to= and className */}
-            <Link to="/admin" className="nav-link">Admin</Link>
-
+            
+            {user && user.role === "admin" && (<Link to="/admin" className="nav-link">Admin</Link>)}
             <Link to="/profile" className="user-icon-btn">
               <HiOutlineUser className="w-4 h-4" />
             </Link>

@@ -10,6 +10,7 @@ const Checkout = () => {
   const dispatch = useDispatch();
 
   const { cart, loading, error } = useSelector((state) => state.cart);
+  const { loading: checkoutLoading, error: checkoutError } = useSelector((state) => state.checkout);
   const { user } = useSelector((state) => state.auth);
 
   const [checkoutId, setCheckoutId] = useState(null)
@@ -22,6 +23,14 @@ const Checkout = () => {
     country: "",
     phone: "",
   });
+
+  const handleAuthFailure = (message) => {
+    if (message === "Not authorized, token failed" || message === "Not authorized, no token") {
+      navigate("/login?redirect=/checkout");
+      return true;
+    }
+    return false;
+  };
  
   const handlePaymentSuccess = async (details) => {
     try {
@@ -40,6 +49,7 @@ const Checkout = () => {
         console.error(error);
       }
     } catch (error) {
+      if (handleAuthFailure(error.response?.data?.message)) return;
       console.error(error);
     }
   };
@@ -53,16 +63,21 @@ const Checkout = () => {
   const handleCreateCheckout = async (e) => {
     e.preventDefault();
     if (cart && cart.products.length > 0) {
-      const res = await dispatch(
-        createCheckout({
-          checkoutItems: cart.products,
-          shippingAddress,
-          paymentMethod: "Paypal",
-          totalPrice: cart.totalPrice,
-        })
-      );
-      if (res.payload && res.payload._id){
-        setCheckoutId(res.payload._id);
+      try {
+        const checkout = await dispatch(
+          createCheckout({
+            checkoutItems: cart.products,
+            shippingAddress,
+            paymentMethod: "Paypal",
+            totalPrice: cart.totalPrice,
+          })
+        ).unwrap();
+        if (checkout?._id){
+          setCheckoutId(checkout._id);
+        }
+      } catch (error) {
+        if (handleAuthFailure(error?.message)) return;
+        console.error(error);
       }
     }
   }
@@ -78,12 +93,13 @@ const Checkout = () => {
           },
         }
       );
-      if (response.status === 200){
-        navigate("/order-confirmation");
+      if (response.status === 200 || response.status === 201){
+        navigate("/order-confirmation", { state: { order: response.data } });
       }else {
         console.error(error);
       }
     } catch (error) {
+      if (handleAuthFailure(error.response?.data?.message)) return;
       console.error(error);
     }
   };
@@ -246,7 +262,8 @@ const Checkout = () => {
                       type="text"
                       value={shippingAddress.city}
                       onChange={(e) => setShippingAddress({ ...shippingAddress, city: e.target.value })}
-                      className="co-input" />
+                      className="co-input"
+                      required />
                   </div>
                   <div>
                     <label className="co-label">Postal Code</label>
@@ -256,7 +273,8 @@ const Checkout = () => {
                       type="text"
                       value={shippingAddress.postalCode}
                       onChange={(e) => setShippingAddress({ ...shippingAddress, postalCode: e.target.value })}
-                      className="co-input" />
+                      className="co-input"
+                      required />
                   </div>
                 </div>
 
@@ -286,9 +304,16 @@ const Checkout = () => {
 
                 <div>
                   {!checkoutId ? (
-                    <button type="submit" className="co-submit-btn">
-                      <span>Continue The Payment</span>
-                    </button>
+                    <>
+                      <button type="submit" className="co-submit-btn" disabled={checkoutLoading}>
+                        <span>{checkoutLoading ? "Creating Checkout..." : "Continue The Payment"}</span>
+                      </button>
+                      {checkoutError ? (
+                        <p style={{ color: '#fca5a5', fontSize: 11, marginTop: 12, letterSpacing: '0.08em' }}>
+                          {checkoutError}
+                        </p>
+                      ) : null}
+                    </>
                   ) : (
                     <div>
                       <p style={{ fontSize: 9, letterSpacing: '0.3em', color: '#c9a96e', textTransform: 'uppercase', marginBottom: 16 }}>Pay with Paypal</p>
