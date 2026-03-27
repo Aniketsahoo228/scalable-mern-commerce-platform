@@ -1,83 +1,51 @@
-import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom"; {/* ✅ added Link */}
+import { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchOrderDetails } from "../redux/slices/orderSlice";
 
 const OrderDetailsPage = () => {
   const { id } = useParams();
-  const [orderDetails, setOrderDetails] = useState(null);
+  const dispatch = useDispatch();
+  const { orderDetails, loading, error } = useSelector((state) => state.order);
 
   useEffect(() => {
-    const mockOrderDetails = {
-      _id: id,
-      createdAt: new Date(),
-      isPaid: true,
-      isDelivered: false,
-      paymentMethod: "PayPal",
-      shippingMethod: "Standard",
-      shippingAddress: {
-        address: "123 Main Street",
-        city: "Bhubaneswar",
-        state: "Odisha",
-        postalCode: "751001",
-        country: "India",
-      },
-      orderItems: [
-        {
-          productId: "1",
-          name: "Jacket",
-          price: 120,
-          quantity: 1,
-          image: "https://picsum.photos/150?random=1",
-        },
-        {
-          productId: "2",
-          name: "Shoes",
-          price: 200,
-          quantity: 2,
-          image: "https://picsum.photos/150?random=2",
-        },
-      ],
-    };
+    dispatch(fetchOrderDetails(id));
+  }, [dispatch, id]);
 
-    const timer = setTimeout(() => {
-      setOrderDetails(mockOrderDetails);
-    }, 0);
-
-    return () => clearTimeout(timer);
-  }, [id]);
-
-  if (!orderDetails) {
+  if (loading || !orderDetails) {
     return <div className="p-6">Loading...</div>;
   }
 
+  if (error) {
+    return <div className="p-6 text-red-500">Error: {error}</div>;
+  }
+
+  const subtotal = orderDetails.orderItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
+
   return (
     <div className="max-w-5xl mx-auto p-4 sm:p-6">
-      <h2 className="text-2xl md:text-3xl font-bold mb-6">
-        Order Details
-      </h2>
+      <h2 className="text-2xl md:text-3xl font-bold mb-6">Order Details</h2>
 
       <div className="p-6 rounded-lg border">
-
-        {/* Order Info + Status */}
         <div className="flex flex-col sm:flex-row justify-between mb-8">
           <div>
             <h3 className="text-lg md:text-xl font-semibold">
               Order ID: #{orderDetails._id}
             </h3>
-
             <p className="text-gray-600">
               {new Date(orderDetails.createdAt).toLocaleDateString()}
             </p>
-
             <p className="text-gray-600">
               Payment Method: {orderDetails.paymentMethod}
             </p>
-
             <p className="text-gray-600">
-              Shipping Method: {orderDetails.shippingMethod}
+              Status: {orderDetails.status}
             </p>
           </div>
 
-          {/* Status Badges */}
           <div className="flex flex-col items-start sm:items-end mt-4 sm:mt-0">
             <span
               className={`${
@@ -101,30 +69,26 @@ const OrderDetailsPage = () => {
           </div>
         </div>
 
-        {/* Shipping Address */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8">
-
-          {/* Payment Info */}
           <div>
             <h4 className="text-lg font-semibold mb-2">Payment Info</h4>
             <p>Payment Method: {orderDetails.paymentMethod}</p>
             <p>Status: {orderDetails.isPaid ? "Paid" : "Unpaid"}</p>
           </div>
 
-          {/* Shipping Info */}
           <div>
             <h4 className="text-lg font-semibold mb-2">Shipping Info</h4>
-            <p>Shipping Method: {orderDetails.shippingMethod}</p>
             <p>
-              Address:{" "}
-              {orderDetails.shippingAddress.city},{" "}
-              {orderDetails.shippingAddress.country}
+              Address: {orderDetails.shippingAddress.address}
             </p>
+            <p>
+              {orderDetails.shippingAddress.city},{" "}
+              {orderDetails.shippingAddress.postalCode}
+            </p>
+            <p>{orderDetails.shippingAddress.country}</p>
           </div>
-
         </div>
 
-        {/* Product List */}
         <div className="overflow-x-auto">
           <h4 className="text-lg font-semibold mb-4">Products</h4>
 
@@ -139,7 +103,7 @@ const OrderDetailsPage = () => {
             </thead>
             <tbody>
               {orderDetails.orderItems.map((item) => (
-                <tr key={item.productId} className="border-b">
+                <tr key={`${item.productId}-${item.size || ""}-${item.color || ""}`} className="border-b">
                   <td className="py-2 px-4 flex items-center">
                     <img
                       src={item.image}
@@ -150,7 +114,6 @@ const OrderDetailsPage = () => {
                       {item.name}
                     </Link>
                   </td>
-                  {/* ✅ added missing cells */}
                   <td className="py-2 px-4">${item.price}</td>
                   <td className="py-2 px-4">{item.quantity}</td>
                   <td className="py-2 px-4">${item.price * item.quantity}</td>
@@ -159,10 +122,14 @@ const OrderDetailsPage = () => {
             </tbody>
           </table>
         </div>
-        <Link to="/my-order" className="text-blue-500 hover:underline" >
-        
-          Back to My Order 
-       </Link>
+
+        <div className="mt-6 border-t pt-4">
+          <p className="font-semibold">Order Total: ${orderDetails.totalPrice ?? subtotal}</p>
+        </div>
+
+        <Link to="/my-order" className="inline-block mt-6 text-blue-500 hover:underline">
+          Back to My Orders
+        </Link>
       </div>
     </div>
   );

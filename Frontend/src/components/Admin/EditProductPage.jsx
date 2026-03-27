@@ -13,8 +13,8 @@ const EditProductPage = () => {
 
   const [productData, setProductData] = useState({
     name: "", description: "", price: 0, countInStock: 0, sku: "",
-    category: "Top Wear", brand: "", sizes: [], colors: [],
-    collections: "", material: "", gender: "Men", images: [],
+    category: "", brand: "", sizes: [], colors: [],
+    collections: "", material: "", gender: "", images: [],
   });
 
   useEffect(() => {
@@ -29,13 +29,13 @@ const EditProductPage = () => {
         price: selectedProduct.price || 0,
         countInStock: selectedProduct.countInStock || 0,
         sku: selectedProduct.sku || "",
-        category: selectedProduct.category || "Top Wear",
+        category: selectedProduct.category || "",
         brand: selectedProduct.brand || "",
         sizes: selectedProduct.sizes || [],
         colors: selectedProduct.colors || [],
         collections: selectedProduct.collections || "",
         material: selectedProduct.material || "",
-        gender: selectedProduct.gender || "Men",
+        gender: selectedProduct.gender || "",
         images: selectedProduct.images || [],
       });
     }
@@ -344,18 +344,21 @@ const EditProductPage = () => {
                 <div>
                   <label className="ep-label">Category</label>
                   <select name="category" value={productData.category} onChange={handleChange} className="ep-select">
+                    <option value="">Select category</option>
                     {categories.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="ep-label">Material</label>
                   <select name="material" value={productData.material} onChange={handleChange} className="ep-select">
+                    <option value="">Select material</option>
                     {materials.map((m) => <option key={m} value={m}>{m}</option>)}
                   </select>
                 </div>
                 <div>
                   <label className="ep-label">Gender</label>
                   <select name="gender" value={productData.gender} onChange={handleChange} className="ep-select">
+                    <option value="">Select gender</option>
                     {genders.map((g) => <option key={g} value={g}>{g}</option>)}
                   </select>
                 </div>

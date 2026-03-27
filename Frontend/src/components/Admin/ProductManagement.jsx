@@ -13,9 +13,13 @@ const ProductManagement = () => {
 
   const [formData, setFormData] = useState({
     name: "",
+    description: "",
     price: "",
     sku: "",
-    category: "Top Wear",
+    category: "",
+    collections: "",
+    sizes: "",
+    colors: "",
     countInStock: "",
   });
 
@@ -34,13 +38,21 @@ const ProductManagement = () => {
         ...formData,
         price: Number(formData.price),
         countInStock: Number(formData.countInStock),
-        description: `${formData.name} product`,
-        sizes: ["M"],
-        colors: ["Black"],
-        collections: formData.category,
+        sizes: formData.sizes.split(",").map((size) => size.trim()).filter(Boolean),
+        colors: formData.colors.split(",").map((color) => color.trim()).filter(Boolean),
       })
     );
-    setFormData({ name: "", price: "", sku: "", category: "Top Wear", countInStock: "" });
+    setFormData({
+      name: "",
+      description: "",
+      price: "",
+      sku: "",
+      category: "",
+      collections: "",
+      sizes: "",
+      colors: "",
+      countInStock: "",
+    });
   };
 
   const handleDelete = (id) => {
@@ -216,20 +228,37 @@ const ProductManagement = () => {
                   <label className="pm-label">Price (Rs)</label>
                   <input type="number" name="price" value={formData.price} onChange={handleChange} required className="pm-input" placeholder="Price" />
                 </div>
+                <div style={{ gridColumn: "1 / -1" }}>
+                  <label className="pm-label">Description</label>
+                  <input type="text" name="description" value={formData.description} onChange={handleChange} required className="pm-input" placeholder="Product description" />
+                </div>
                 <div>
                   <label className="pm-label">SKU</label>
                   <input type="text" name="sku" value={formData.sku} onChange={handleChange} required className="pm-input" placeholder="SKU code" />
                 </div>
                 <div>
                   <label className="pm-label">Category</label>
-                  <select name="category" value={formData.category} onChange={handleChange} className="pm-select">
+                  <select name="category" value={formData.category} onChange={handleChange} required className="pm-select">
+                    <option value="">Select category</option>
                     <option value="Top Wear">Top Wear</option>
                     <option value="Bottom Wear">Bottom Wear</option>
                   </select>
                 </div>
                 <div>
+                  <label className="pm-label">Collection</label>
+                  <input type="text" name="collections" value={formData.collections} onChange={handleChange} required className="pm-input" placeholder="Collection name" />
+                </div>
+                <div>
                   <label className="pm-label">Stock</label>
                   <input type="number" name="countInStock" value={formData.countInStock} onChange={handleChange} required className="pm-input" placeholder="Stock quantity" />
+                </div>
+                <div>
+                  <label className="pm-label">Sizes</label>
+                  <input type="text" name="sizes" value={formData.sizes} onChange={handleChange} required className="pm-input" placeholder="S, M, L" />
+                </div>
+                <div>
+                  <label className="pm-label">Colors</label>
+                  <input type="text" name="colors" value={formData.colors} onChange={handleChange} required className="pm-input" placeholder="Black, White" />
                 </div>
               </div>
               <button type="submit" className="pm-submit-btn">Add Product</button>
