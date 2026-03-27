@@ -1,10 +1,22 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { logout } from "./authSlice";
+
+const handleAuthFailure = (error, rejectWithValue, dispatch) => {
+  const message = error.response?.data?.message;
+  if (
+    error.response?.status === 401 &&
+    (message === "Not authorized, token failed" || message === "Not authorized, no token")
+  ) {
+    dispatch(logout());
+  }
+  return rejectWithValue(error.response?.data || { message: "Request failed" });
+};
 
 // Async Thunk to fetch user orders
 export const fetchUserOrders = createAsyncThunk(
   "orders/fetchUserOrders",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/orders/my-orders`,
@@ -16,7 +28,7 @@ export const fetchUserOrders = createAsyncThunk(
       );
       return response.data
     } catch (error) {
-        return rejectWithValue(error.response.data)
+        return handleAuthFailure(error, rejectWithValue, dispatch)
     }
   }
 );
@@ -24,7 +36,7 @@ export const fetchUserOrders = createAsyncThunk(
 // Async thunk to fetch orders details by ID
 export const fetchOrderDetails = createAsyncThunk(
   "orders/fetchOrderDetails",
-  async (orderId, { rejectWithValue }) => {
+  async (orderId, { rejectWithValue, dispatch }) => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/orders/${orderId}`,
@@ -37,7 +49,7 @@ export const fetchOrderDetails = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-        return rejectWithValue(error.response.data)
+        return handleAuthFailure(error, rejectWithValue, dispatch)
 
     }
   }

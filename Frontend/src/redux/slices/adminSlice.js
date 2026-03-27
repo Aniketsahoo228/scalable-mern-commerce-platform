@@ -1,19 +1,38 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { logout } from "./authSlice";
 
-export const fetchUsers = createAsyncThunk("admin/fetchUsers", async () => {
-  const response = await axios.get(
-    `${import.meta.env.VITE_BACKEND_URL}/api/admin/users`,
-    {
-      headers: { Authorization: `Bearer ${localStorage.getItem("userToken")}` },
+const handleAuthFailure = (error, rejectWithValue, dispatch) => {
+  const message = error.response?.data?.message;
+  if (
+    error.response?.status === 401 &&
+    (message === "Not authorized, token failed" || message === "Not authorized, no token")
+  ) {
+    dispatch(logout());
+  }
+  return rejectWithValue(error.response?.data || { message: "Request failed" });
+};
+
+export const fetchUsers = createAsyncThunk(
+  "admin/fetchUsers",
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/admin/users`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("userToken")}` },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return handleAuthFailure(error, rejectWithValue, dispatch);
     }
-  );
-  return response.data;
-});
+  }
+);
 
 export const addUser = createAsyncThunk(
   "admin/addUser",
-  async (userData, { rejectWithValue }) => {
+  async (userData, { rejectWithValue, dispatch }) => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/admin/users`,
@@ -26,38 +45,49 @@ export const addUser = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data);
+      return handleAuthFailure(error, rejectWithValue, dispatch);
     }
   }
 );
 
 export const updateUser = createAsyncThunk(
   "admin/updateUser",
-  async ({ id, name, email, role }) => {
-    const response = await axios.put(
-      `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`,
-      { name, email, role },
-      {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-        },
-      }
-    );
-    return response.data;
+  async ({ id, name, email, role }, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`,
+        { name, email, role },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      return handleAuthFailure(error, rejectWithValue, dispatch);
+    }
   }
 );
 
-export const deleteUser = createAsyncThunk("admin/deleteUser", async (id) => {
-  await axios.delete(
-    `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`,
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-      },
+export const deleteUser = createAsyncThunk(
+  "admin/deleteUser",
+  async (id, { rejectWithValue, dispatch }) => {
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/api/admin/users/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        }
+      );
+      return id;
+    } catch (error) {
+      return handleAuthFailure(error, rejectWithValue, dispatch);
     }
-  );
-  return id;
-});
+  }
+);
 
 const adminSlice = createSlice({
   name: "admin",
@@ -80,7 +110,7 @@ const adminSlice = createSlice({
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload?.message || "Failed to fetch users";
       })
       // addUser
       .addCase(addUser.pending, (state) => {
@@ -110,7 +140,7 @@ const adminSlice = createSlice({
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload?.message || "Failed to update user";
       })
       // deleteUser
       .addCase(deleteUser.pending, (state) => {
@@ -123,7 +153,7 @@ const adminSlice = createSlice({
       })
       .addCase(deleteUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = action.payload?.message || "Failed to delete user";
       });
   },
 });

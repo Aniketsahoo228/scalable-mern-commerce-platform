@@ -15,6 +15,7 @@ const Home = () => {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector((state) => state.products);
   const [bestSellerProduct, setBestSellerProduct] = useState(null);
+  const [bestSellerUnavailable, setBestSellerUnavailable] = useState(false);
 
   useEffect(() => {
     // Fetch products for a specific collection
@@ -28,13 +29,16 @@ const Home = () => {
 
     // Fetch best seller product
     const fetchBestSeller = async () => {
-  try {
-    const response = await axios.get(
-      `${import.meta.env.VITE_BACKEND_URL}/api/products/best-seller`
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/products/best-seller`
         );
-
         setBestSellerProduct(response.data);
       } catch (error) {
+        if (error.response?.status === 404) {
+          setBestSellerUnavailable(true);
+          return;
+        }
         console.error(error);
       }
     };
@@ -60,8 +64,13 @@ const Home = () => {
             </h2>
             <div style={{ width: 32, height: 1, background: '#c9a96e', margin: '12px auto 0' }} />
           </div>
-          {bestSellerProduct ? (<ProductDetails productId={bestSellerProduct._id} />): 
-          (<p className ="text-center">Loading best seller product ...</p>) }
+          {bestSellerProduct ? (
+            <ProductDetails productId={bestSellerProduct._id} />
+          ) : (
+            <p className="text-center" style={{ color: "#c9a96e" }}>
+              {bestSellerUnavailable ? "Best seller not available right now." : "Loading best seller product ..."}
+            </p>
+          )}
           
         </div>
       </section>

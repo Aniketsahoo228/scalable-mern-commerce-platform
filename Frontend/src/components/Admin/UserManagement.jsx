@@ -11,7 +11,11 @@ const UserManagement = () => {
   const { users, loading, error } = useSelector((state) => state.admin);
 
   useEffect(() => {
-    if (user && user.role !== "admin") {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (user.role !== "admin") {
       navigate("/");
       return;
     }

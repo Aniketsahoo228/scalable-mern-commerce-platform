@@ -76,7 +76,7 @@ const Hero = () => {
             Explore our vacation-ready outfits with fast worldwide shipping.
           </p>
           <div className="hero-fade hero-fade-3">
-            <Link to="#" className="hero-btn"><span>Shop Now</span></Link>
+            <Link to="/collections/all" className="hero-btn"><span>Shop Now</span></Link>
           </div>
         </div>
 

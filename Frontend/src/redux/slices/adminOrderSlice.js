@@ -1,10 +1,22 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { logout } from "./authSlice";
+
+const handleAuthFailure = (error, rejectWithValue, dispatch) => {
+  const message = error.response?.data?.message;
+  if (
+    error.response?.status === 401 &&
+    (message === "Not authorized, token failed" || message === "Not authorized, no token")
+  ) {
+    dispatch(logout());
+  }
+  return rejectWithValue(error.response?.data || { message: "Request failed" });
+};
 
 // Fetch all orders (admin only)
 export const fetchAllOrders = createAsyncThunk(
   "adminOrders/fetchAllOrders",
-  async (_, { rejectWithValue }) => {
+  async (_, { rejectWithValue, dispatch }) => {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders`,
@@ -16,7 +28,7 @@ export const fetchAllOrders = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-        return rejectWithValue(error.response.data);
+        return handleAuthFailure(error, rejectWithValue, dispatch);
 
     }
   }
@@ -25,7 +37,7 @@ export const fetchAllOrders = createAsyncThunk(
 // update order delivery status
 export const updateOrderStatus = createAsyncThunk(
   "adminOrders/updateOrderStatus",
-  async ({ id, status }, { rejectWithValue }) => {
+  async ({ id, status }, { rejectWithValue, dispatch }) => {
     try {
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders/${id}`,
@@ -39,7 +51,7 @@ export const updateOrderStatus = createAsyncThunk(
 
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return handleAuthFailure(error, rejectWithValue, dispatch);
     }
   }
 );
@@ -47,7 +59,7 @@ export const updateOrderStatus = createAsyncThunk(
 // Delete an order
 export const deleteOrder = createAsyncThunk(
   "adminOrders/deleteOrder",
-  async (id, { rejectWithValue }) => {
+  async (id, { rejectWithValue, dispatch }) => {
     try {
       await axios.delete(
         `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders/${id}`,
@@ -60,7 +72,7 @@ export const deleteOrder = createAsyncThunk(
 
       return id;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return handleAuthFailure(error, rejectWithValue, dispatch);
     }
   }
 );

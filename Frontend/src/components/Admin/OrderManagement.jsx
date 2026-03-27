@@ -11,11 +11,20 @@ import {
 const OrderManagement = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
   const { orders, loading, error } = useSelector((state) => state.adminOrders);
 
   useEffect(() => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+    if (user.role !== "admin") {
+      navigate("/");
+      return;
+    }
     dispatch(fetchAllOrders());
-  }, [dispatch]);
+  }, [dispatch, navigate, user]);
 
   const handleStatusChange = (orderId, newStatus) => {
     dispatch(updateOrderStatus({ id: orderId, status: newStatus }));
@@ -131,7 +140,6 @@ const OrderManagement = () => {
           text-transform: uppercase;
           cursor: pointer;
           transition: all 0.2s ease;
-          white-space: nowrap;
         }
         .om-delete-btn:hover {
           background: rgba(239,68,68,0.15);
@@ -203,8 +211,7 @@ const OrderManagement = () => {
                           </td>
                           <td>
                             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                              {/* Show 'Mark Delivered' if the order is not yet Delivered or Cancelled */}
-                              {order.status !== "Delivered" && order.status !== "Cancelled" && (
+                              {order.status !== "Delivered" && (
                                 <button
                                   onClick={() => handleStatusChange(order._id, "Delivered")}
                                   className="om-deliver-btn"
@@ -212,28 +219,12 @@ const OrderManagement = () => {
                                   Mark Delivered
                                 </button>
                               )}
-
-                              {/* NEW: Cancel Button - Show if order is active (not Delivered/Cancelled) */}
-                              {order.status !== "Cancelled" && order.status !== "Delivered" && (
-                                <button
-                                  onClick={() => {
-                                    if (window.confirm("Are you sure you want to cancel this order?")) {
-                                      handleStatusChange(order._id, "Cancelled");
-                                    }
-                                  }}
-                                  className="om-delete-btn"
-                                >
-                                  Cancel
-                                </button>
-                              )}
-
                               <button
                                 onClick={() => navigate(`/order/${order._id}`)}
                                 className="om-view-btn"
                               >
                                 <FaEye />
                               </button>
-
                               <button
                                 onClick={() => handleDelete(order._id)}
                                 className="om-delete-btn"
