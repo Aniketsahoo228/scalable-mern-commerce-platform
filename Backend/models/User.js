@@ -13,7 +13,8 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
             trim: true,
-            match: [/.+\@.+\..+/, "Please enter a valid email addresss"],
+            lowercase: true,
+            match: [/.+\@.+\..+/, "Please enter a valid email address"],
         },
         password: {
             type: String,
@@ -24,6 +25,11 @@ const userSchema = new mongoose.Schema(
             type : String,
             enum: ["customer", "admin"],
             default: "customer",
+        },
+        profileImage: {
+            type: String,
+            trim: true,
+            default: "",
         },
     },
     { timestamps: true }

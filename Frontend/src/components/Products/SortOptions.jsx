@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 const sortOptions = [
@@ -12,6 +12,10 @@ const SortOptions = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selected, setSelected] = useState(searchParams.get("sortBy") || "");
 
+  useEffect(() => {
+    setSelected(searchParams.get("sortBy") || "");
+  }, [searchParams]);
+
   const handleSort = (e) => {
     const value = e.target.value;
     setSelected(value);
@@ -19,7 +23,6 @@ const SortOptions = () => {
     if (value) params.set("sortBy", value);
     else params.delete("sortBy");
     setSearchParams(params);
-    console.log("Sort:", value);
   };
 
   return (

@@ -55,6 +55,26 @@ export const fetchOrderDetails = createAsyncThunk(
   }
 );
 
+export const deleteUserOrder = createAsyncThunk(
+  "orders/deleteUserOrder",
+  async (orderId, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/api/orders/${orderId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
+          },
+        }
+      );
+
+      return { orderId, ...response.data };
+    } catch (error) {
+      return handleAuthFailure(error, rejectWithValue, dispatch);
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: "orders",
   initialState: {
@@ -91,6 +111,22 @@ const orderSlice = createSlice({
       .addCase(fetchOrderDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || "Failed to fetch order details";
+      })
+      .addCase(deleteUserOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(deleteUserOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = state.orders.filter((order) => order._id !== action.payload.orderId);
+        state.totalOrders = state.orders.length;
+        if (state.orderDetails?._id === action.payload.orderId) {
+          state.orderDetails = null;
+        }
+      })
+      .addCase(deleteUserOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || "Failed to delete order";
       });
   },
 });

@@ -87,7 +87,20 @@ const FilterSidebar = () => {
       nextFilters.maxPrice === "" ? MAX_PRICE : nextFilters.maxPrice,
     ]);
 
-    const normalizedParams = new URLSearchParams();
+    const normalizedParams = new URLSearchParams(searchParams);
+    const filterKeys = [
+      "category",
+      "gender",
+      "color",
+      "size",
+      "material",
+      "brand",
+      "minPrice",
+      "maxPrice",
+    ];
+
+    filterKeys.forEach((key) => normalizedParams.delete(key));
+
     if (nextFilters.category) normalizedParams.set("category", nextFilters.category);
     if (nextFilters.gender) normalizedParams.set("gender", nextFilters.gender);
     if (nextFilters.color) normalizedParams.set("color", nextFilters.color);
@@ -140,6 +153,18 @@ const FilterSidebar = () => {
     updateQuery(newFilters);
   };
 
+  const clearSingleSelect = (name) => {
+    const newFilters = { ...filters, [name]: "" };
+    setFilters(newFilters);
+    updateQuery(newFilters);
+  };
+
+  const handleSingleSelectClick = (name, value) => {
+    if (filters[name] === value) {
+      clearSingleSelect(name);
+    }
+  };
+
   const sectionLabel = (text) => (
     <p className="text-[9px] font-semibold tracking-[0.3em] uppercase mb-3 mt-1" style={{ color: '#c9a96e' }}>
       {text}
@@ -184,8 +209,14 @@ const FilterSidebar = () => {
           {categories.map((c) => (
             <div key={c} className="flex items-center mb-2 gap-2">
               <input type="radio" name="category" value={c} checked={filters.category === c}
+                onClick={() => handleSingleSelectClick("category", c)}
                 onChange={handlefilterChange} className="fs-input" />
-              <span style={radioStyle(filters.category === c)}>{c}</span>
+              <span
+                onDoubleClick={() => clearSingleSelect("category")}
+                style={{ ...radioStyle(filters.category === c), cursor: "pointer" }}
+              >
+                {c}
+              </span>
             </div>
           ))}
         </div>
@@ -196,8 +227,14 @@ const FilterSidebar = () => {
           {genders.map((g) => (
             <div key={g} className="flex items-center mb-2 gap-2">
               <input type="radio" name="gender" value={g} checked={filters.gender === g}
+                onClick={() => handleSingleSelectClick("gender", g)}
                 onChange={handlefilterChange} className="fs-input" />
-              <span style={radioStyle(filters.gender === g)}>{g}</span>
+              <span
+                onDoubleClick={() => clearSingleSelect("gender")}
+                style={{ ...radioStyle(filters.gender === g), cursor: "pointer" }}
+              >
+                {g}
+              </span>
             </div>
           ))}
         </div>
@@ -207,12 +244,18 @@ const FilterSidebar = () => {
           {sectionLabel("Color")}
           <div className="flex flex-wrap gap-2">
             {colors.map(({ name, hex }) => (
-              <label key={name} style={{ cursor: "pointer" }} aria-label={name}>
+              <label
+                key={name}
+                style={{ cursor: "pointer" }}
+                aria-label={name}
+                onDoubleClick={() => clearSingleSelect("color")}
+              >
                 <input
                   type="radio"
                   name="color"
                   value={name}
                   checked={filters.color === name}
+                  onClick={() => handleSingleSelectClick("color", name)}
                   onChange={handlefilterChange}
                   className="sr-only"
                 />

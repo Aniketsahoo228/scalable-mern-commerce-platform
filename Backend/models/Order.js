@@ -1,79 +1,147 @@
 const mongoose = require("mongoose");
 
-const orderItemSchema = new mongoose.Schema({
-  productId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Product",
-    required: true,
+const orderItemSchema = new mongoose.Schema(
+  {
+    productId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+      required: true,
+    },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    image: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    size: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    color: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1,
+      default: 1,
+    },
   },
-  name: {
-    type: String,
-    required: true,
-  },
-  image: {
-    type: String,
-    required: true,
-  },
- price: {
-    type: Number,
-    required: true,
-  },
-  size: String,
-  color: String,
-  quantity: {
-    type: Number,
-    required: false,
-  },
-},
-{_id: false }
+  { _id: false }
 );
 
-const orderSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
+const shippingAddressSchema = new mongoose.Schema(
+  {
+    firstName: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    lastName: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    address: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    city: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    postalCode: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    country: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    phone: {
+      type: String,
+      trim: true,
+      default: "",
+    },
   },
-  orderItems: [orderItemSchema],
-  shippingAddress: {
-    address: { type: String, required: true },
-    city: { type: String, required: true },
-    postalCode: { type: String, required: true },
-    country: { type: String, required: true },
-  },
+  { _id: false }
+);
+
+const orderSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    orderItems: {
+      type: [orderItemSchema],
+      required: true,
+      validate: {
+        validator: (items) => Array.isArray(items) && items.length > 0,
+        message: "Order must include at least one item",
+      },
+    },
+    shippingAddress: {
+      type: shippingAddressSchema,
+      required: true,
+    },
     paymentMethod: {
-        type: String,
-        required : true,
+      type: String,
+      required: true,
+      trim: true,
     },
     totalPrice: {
-        type: Number,
-        required : true,
+      type: Number,
+      required: true,
+      min: 0,
     },
     isPaid: {
-        type: Boolean,
-        required : false,
+      type: Boolean,
+      default: false,
     },
     paidAt: {
-        type: Date ,
+      type: Date,
+      default: null,
     },
     isDelivered: {
-        type: Boolean,
-        default: false,
+      type: Boolean,
+      default: false,
     },
     deliveredAt: {
-        type: Date,
+      type: Date,
+      default: null,
     },
     paymentStatus: {
-         type: String,
-         default: "pending",
+      type: String,
+      enum: ["pending", "paid", "failed"],
+      default: "pending",
+      lowercase: true,
+      trim: true,
     },
-    status : {
-        type: String,
-        enum: ["Processing", "Shipping", "Delivered", "Cancelled"],
-        default: "Processing",
+    status: {
+      type: String,
+      enum: ["Processing", "Shipping", "Delivered", "Cancelled"],
+      default: "Processing",
     },
-},
-{timestamps: true}
+  },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Order", orderSchema);

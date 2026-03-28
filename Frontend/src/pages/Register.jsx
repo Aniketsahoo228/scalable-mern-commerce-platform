@@ -26,10 +26,16 @@ const Register = () => {
       const user = await dispatch(registerUser({ name, email, password })).unwrap();
 
       if (cart?.products?.length > 0 && guestId) {
-        await dispatch(mergeCart({ guestId, user })).unwrap();
+        try {
+          await dispatch(mergeCart({ guestId, user })).unwrap();
+        } catch (mergeError) {
+          if (mergeError?.message !== "Guest Cart not found") {
+            console.error("Cart merge failed after registration:", mergeError);
+          }
+        }
       }
 
-      navigate(isCheckoutRedirect ? "/checkout" : "/", { replace: true });
+      navigate(redirect || (isCheckoutRedirect ? "/checkout" : "/"), { replace: true });
     } catch (err) {
       // Error state is already handled in Redux/UI
     }
@@ -138,7 +144,7 @@ const Register = () => {
           <img src={register} alt="Register Visual" />
           <div className="image-overlay" />
           <div style={{ position: 'absolute', top: 48, left: 48, right: 48 }}>
-            <p className="brand-font text-white text-3xl font-light tracking-[0.3em]">AURELLE</p>
+            <p className="brand-font text-white text-3xl font-light tracking-[0.3em]">AZURELLE</p>
             <div style={{ width: 32, height: 1, background: '#c9a96e', marginTop: 10 }} />
           </div>
           <div style={{ position: 'absolute', bottom: 48, left: 48, right: 48 }}>
@@ -153,7 +159,7 @@ const Register = () => {
         <div className="flex-1 flex flex-col justify-center px-10 md:px-20 py-16">
 
           <div className="fade-in fade-in-1 mb-12">
-            <p className="text-[11px] font-semibold tracking-[0.25em] text-[#b0a499] uppercase mb-3">Join Aurelle</p>
+            <p className="text-[11px] font-semibold tracking-[0.25em] text-[#b0a499] uppercase mb-3">Join Azurelle</p>
             <h1 className="brand-font text-5xl font-light text-[#1a1a1a] leading-tight">
               Begin your<br/><em>journey</em>
             </h1>

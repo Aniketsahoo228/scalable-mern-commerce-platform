@@ -36,6 +36,8 @@ router.post("/register", async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                createdAt: user.createdAt,
+                profileImage: user.profileImage,
             },
             token,
         });
@@ -92,6 +94,8 @@ router.post("/login", async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                createdAt: user.createdAt,
+                profileImage: user.profileImage,
             },
             token,
         });
@@ -115,6 +119,31 @@ router.post("/login", async (req, res) => {
 
 router.get("/profile", protect, async (req, res) => {
     res.json(req.user);
+});
+
+router.put("/profile", protect, async (req, res) => {
+    try {
+        const { profileImage } = req.body || {};
+
+        if (profileImage === null || profileImage === undefined || profileImage === "") {
+            req.user.profileImage = "";
+        } else if (typeof profileImage === "string") {
+            req.user.profileImage = profileImage.trim();
+        }
+        await req.user.save();
+
+        return res.status(200).json({
+            _id: req.user._id,
+            name: req.user.name,
+            email: req.user.email,
+            role: req.user.role,
+            createdAt: req.user.createdAt,
+            profileImage: req.user.profileImage,
+        });
+    } catch (error) {
+        console.log("PROFILE UPDATE ERROR:", error.message);
+        return res.status(500).json({ message: "Server Error" });
+    }
 });
 
 module.exports = router;

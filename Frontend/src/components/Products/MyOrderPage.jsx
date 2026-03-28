@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserOrders } from "../../redux/slices/orderSlice";
+import { deleteUserOrder, fetchUserOrders } from "../../redux/slices/orderSlice";
 
 const MyOrdersPage = () => {
   const dispatch = useDispatch();
@@ -9,8 +9,22 @@ const MyOrdersPage = () => {
   const { user } = useSelector((state) => state.auth);
   const { orders, loading } = useSelector((state) => state.order);
 
+  const getIsPaid = (order) => order?.paymentStatus === "paid" || order?.isPaid === true;
+  const getItemCount = (order) =>
+    Array.isArray(order?.orderItems)
+      ? order.orderItems.reduce((sum, item) => sum + Number(item?.quantity || 0), 0)
+      : 0;
+
   const handleRowClick = (id) => {
     navigate(`/order/${id}`);
+  };
+
+  const handleDeleteOrder = async (e, orderId) => {
+    e.stopPropagation();
+    if (!window.confirm("Remove this order from your history?")) {
+      return;
+    }
+    await dispatch(deleteUserOrder(orderId));
   };
 
   useEffect(() => {
@@ -100,8 +114,8 @@ const MyOrdersPage = () => {
           <div className="grid grid-cols-3 gap-4 mb-12">
             {[
               { label: "Total Orders", value: orders.length },
-              { label: "Paid", value: orders.filter((o) => o.isPaid).length },
-              { label: "Pending", value: orders.filter((o) => !o.isPaid).length },
+              { label: "Paid", value: orders.filter((o) => getIsPaid(o)).length },
+              { label: "Pending", value: orders.filter((o) => !getIsPaid(o)).length },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -176,12 +190,12 @@ const MyOrdersPage = () => {
                       <span
                         className="text-[9px] font-semibold tracking-[0.2em] uppercase px-3 py-1.5"
                         style={
-                          order.isPaid
+                          getIsPaid(order)
                             ? { background: "rgba(16,185,129,0.08)", color: "#6ee7b7", border: "1px solid rgba(16,185,129,0.2)" }
                             : { background: "rgba(239,68,68,0.08)", color: "#fca5a5", border: "1px solid rgba(239,68,68,0.2)" }
                         }
                       >
-                        {order.isPaid ? "Paid" : "Pending"}
+                        {getIsPaid(order) ? "Paid" : "Pending"}
                       </span>
                     </div>
 
@@ -199,7 +213,7 @@ const MyOrdersPage = () => {
                         <p className="text-[8px] tracking-[0.2em] uppercase mb-0.5" style={{ color: "rgba(255,255,255,0.2)" }}>
                           Items
                         </p>
-                        <p className="text-[11px] text-white">{order.orderItems?.length || 0}</p>
+                        <p className="text-[11px] text-white">{getItemCount(order)}</p>
                       </div>
                       <div style={{ width: 1, height: 28, background: "rgba(255,255,255,0.06)" }} />
                       <div>
@@ -213,8 +227,22 @@ const MyOrdersPage = () => {
                     </div>
                   </div>
 
-                  <div className="flex-shrink-0 text-[18px]" style={{ color: "rgba(201,169,110,0.3)" }}>
-                    &rsaquo;
+                  <div className="flex flex-col items-end gap-3 flex-shrink-0">
+                    <button
+                      onClick={(e) => handleDeleteOrder(e, order._id)}
+                      className="text-[9px] font-semibold tracking-[0.2em] uppercase px-3 py-2 transition-colors duration-300"
+                      style={{
+                        color: "rgba(239,68,68,0.75)",
+                        border: "1px solid rgba(239,68,68,0.25)",
+                        background: "transparent",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Remove
+                    </button>
+                    <div className="text-[18px]" style={{ color: "rgba(201,169,110,0.3)" }}>
+                      &rsaquo;
+                    </div>
                   </div>
                 </div>
               </div>

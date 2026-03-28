@@ -11,20 +11,11 @@ import {
 const OrderManagement = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
   const { orders, loading, error } = useSelector((state) => state.adminOrders);
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    if (user.role !== "admin") {
-      navigate("/");
-      return;
-    }
     dispatch(fetchAllOrders());
-  }, [dispatch, navigate, user]);
+  }, [dispatch]);
 
   const handleStatusChange = (orderId, newStatus) => {
     dispatch(updateOrderStatus({ id: orderId, status: newStatus }));
@@ -49,17 +40,21 @@ const OrderManagement = () => {
     }
   };
 
-  if (loading) return (
-    <div style={{ background: "#f5f5f7", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <p style={{ color: "#999", fontFamily: "Inter", fontSize: 11, letterSpacing: "0.3em", textTransform: "uppercase" }}>Loading...</p>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div style={{ background: "#f5f5f7", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "#999", fontFamily: "Inter", fontSize: 11, letterSpacing: "0.3em", textTransform: "uppercase" }}>Loading...</p>
+      </div>
+    );
+  }
 
-  if (error) return (
-    <div style={{ background: "#f5f5f7", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <p style={{ color: "#ef4444", fontFamily: "Inter", fontSize: 11 }}>Error: {error}</p>
-    </div>
-  );
+  if (error) {
+    return (
+      <div style={{ background: "#f5f5f7", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "#ef4444", fontFamily: "Inter", fontSize: 11 }}>Error: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -127,6 +122,26 @@ const OrderManagement = () => {
           border-color: rgba(99,102,241,0.4);
         }
 
+        .om-cancel-btn {
+          padding: 5px 12px;
+          background: rgba(234,179,8,0.08);
+          border: 1px solid rgba(234,179,8,0.2);
+          border-radius: 4px;
+          color: #b45309;
+          font-family: 'Inter', sans-serif;
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+        }
+        .om-cancel-btn:hover {
+          background: rgba(234,179,8,0.15);
+          border-color: rgba(234,179,8,0.4);
+        }
+
         .om-delete-btn {
           padding: 5px 12px;
           background: rgba(239,68,68,0.08);
@@ -149,8 +164,6 @@ const OrderManagement = () => {
 
       <div className="om-root" style={{ background: "#f5f5f7", minHeight: "100vh", padding: "40px 32px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-
-          {/* Header */}
           <div style={{ marginBottom: 32 }}>
             <p style={{ fontSize: 9, letterSpacing: "0.3em", textTransform: "uppercase", color: "#aaa", marginBottom: 6 }}>Admin</p>
             <h1 style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 28, fontWeight: 600, color: "#1a1a1a", margin: 0 }}>
@@ -158,7 +171,6 @@ const OrderManagement = () => {
             </h1>
           </div>
 
-          {/* Table Card */}
           <div style={{ background: "#ffffff", border: "1px solid #e8e8ed", borderRadius: 10, overflow: "hidden" }}>
             <div style={{ padding: "20px 24px", borderBottom: "1px solid #f0f0f3" }}>
               <p style={{ fontSize: 9, letterSpacing: "0.3em", textTransform: "uppercase", color: "#aaa", marginBottom: 4 }}>All Transactions</p>
@@ -182,6 +194,8 @@ const OrderManagement = () => {
                   {orders.length > 0 ? (
                     orders.map((order) => {
                       const s = statusConfig(order.status);
+                      const isTerminal = order.status === "Delivered" || order.status === "Cancelled";
+
                       return (
                         <tr key={order._id}>
                           <td style={{ color: "#888", fontFamily: "monospace", fontSize: 11, whiteSpace: "nowrap" }}>
@@ -194,29 +208,39 @@ const OrderManagement = () => {
                             ${order.totalPrice}
                           </td>
                           <td>
-                            <span style={{
-                              display: "inline-block",
-                              padding: "3px 10px",
-                              borderRadius: "999px",
-                              fontSize: 9,
-                              fontWeight: 600,
-                              letterSpacing: "0.15em",
-                              textTransform: "uppercase",
-                              background: s.bg,
-                              color: s.color,
-                              border: `1px solid ${s.border}`,
-                            }}>
+                            <span
+                              style={{
+                                display: "inline-block",
+                                padding: "3px 10px",
+                                borderRadius: "999px",
+                                fontSize: 9,
+                                fontWeight: 600,
+                                letterSpacing: "0.15em",
+                                textTransform: "uppercase",
+                                background: s.bg,
+                                color: s.color,
+                                border: `1px solid ${s.border}`,
+                              }}
+                            >
                               {order.status}
                             </span>
                           </td>
                           <td>
                             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                              {order.status !== "Delivered" && (
+                              {!isTerminal && (
                                 <button
                                   onClick={() => handleStatusChange(order._id, "Delivered")}
                                   className="om-deliver-btn"
                                 >
                                   Mark Delivered
+                                </button>
+                              )}
+                              {!isTerminal && (
+                                <button
+                                  onClick={() => handleStatusChange(order._id, "Cancelled")}
+                                  className="om-cancel-btn"
+                                >
+                                  Cancel Order
                                 </button>
                               )}
                               <button
@@ -247,7 +271,6 @@ const OrderManagement = () => {
               </table>
             </div>
           </div>
-
         </div>
       </div>
     </>

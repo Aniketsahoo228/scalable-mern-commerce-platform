@@ -36,12 +36,38 @@ router.get("/:id", protect, async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Return the full order details
+    if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized to view this order" });
+    }
+
     res.json(order);
 
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// @route DELETE /api/orders/:id
+// @desc Delete logged-in user's order history entry
+// @access Private
+router.delete("/:id", protect, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    if (order.user.toString() !== req.user._id.toString() && req.user.role !== "admin") {
+      return res.status(403).json({ message: "Not authorized to delete this order" });
+    }
+
+    await order.deleteOne();
+    return res.status(200).json({ message: "Order removed", orderId: req.params.id });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server Error" });
   }
 });
 

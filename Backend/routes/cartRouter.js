@@ -189,7 +189,15 @@ router.post("/merge", protect, async (req, res) => {
     const userCart = await Cart.findOne({ user: req.user._id });
     if (guestCart) {
       if (guestCart.products.length === 0) {
-        return res.status(400).json({ message: "Guest cart is empty" });
+        await Cart.findOneAndDelete({ guestId });
+        return res.status(200).json(
+          userCart || {
+            user: req.user._id,
+            guestId: null,
+            products: [],
+            totalPrice: 0,
+          }
+        );
       }
 
       if (userCart) {
@@ -236,7 +244,13 @@ router.post("/merge", protect, async (req, res) => {
       return res.status(200).json(userCart);
     }
 
-    return res.status(404).json({ message: "Guest Cart not found" });
+    return res.status(200).json({
+      user: req.user._id,
+      guestId: null,
+      products: [],
+      totalPrice: 0,
+      message: "No guest cart found to merge",
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Server Error" });

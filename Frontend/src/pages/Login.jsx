@@ -26,10 +26,16 @@ const Login = () => {
       const user = await dispatch(loginUser({ email , password })).unwrap();
 
       if (cart?.products?.length > 0 && guestId) {
-        await dispatch(mergeCart({ guestId, user })).unwrap();
+        try {
+          await dispatch(mergeCart({ guestId, user })).unwrap();
+        } catch (mergeError) {
+          if (mergeError?.message !== "Guest Cart not found") {
+            console.error("Cart merge failed after login:", mergeError);
+          }
+        }
       }
 
-      navigate(isCheckoutRedirect ? "/checkout" : "/", { replace: true });
+      navigate(redirect || (isCheckoutRedirect ? "/checkout" : "/"), { replace: true });
     } catch (err) {
       // Error state is already handled in Redux/UI
     }
@@ -142,7 +148,7 @@ const Login = () => {
 
           {/* Brand */}
           <div className="fade-in fade-in-1 mb-16">
-            <p className="brand-font text-3xl font-light tracking-[0.3em] text-[#1a1a1a]">AURELLE</p>
+            <p className="brand-font text-3xl font-light tracking-[0.3em] text-[#1a1a1a]">AZURELLE</p>
             <div style={{ width: 32, height: 1, background: '#c9a96e', marginTop: 8 }} />
           </div>
 
@@ -201,7 +207,7 @@ const Login = () => {
           </form>
 
           <p className="fade-in fade-in-5 mt-10 text-[12px] text-[#b0a499] tracking-wide text-center">
-            New to Aurelle?{" "}
+            New to Azurelle?{" "}
             <Link to={`/register?redirect=${encodeURIComponent(redirect)}`} className="text-[#1a1a1a] font-semibold border-b border-[#1a1a1a] pb-px hover:text-[#c9a96e] hover:border-[#c9a96e] transition-colors duration-300">
               Create Account
             </Link>
