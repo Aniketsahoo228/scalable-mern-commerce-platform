@@ -210,6 +210,98 @@ VITE_BACKEND_URL=http://localhost:9000
 VITE_PAYPAL_CLIENT_ID=your_paypal_client_id
 ```
 
+## Exact Project Paths
+
+These are the exact project folders used in this repository:
+
+- Repository root: `full_mern_stack_Ecommerce_Project-main/`
+- Backend app path: `full_mern_stack_Ecommerce_Project-main/Backend`
+- Frontend app path: `full_mern_stack_Ecommerce_Project-main/Frontend`
+- Backend entry file: `Backend/Server.js`
+- Frontend entry file: `Frontend/src/main.jsx`
+- Frontend route file: `Frontend/src/App.jsx`
+
+## Deployment Paths
+
+Keep the older setup steps above as-is. For deployment, use these exact root paths:
+
+### Vercel
+
+- Project root directory: `Frontend`
+- Framework preset: `Vite`
+- Install command: `npm install`
+- Build command: `npm run build`
+- Output directory: `dist`
+
+### Render
+
+- Service type: `Web Service`
+- Root directory: `Backend`
+- Install command: `npm install`
+- Start command: `npm start`
+- Runtime entry: `Backend/Server.js`
+
+## Environment Secrets By Service
+
+Use the following environment variables in deployment dashboards.
+
+### Render secrets for Backend
+
+```env
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+PORT=10000
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
+
+### Vercel secrets for Frontend
+
+```env
+VITE_BACKEND_URL=https://your-render-backend.onrender.com
+VITE_PAYPAL_CLIENT_ID=your_paypal_client_id
+```
+
+### Secret usage notes
+
+- `VITE_BACKEND_URL` must point to the live backend URL after Render deployment.
+- `JWT_SECRET` should be a long random string and must not be committed.
+- `MONGO_URI` should be your production MongoDB connection string.
+- Cloudinary keys are required for image upload routes.
+- `PORT` is usually provided by Render automatically, but keeping it set is safe.
+
+## Frontend Page Routes
+
+The main frontend pages currently live under the following routes:
+
+| Page | Route |
+|---|---|
+| Home | `/` |
+| Login | `/login` |
+| Register | `/register` |
+| Profile | `/profile` |
+| Collections | `/collections/all` |
+| Product Details | `/product/:id` |
+| Cart | `/cart` |
+| Checkout | `/checkout` |
+| Order Confirmation | `/order-confirmation` |
+| My Orders | `/my-orders` |
+| Order Details | `/order/:id` |
+| Admin Dashboard | `/admin` |
+| Admin Users | `/admin/users` |
+| Admin Products | `/admin/products` |
+| Admin Orders | `/admin/orders` |
+
+## Deployment Order
+
+For the smoothest production setup:
+
+1. Deploy `Backend` on Render.
+2. Copy the live Render backend URL.
+3. Add that URL as `VITE_BACKEND_URL` in Vercel.
+4. Deploy `Frontend` on Vercel.
+
 ## Usage
 
 ### Storefront

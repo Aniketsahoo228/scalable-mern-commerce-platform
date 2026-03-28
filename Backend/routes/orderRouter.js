@@ -36,8 +36,17 @@ router.get("/:id", protect, async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    if (order.user._id.toString() !== req.user._id.toString() && req.user.role !== "admin") {
-      return res.status(403).json({ message: "Not authorized to view this order" });
+    if (req.user.role !== "admin") {
+      const orderUserId =
+        order.user && typeof order.user === "object" && order.user._id
+          ? order.user._id.toString()
+          : order.user
+          ? order.user.toString()
+          : null;
+
+      if (!orderUserId || orderUserId !== req.user._id.toString()) {
+        return res.status(403).json({ message: "Not authorized to view this order" });
+      }
     }
 
     res.json(order);
@@ -59,8 +68,12 @@ router.delete("/:id", protect, async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    if (order.user.toString() !== req.user._id.toString() && req.user.role !== "admin") {
-      return res.status(403).json({ message: "Not authorized to delete this order" });
+    if (req.user.role !== "admin") {
+      const orderUserId = order.user ? order.user.toString() : null;
+
+      if (!orderUserId || orderUserId !== req.user._id.toString()) {
+        return res.status(403).json({ message: "Not authorized to delete this order" });
+      }
     }
 
     await order.deleteOne();

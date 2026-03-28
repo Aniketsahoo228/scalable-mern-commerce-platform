@@ -6,6 +6,7 @@ import { fetchOrderDetails } from "../redux/slices/orderSlice";
 const OrderDetailsPage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
   const { orderDetails, loading, error } = useSelector((state) => state.order);
 
   useEffect(() => {
@@ -14,7 +15,7 @@ const OrderDetailsPage = () => {
     }
   }, [dispatch, id]);
 
-  if (loading || !orderDetails || orderDetails._id !== id) {
+  if (loading) {
     return (
       <div style={{ background: "#111", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <p style={{ color: "rgba(255,255,255,0.4)", fontFamily: "Montserrat", fontSize: 12, letterSpacing: "0.3em" }}>LOADING ORDER...</p>
@@ -27,6 +28,16 @@ const OrderDetailsPage = () => {
       <div style={{ background: "#111", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <p style={{ color: "#fca5a5", fontFamily: "Montserrat", fontSize: 12, letterSpacing: "0.2em" }}>
           {error}
+        </p>
+      </div>
+    );
+  }
+
+  if (!orderDetails || orderDetails._id !== id) {
+    return (
+      <div style={{ background: "#111", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p style={{ color: "rgba(255,255,255,0.4)", fontFamily: "Montserrat", fontSize: 12, letterSpacing: "0.2em" }}>
+          ORDER DETAILS NOT AVAILABLE
         </p>
       </div>
     );
@@ -213,7 +224,9 @@ const OrderDetailsPage = () => {
             </div>
 
             <div style={{ marginTop: 32, borderTop: "1px solid rgba(255,255,255,0.05)", paddingTop: 24 }}>
-              <Link to="/my-order" className="od-back-link">Back to My Orders</Link>
+              <Link to={user?.role === "admin" ? "/admin/orders" : "/my-order"} className="od-back-link">
+                {user?.role === "admin" ? "Back to Order Management" : "Back to My Orders"}
+              </Link>
             </div>
           </div>
         </div>
