@@ -302,6 +302,60 @@ For the smoothest production setup:
 3. Add that URL as `VITE_BACKEND_URL` in Vercel.
 4. Deploy `Frontend` on Vercel.
 
+## Website Pages
+
+### Home Page
+
+#### Hero Section
+
+![Home Page](Frontend/src/assets/Screenshot%202026-03-28%20094822.png)
+
+#### Collection Preview Section
+
+![Collections Page](Frontend/src/assets/Screenshot%202026-03-28%20095054.png)
+
+#### Featured Product Section
+
+![Product Details Page](Frontend/src/assets/Screenshot%202026-03-28%20095115.png)
+
+#### Checkout Preview Section
+
+![Checkout Page](Frontend/src/assets/Screenshot%202026-03-28%20095209.png)
+
+#### Order Preview Section
+
+![Order Details Page](Frontend/src/assets/Screenshot%202026-03-28%20095455.png)
+
+#### Profile Preview Section
+
+![Admin Profile Page](Frontend/src/assets/Screenshot%202026-03-28%20095223.png)
+
+#### Additional Order Preview Section
+
+![Admin Order Details Page](Frontend/src/assets/Screenshot%202026-03-28%20095953.png)
+
+### Admin Pages
+
+#### Admin Dashboard
+
+![Admin Dashboard](Frontend/src/assets/Screenshot%202026-03-28%20095256.png)
+
+#### User Management
+
+![User Management](Frontend/src/assets/Screenshot%202026-03-28%20095238.png)
+
+#### Product Management
+
+![Product Management](Frontend/src/assets/Screenshot%202026-03-28%20095319.png)
+
+#### Edit Product
+
+![Edit Product](Frontend/src/assets/Screenshot%202026-03-28%20095336.png)
+
+#### Order Management
+
+![Order Management](Frontend/src/assets/Screenshot%202026-03-28%20095342.png)
+
 ## Usage
 
 ### Storefront
