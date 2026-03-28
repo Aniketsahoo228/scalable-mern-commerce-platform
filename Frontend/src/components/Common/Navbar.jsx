@@ -28,7 +28,18 @@ const Navbar = () => {
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap');
         .nav-brand { font-family: 'Cormorant Garamond', serif; }
         .nav-links { font-family: 'Montserrat', sans-serif; }
-
+        .nav-logo {
+          display: block;
+          height: 38px;
+          width: auto;
+          max-width: none;
+        }
+        .nav-logo-mobile {
+          display: block;
+          height: 32px;
+          width: auto;
+          max-width: none;
+        }
         .nav-link {
           position: relative;
           font-size: 11px;
@@ -96,11 +107,11 @@ const Navbar = () => {
       `}</style>
 
       <div className="navbar-wrapper">
-        <nav className="nav-links container mx-auto flex items-center justify-between py-4 px-6">
+        <nav className="nav-links container mx-auto flex items-center justify-between py-3 px-6">
 
           {/* Brand */}
-          <Link to="/" className="nav-brand text-3xl font-light tracking-[0.2em] text-[#1a1a1a]">
-            AZURELLE
+          <Link to="/" aria-label="Azurelle home">
+            <img src="/azurelle_nav_logo.svg" alt="Azurelle" className="nav-logo" />
           </Link>
 
           {/* Desktop Links */}
@@ -175,7 +186,7 @@ const Navbar = () => {
         }`}
       >
         <div className="flex items-center justify-between px-6 py-5 border-b border-[#f0ece6]">
-          <span className="nav-brand text-2xl font-light tracking-[0.2em] text-[#1a1a1a]">AURELLE</span>
+          <img src="/azurelle_nav_logo.svg" alt="Azurelle" className="nav-logo-mobile" />
           <button
             onClick={toggleNavDrawer}
             className="w-8 h-8 flex items-center justify-center rounded-full border border-[#e8e2da] text-[#555] hover:border-[#c9a96e] hover:text-[#c9a96e] transition-all duration-300"

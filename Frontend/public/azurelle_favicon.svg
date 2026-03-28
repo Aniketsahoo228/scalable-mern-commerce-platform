@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <rect width="128" height="128" rx="24" fill="#111111" />
+  <g transform="translate(64 64)">
+    <polygon points="0,-40 24,-14 -24,-14" fill="#c9a96e" opacity="0.95" />
+    <polygon points="0,-40 -24,-14 -34,6" fill="#b8934a" opacity="0.9" />
+    <polygon points="0,-40 24,-14 34,6" fill="#d4b87a" opacity="0.9" />
+    <polygon points="-24,-14 -34,6 0,40" fill="#a07830" opacity="0.85" />
+    <polygon points="24,-14 34,6 0,40" fill="#c9a96e" opacity="0.85" />
+    <polygon points="-34,6 0,40 0,20" fill="#8a6020" opacity="0.8" />
+    <polygon points="34,6 0,40 0,20" fill="#b8934a" opacity="0.8" />
+    <polygon points="-24,-14 24,-14 34,6 0,20 -34,6" fill="#e8c87e" opacity="0.65" />
+    <line x1="0" y1="-40" x2="0" y2="20" stroke="#f0d898" stroke-width="1.5" opacity="0.5" />
+    <line x1="-24" y1="-14" x2="34" y2="6" stroke="#f0d898" stroke-width="1.2" opacity="0.3" />
+    <line x1="24" y1="-14" x2="-34" y2="6" stroke="#f0d898" stroke-width="1.2" opacity="0.3" />
+  </g>
+</svg>

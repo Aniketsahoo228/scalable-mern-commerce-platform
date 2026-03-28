@@ -11,7 +11,6 @@ const Footer = () => {
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Montserrat:wght@300;400;500;600&display=swap');
         .footer-root { font-family: 'Montserrat', sans-serif; }
         .footer-brand { font-family: 'Cormorant Garamond', serif; }
-
         .footer-link {
           font-size: 12px;
           letter-spacing: 0.08em;
@@ -95,7 +94,9 @@ const Footer = () => {
 
             {/* Newsletter */}
             <div>
-              <p className="footer-brand text-3xl font-light tracking-[0.25em] text-white mb-1">AURELLE</p>
+              <p className="footer-brand text-3xl font-light tracking-[0.25em] text-white mb-1">
+                AZURELLE
+              </p>
               <div style={{ width: 28, height: 1, background: '#c9a96e', marginBottom: 20 }} />
               <p className="text-[12px] leading-relaxed tracking-wide mb-2" style={{ color: 'rgba(255,255,255,0.45)' }}>
                 Be the first to hear about new arrivals, exclusive events, and special offers.

@@ -10,7 +10,13 @@ const GenderCollectionSection = () => {
         .gc-brand { font-family: 'Cormorant Garamond', serif; }
         .gc-body  { font-family: 'Montserrat', sans-serif; }
 
-        .gc-card { position: relative; overflow: hidden; flex: 1; }
+        .gc-card {
+          position: relative;
+          overflow: hidden;
+          flex: 1;
+          display: block;
+          text-decoration: none;
+        }
         .gc-card img {
           width: 100%; height: 700px; object-fit: cover;
           transition: transform 8s ease;
@@ -70,30 +76,30 @@ const GenderCollectionSection = () => {
 
           <div className="flex flex-col md:flex-row gap-4">
             {/* Women */}
-            <div className="gc-card">
+            <Link to="/collections/all?gender=Women" className="gc-card">
               <img src={womensCollectionImage} alt="Women's Collection" />
               <div className="gc-overlay" />
               <div className="gc-label">
                 <p className="text-[9px] tracking-[0.3em] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>For Her</p>
                 <h2 className="gc-brand text-4xl font-light text-white mb-4">Women's Collection</h2>
-                <Link to="/collections/all?gender=Women" className="gc-shop-link">
+                <span className="gc-shop-link">
                   Shop Now
-                </Link>
+                </span>
               </div>
-            </div>
+            </Link>
 
             {/* Men */}
-            <div className="gc-card">
+            <Link to="/collections/all?gender=Men" className="gc-card">
               <img src={mensCollectionImage} alt="Men's Collection" />
               <div className="gc-overlay" />
               <div className="gc-label">
                 <p className="text-[9px] tracking-[0.3em] uppercase mb-2" style={{ color: 'rgba(255,255,255,0.4)' }}>For Him</p>
                 <h2 className="gc-brand text-4xl font-light text-white mb-4">Men's Collection</h2>
-                <Link to="/collections/all?gender=Men" className="gc-shop-link">
+                <span className="gc-shop-link">
                   Shop Now
-                </Link>
+                </span>
               </div>
-            </div>
+            </Link>
           </div>
         </div>
       </section>
