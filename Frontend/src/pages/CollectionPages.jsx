@@ -85,7 +85,7 @@ const CollectionPages = () => {
       `}</style>
 
       <div
-        className="cp-body flex min-h-screen"
+        className="cp-body flex min-h-screen overflow-x-hidden"
         style={{ background: '#111' }}
       >
 
@@ -153,11 +153,11 @@ const CollectionPages = () => {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 min-w-0 flex flex-col">
+        <div className="flex-1 min-w-0 flex flex-col w-full">
 
           {/* Top Bar */}
           <div
-            className="flex items-center justify-between px-6 py-4"
+            className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-6 py-4 gap-4"
             style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}
           >
             <div className="flex items-center gap-4">

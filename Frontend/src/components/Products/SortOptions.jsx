@@ -45,6 +45,8 @@ const SortOptions = () => {
           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23c9a96e' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
           background-repeat: no-repeat;
           background-position: right 10px center;
+          min-width: 120px;
+          max-width: 200px;
         }
         .sort-select:hover { border-color: #c9a96e; color: #c9a96e; }
         .sort-select option { background: #1a1a1a; color: #fff; }
