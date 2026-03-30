@@ -2,6 +2,10 @@
 
 Full-stack MERN e-commerce platform for browsing curated fashion collections, managing carts and checkout, and operating an admin dashboard for users, products, and orders.
 
+## Live Deployment
+
+- Mobile & Desktop: https://azurelle.vercel.app/
+
 ## Overview
 
 Azurelle is a portfolio-grade commerce application built with a React frontend and an Express/MongoDB backend. The project covers the core flows expected in a modern online store: authentication, product discovery, cart management, checkout orchestration, order history, file uploads, newsletter subscriptions, and admin operations.
@@ -65,115 +69,115 @@ The codebase is organized as a split frontend/backend application, with Redux To
 ```text
 full_mern_stack_Ecommerce_Project-main/
 +-- Backend/
-¦   +-- config/
-¦   ¦   +-- db.js
-¦   +-- data/
-¦   ¦   +-- products.js
-¦   +-- middleware/
-¦   ¦   +-- authMiddleware.js
-¦   +-- models/
-¦   ¦   +-- Cart.js
-¦   ¦   +-- Checkout.js
-¦   ¦   +-- Order.js
-¦   ¦   +-- Product.js
-¦   ¦   +-- Subscriber.js
-¦   ¦   +-- User.js
-¦   +-- routes/
-¦   ¦   +-- adminOrderRoutes.js
-¦   ¦   +-- adminRoutes.js
-¦   ¦   +-- cartRouter.js
-¦   ¦   +-- checkoutRoutes.js
-¦   ¦   +-- orderRouter.js
-¦   ¦   +-- productAdminRoutes.js
-¦   ¦   +-- productRoutes.js
-¦   ¦   +-- subscriberRoutes.js
-¦   ¦   +-- uploadRoutes.js
-¦   ¦   +-- userRoutes.js
-¦   +-- .env.example
-¦   +-- package.json
-¦   +-- seeder.js
-¦   +-- Server.js
-¦   +-- vercel.json
+Â¦   +-- config/
+Â¦   Â¦   +-- db.js
+Â¦   +-- data/
+Â¦   Â¦   +-- products.js
+Â¦   +-- middleware/
+Â¦   Â¦   +-- authMiddleware.js
+Â¦   +-- models/
+Â¦   Â¦   +-- Cart.js
+Â¦   Â¦   +-- Checkout.js
+Â¦   Â¦   +-- Order.js
+Â¦   Â¦   +-- Product.js
+Â¦   Â¦   +-- Subscriber.js
+Â¦   Â¦   +-- User.js
+Â¦   +-- routes/
+Â¦   Â¦   +-- adminOrderRoutes.js
+Â¦   Â¦   +-- adminRoutes.js
+Â¦   Â¦   +-- cartRouter.js
+Â¦   Â¦   +-- checkoutRoutes.js
+Â¦   Â¦   +-- orderRouter.js
+Â¦   Â¦   +-- productAdminRoutes.js
+Â¦   Â¦   +-- productRoutes.js
+Â¦   Â¦   +-- subscriberRoutes.js
+Â¦   Â¦   +-- uploadRoutes.js
+Â¦   Â¦   +-- userRoutes.js
+Â¦   +-- .env.example
+Â¦   +-- package.json
+Â¦   +-- seeder.js
+Â¦   +-- Server.js
+Â¦   +-- vercel.json
 +-- Frontend/
-¦   +-- public/
-¦   ¦   +-- azurelle_favicon.svg
-¦   ¦   +-- azurelle_logo.svg
-¦   ¦   +-- azurelle_nav_logo.svg
-¦   ¦   +-- index.html
-¦   +-- src/
-¦   ¦   +-- assets/
-¦   ¦   ¦   +-- Azurelle.webp
-¦   ¦   ¦   +-- featured.webp
-¦   ¦   ¦   +-- login.webp
-¦   ¦   ¦   +-- mens-collection.jpg
-¦   ¦   ¦   +-- mens-collection.webp
-¦   ¦   ¦   +-- rabbit-hero.webp
-¦   ¦   ¦   +-- register.webp
-¦   ¦   ¦   +-- womens-collection.webp
-¦   ¦   ¦   +-- website screenshots...
-¦   ¦   +-- components/
-¦   ¦   ¦   +-- Admin/
-¦   ¦   ¦   ¦   +-- AdminLayout.jsx
-¦   ¦   ¦   ¦   +-- AdminSidebar.jsx
-¦   ¦   ¦   ¦   +-- EditProductPage.jsx
-¦   ¦   ¦   ¦   +-- OrderManagement.jsx
-¦   ¦   ¦   ¦   +-- ProductManagement.jsx
-¦   ¦   ¦   ¦   +-- UserManagement.jsx
-¦   ¦   ¦   +-- Cart/
-¦   ¦   ¦   ¦   +-- CartContents.jsx
-¦   ¦   ¦   ¦   +-- Checkout.jsx
-¦   ¦   ¦   ¦   +-- PayPalButton.jsx
-¦   ¦   ¦   +-- Common/
-¦   ¦   ¦   ¦   +-- Footer.jsx
-¦   ¦   ¦   ¦   +-- Header.jsx
-¦   ¦   ¦   ¦   +-- Navbar.jsx
-¦   ¦   ¦   ¦   +-- ProtectedRouter.jsx
-¦   ¦   ¦   ¦   +-- SearchBar.jsx
-¦   ¦   ¦   +-- Layout/
-¦   ¦   ¦   ¦   +-- CartDrawer.jsx
-¦   ¦   ¦   ¦   +-- Hero.jsx
-¦   ¦   ¦   ¦   +-- Topbar.jsx
-¦   ¦   ¦   ¦   +-- UserLayout.jsx
-¦   ¦   ¦   +-- Products/
-¦   ¦   ¦       +-- FeaturedCollection.jsx
-¦   ¦   ¦       +-- FeaturesSection.jsx
-¦   ¦   ¦       +-- FilterSidebar.jsx
-¦   ¦   ¦       +-- GenderCollectionSection.jsx
-¦   ¦   ¦       +-- MyOrderPage.jsx
-¦   ¦   ¦       +-- NewArrivals.jsx
-¦   ¦   ¦       +-- ProductDetails.jsx
-¦   ¦   ¦       +-- ProductGrid.jsx
-¦   ¦   ¦       +-- SortOptions.jsx
-¦   ¦   +-- pages/
-¦   ¦   ¦   +-- AdminHomePage.jsx
-¦   ¦   ¦   +-- CollectionPages.jsx
-¦   ¦   ¦   +-- Home.jsx
-¦   ¦   ¦   +-- Login.jsx
-¦   ¦   ¦   +-- OrderConfirmationPage.jsx
-¦   ¦   ¦   +-- OrderDetailsPage.jsx
-¦   ¦   ¦   +-- Profile.jsx
-¦   ¦   ¦   +-- Register.jsx
-¦   ¦   +-- redux/
-¦   ¦   ¦   +-- slices/
-¦   ¦   ¦   ¦   +-- adminOrderSlice.js
-¦   ¦   ¦   ¦   +-- adminProductSlice.js
-¦   ¦   ¦   ¦   +-- adminSlice.js
-¦   ¦   ¦   ¦   +-- authSlice.js
-¦   ¦   ¦   ¦   +-- cartSlice.js
-¦   ¦   ¦   ¦   +-- checkoutSlice.js
-¦   ¦   ¦   ¦   +-- orderSlice.js
-¦   ¦   ¦   ¦   +-- productsSlice.js
-¦   ¦   ¦   +-- store.js
-¦   ¦   +-- App.css
-¦   ¦   +-- App.jsx
-¦   ¦   +-- index.css
-¦   ¦   +-- main.jsx
-¦   +-- .env.example
-¦   +-- eslint.config.js
-¦   +-- index.html
-¦   +-- package.json
-¦   +-- tailwind.config.js
-¦   +-- vite.config.js
+Â¦   +-- public/
+Â¦   Â¦   +-- azurelle_favicon.svg
+Â¦   Â¦   +-- azurelle_logo.svg
+Â¦   Â¦   +-- azurelle_nav_logo.svg
+Â¦   Â¦   +-- index.html
+Â¦   +-- src/
+Â¦   Â¦   +-- assets/
+Â¦   Â¦   Â¦   +-- Azurelle.webp
+Â¦   Â¦   Â¦   +-- featured.webp
+Â¦   Â¦   Â¦   +-- login.webp
+Â¦   Â¦   Â¦   +-- mens-collection.jpg
+Â¦   Â¦   Â¦   +-- mens-collection.webp
+Â¦   Â¦   Â¦   +-- rabbit-hero.webp
+Â¦   Â¦   Â¦   +-- register.webp
+Â¦   Â¦   Â¦   +-- womens-collection.webp
+Â¦   Â¦   Â¦   +-- website screenshots...
+Â¦   Â¦   +-- components/
+Â¦   Â¦   Â¦   +-- Admin/
+Â¦   Â¦   Â¦   Â¦   +-- AdminLayout.jsx
+Â¦   Â¦   Â¦   Â¦   +-- AdminSidebar.jsx
+Â¦   Â¦   Â¦   Â¦   +-- EditProductPage.jsx
+Â¦   Â¦   Â¦   Â¦   +-- OrderManagement.jsx
+Â¦   Â¦   Â¦   Â¦   +-- ProductManagement.jsx
+Â¦   Â¦   Â¦   Â¦   +-- UserManagement.jsx
+Â¦   Â¦   Â¦   +-- Cart/
+Â¦   Â¦   Â¦   Â¦   +-- CartContents.jsx
+Â¦   Â¦   Â¦   Â¦   +-- Checkout.jsx
+Â¦   Â¦   Â¦   Â¦   +-- PayPalButton.jsx
+Â¦   Â¦   Â¦   +-- Common/
+Â¦   Â¦   Â¦   Â¦   +-- Footer.jsx
+Â¦   Â¦   Â¦   Â¦   +-- Header.jsx
+Â¦   Â¦   Â¦   Â¦   +-- Navbar.jsx
+Â¦   Â¦   Â¦   Â¦   +-- ProtectedRouter.jsx
+Â¦   Â¦   Â¦   Â¦   +-- SearchBar.jsx
+Â¦   Â¦   Â¦   +-- Layout/
+Â¦   Â¦   Â¦   Â¦   +-- CartDrawer.jsx
+Â¦   Â¦   Â¦   Â¦   +-- Hero.jsx
+Â¦   Â¦   Â¦   Â¦   +-- Topbar.jsx
+Â¦   Â¦   Â¦   Â¦   +-- UserLayout.jsx
+Â¦   Â¦   Â¦   +-- Products/
+Â¦   Â¦   Â¦       +-- FeaturedCollection.jsx
+Â¦   Â¦   Â¦       +-- FeaturesSection.jsx
+Â¦   Â¦   Â¦       +-- FilterSidebar.jsx
+Â¦   Â¦   Â¦       +-- GenderCollectionSection.jsx
+Â¦   Â¦   Â¦       +-- MyOrderPage.jsx
+Â¦   Â¦   Â¦       +-- NewArrivals.jsx
+Â¦   Â¦   Â¦       +-- ProductDetails.jsx
+Â¦   Â¦   Â¦       +-- ProductGrid.jsx
+Â¦   Â¦   Â¦       +-- SortOptions.jsx
+Â¦   Â¦   +-- pages/
+Â¦   Â¦   Â¦   +-- AdminHomePage.jsx
+Â¦   Â¦   Â¦   +-- CollectionPages.jsx
+Â¦   Â¦   Â¦   +-- Home.jsx
+Â¦   Â¦   Â¦   +-- Login.jsx
+Â¦   Â¦   Â¦   +-- OrderConfirmationPage.jsx
+Â¦   Â¦   Â¦   +-- OrderDetailsPage.jsx
+Â¦   Â¦   Â¦   +-- Profile.jsx
+Â¦   Â¦   Â¦   +-- Register.jsx
+Â¦   Â¦   +-- redux/
+Â¦   Â¦   Â¦   +-- slices/
+Â¦   Â¦   Â¦   Â¦   +-- adminOrderSlice.js
+Â¦   Â¦   Â¦   Â¦   +-- adminProductSlice.js
+Â¦   Â¦   Â¦   Â¦   +-- adminSlice.js
+Â¦   Â¦   Â¦   Â¦   +-- authSlice.js
+Â¦   Â¦   Â¦   Â¦   +-- cartSlice.js
+Â¦   Â¦   Â¦   Â¦   +-- checkoutSlice.js
+Â¦   Â¦   Â¦   Â¦   +-- orderSlice.js
+Â¦   Â¦   Â¦   Â¦   +-- productsSlice.js
+Â¦   Â¦   Â¦   +-- store.js
+Â¦   Â¦   +-- App.css
+Â¦   Â¦   +-- App.jsx
+Â¦   Â¦   +-- index.css
+Â¦   Â¦   +-- main.jsx
+Â¦   +-- .env.example
+Â¦   +-- eslint.config.js
+Â¦   +-- index.html
+Â¦   +-- package.json
+Â¦   +-- tailwind.config.js
+Â¦   +-- vite.config.js
 +-- README.md
 ```
 
