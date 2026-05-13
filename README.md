@@ -11,7 +11,7 @@ Full-stack MERN e-commerce platform for browsing curated fashion collections, ma
 Azurelle is a portfolio-grade commerce application built with a React frontend and an Express/MongoDB backend. The project covers the core flows expected in a modern online store: authentication, product discovery, cart management, checkout orchestration, order history, file uploads, newsletter subscriptions, and admin operations.
 
 The codebase is organized as a split frontend/backend application, with Redux Toolkit handling client state and Express route modules exposing REST-style APIs behind auth middleware and role-based access control.
-
+vite.config.js
 ## Key Features
 
 - User registration, login, JWT-based profile access, and role-aware session handling

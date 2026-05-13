@@ -16,188 +16,175 @@ const AdminSidebar = () => {
   };
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap');
+    <div className="flex min-h-screen w-[240px] flex-col border-r border-white/5 bg-[#0d1117] px-5 py-8 font-['Inter']">
 
-        .as-root {
-          font-family: 'Inter', sans-serif;
-          background: #0d1117;
-          min-height: 100vh;
-          width: 240px;
-          padding: 32px 20px;
-          border-right: 1px solid rgba(255,255,255,0.06);
-          display: flex;
-          flex-direction: column;
-        }
+      {/* Brand */}
+      <Link
+        to="/admin"
+        className="mb-1 font-['Space_Grotesk'] text-[20px] font-semibold tracking-[0.05em] text-white"
+      >
+        Azurelle
+      </Link>
 
-        .as-brand {
-          font-family: 'Space Grotesk', sans-serif;
-          font-size: 20px;
-          font-weight: 600;
-          color: #fff;
-          text-decoration: none;
-          letter-spacing: 0.05em;
-          display: block;
-          margin-bottom: 4px;
-        }
+      <span className="mb-9 text-[9px] uppercase tracking-[0.3em] text-white/20">
+        Admin Console
+      </span>
 
-        .as-brand-sub {
-          font-size: 9px;
-          letter-spacing: 0.3em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.2);
-          margin-bottom: 36px;
-          display: block;
-        }
+      {/* Navigation Label */}
+      <p className="mb-2.5 pl-3 text-[9px] uppercase tracking-[0.25em] text-white/20">
+        Navigation
+      </p>
 
-        .as-nav-label {
-          font-size: 9px;
-          letter-spacing: 0.25em;
-          text-transform: uppercase;
-          color: rgba(255,255,255,0.2);
-          margin-bottom: 10px;
-          padding-left: 12px;
-        }
+      {/* Navigation */}
+      <nav className="flex flex-col">
 
-        .as-nav-link {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 10px 12px;
-          border-radius: 6px;
-          font-size: 12px;
-          font-weight: 500;
-          letter-spacing: 0.05em;
-          color: rgba(255,255,255,0.4);
-          text-decoration: none;
-          transition: all 0.2s ease;
-          margin-bottom: 2px;
-          border: 1px solid transparent;
-        }
+        {/* Dashboard */}
+        <NavLink
+          to="/admin/home"
+          className={({ isActive }) =>
+            `mb-1 flex items-center gap-3 rounded-md border px-3 py-2.5 text-[12px] font-medium tracking-[0.05em] transition-all duration-200 ${
+              isActive
+                ? "border-indigo-500/30 bg-indigo-500/15 text-white"
+                : "border-transparent text-white/40 hover:border-white/10 hover:bg-white/5 hover:text-white/85"
+            }`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <FaChartLine
+                className={`text-[13px] transition-all duration-200 ${
+                  isActive
+                    ? "text-indigo-400"
+                    : "text-white/25"
+                }`}
+              />
 
-        .as-nav-link:hover {
-          color: rgba(255,255,255,0.85);
-          background: rgba(255,255,255,0.05);
-          border-color: rgba(255,255,255,0.06);
-        }
+              <span>Dashboard</span>
+            </>
+          )}
+        </NavLink>
 
-        .as-nav-link.active {
-          color: #fff;
-          background: rgba(99,102,241,0.15);
-          border-color: rgba(99,102,241,0.3);
-        }
+        {/* Users */}
+        <NavLink
+          to="/admin/users"
+          className={({ isActive }) =>
+            `mb-1 flex items-center gap-3 rounded-md border px-3 py-2.5 text-[12px] font-medium tracking-[0.05em] transition-all duration-200 ${
+              isActive
+                ? "border-indigo-500/30 bg-indigo-500/15 text-white"
+                : "border-transparent text-white/40 hover:border-white/10 hover:bg-white/5 hover:text-white/85"
+            }`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <FaUser
+                className={`text-[13px] transition-all duration-200 ${
+                  isActive
+                    ? "text-indigo-400"
+                    : "text-white/25"
+                }`}
+              />
 
-        .as-nav-link.active svg {
-          color: #818cf8;
-        }
+              <span>Users</span>
+            </>
+          )}
+        </NavLink>
 
-        .as-nav-link svg {
-          font-size: 13px;
-          flex-shrink: 0;
-          color: rgba(255,255,255,0.25);
-          transition: color 0.2s ease;
-        }
+        {/* Products */}
+        <NavLink
+          to="/admin/products"
+          className={({ isActive }) =>
+            `mb-1 flex items-center gap-3 rounded-md border px-3 py-2.5 text-[12px] font-medium tracking-[0.05em] transition-all duration-200 ${
+              isActive
+                ? "border-indigo-500/30 bg-indigo-500/15 text-white"
+                : "border-transparent text-white/40 hover:border-white/10 hover:bg-white/5 hover:text-white/85"
+            }`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <FaBoxOpen
+                className={`text-[13px] transition-all duration-200 ${
+                  isActive
+                    ? "text-indigo-400"
+                    : "text-white/25"
+                }`}
+              />
 
-        .as-nav-link:hover svg {
-          color: rgba(255,255,255,0.6);
-        }
+              <span>Products</span>
+            </>
+          )}
+        </NavLink>
 
-        .as-divider {
-          height: 1px;
-          background: rgba(255,255,255,0.06);
-          margin: 20px 0;
-        }
+        {/* Orders */}
+        <NavLink
+          to="/admin/orders"
+          className={({ isActive }) =>
+            `mb-1 flex items-center gap-3 rounded-md border px-3 py-2.5 text-[12px] font-medium tracking-[0.05em] transition-all duration-200 ${
+              isActive
+                ? "border-indigo-500/30 bg-indigo-500/15 text-white"
+                : "border-transparent text-white/40 hover:border-white/10 hover:bg-white/5 hover:text-white/85"
+            }`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <FaClipboardList
+                className={`text-[13px] transition-all duration-200 ${
+                  isActive
+                    ? "text-indigo-400"
+                    : "text-white/25"
+                }`}
+              />
 
-        .as-logout-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          width: 100%;
-          padding: 10px 12px;
-          background: rgba(239,68,68,0.08);
-          border: 1px solid rgba(239,68,68,0.2);
-          border-radius: 6px;
-          color: rgba(252,165,165,0.8);
-          font-family: 'Inter', sans-serif;
-          font-size: 11px;
-          font-weight: 500;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          margin-top: auto;
-        }
+              <span>Orders</span>
+            </>
+          )}
+        </NavLink>
 
-        .as-logout-btn:hover {
-          background: rgba(239,68,68,0.15);
-          border-color: rgba(239,68,68,0.4);
-          color: #fca5a5;
-        }
-      `}</style>
+        {/* Divider */}
+        <div className="my-5 h-px bg-white/5" />
 
-      <div className="as-root">
+        {/* Back To Shop */}
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) =>
+            `mb-1 flex items-center gap-3 rounded-md border px-3 py-2.5 text-[12px] font-medium tracking-[0.05em] transition-all duration-200 ${
+              isActive
+                ? "border-indigo-500/30 bg-indigo-500/15 text-white"
+                : "border-transparent text-white/40 hover:border-white/10 hover:bg-white/5 hover:text-white/85"
+            }`
+          }
+        >
+          {({ isActive }) => (
+            <>
+              <FaStore
+                className={`text-[13px] transition-all duration-200 ${
+                  isActive
+                    ? "text-indigo-400"
+                    : "text-white/25"
+                }`}
+              />
 
-        {/* Brand */}
-        <Link to="/admin" className="as-brand">Azurelle</Link>
-        <span className="as-brand-sub">Admin Console</span>
+              <span>Back to Shop</span>
+            </>
+          )}
+        </NavLink>
 
-        {/* Nav */}
-        <p className="as-nav-label">Navigation</p>
-        <nav style={{ display: "flex", flexDirection: "column" }}>
-          <NavLink
-            to="/admin/home"
-            className={({ isActive }) => `as-nav-link${isActive ? " active" : ""}`}
-          >
-            <FaChartLine />
-            <span>Dashboard</span>
-          </NavLink>
+      </nav>
 
-          <NavLink
-            to="/admin/users"
-            className={({ isActive }) => `as-nav-link${isActive ? " active" : ""}`}
-          >
-            <FaUser />
-            <span>Users</span>
-          </NavLink>
+      {/* Logout */}
+      <button
+        onClick={handelLogout}
+        className="mt-auto flex w-full items-center justify-center gap-2 rounded-md border border-red-500/20 bg-red-500/10 px-3 py-2.5 text-[11px] font-medium uppercase tracking-[0.1em] text-red-300 transition-all duration-200 hover:border-red-500/40 hover:bg-red-500/15 hover:text-red-200"
+      >
+        <FaSignOutAlt />
 
-          <NavLink
-            to="/admin/products"
-            className={({ isActive }) => `as-nav-link${isActive ? " active" : ""}`}
-          >
-            <FaBoxOpen />
-            <span>Products</span>
-          </NavLink>
+        <span>Logout</span>
+      </button>
 
-          <NavLink
-            to="/admin/orders"
-            className={({ isActive }) => `as-nav-link${isActive ? " active" : ""}`}
-          >
-            <FaClipboardList />
-            <span>Orders</span>
-          </NavLink>
-
-          <div className="as-divider" />
-
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) => `as-nav-link${isActive ? " active" : ""}`}
-          >
-            <FaStore />
-            <span>Back to Shop</span>
-          </NavLink>
-        </nav>
-
-        {/* Logout */}
-        <button onClick={handelLogout} className="as-logout-btn">
-          <FaSignOutAlt />
-          <span>Logout</span>
-        </button>
-
-      </div>
-    </>
+    </div>
   );
 };
 

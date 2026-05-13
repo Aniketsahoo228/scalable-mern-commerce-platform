@@ -127,7 +127,6 @@ const adminSlice = createSlice({
       })
       // updateUser
       .addCase(updateUser.pending, (state) => {
-        state.loading = true;
         state.error = null;
       })
       .addCase(updateUser.fulfilled, (state, action) => {

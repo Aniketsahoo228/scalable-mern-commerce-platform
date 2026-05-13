@@ -1,26 +1,22 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { addUser, deleteUser, fetchUsers, updateUser } from "../../redux/slices/adminSlice";
+import {
+  addUser,
+  deleteUser,
+  fetchUsers,
+  updateUser,
+} from "../../redux/slices/adminSlice";
 
 const UserManagement = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
-  const { user } = useSelector((state) => state.auth);
-  const { users, loading, error } = useSelector((state) => state.admin);
+  const { users, loading, error } = useSelector(
+    (state) => state.admin
+  );
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    if (user.role !== "admin") {
-      navigate("/");
-      return;
-    }
     dispatch(fetchUsers());
-  }, [dispatch, user, navigate]);
+  }, [dispatch]);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -30,13 +26,23 @@ const UserManagement = () => {
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     dispatch(addUser(formData));
-    setFormData({ name: "", email: "", password: "", role: "customer" });
+
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      role: "customer",
+    });
   };
 
   const handleDelete = (id) => {
@@ -44,210 +50,221 @@ const UserManagement = () => {
   };
 
   const handleRoleChange = (userId, newRole) => {
-    const selectedUser = users.find((item) => item._id === userId);
+    const selectedUser = users.find(
+      (item) => item._id === userId
+    );
+
     if (!selectedUser) return;
-    dispatch(updateUser({ id: userId, name: selectedUser.name, email: selectedUser.email, role: newRole }));
+
+    dispatch(
+      updateUser({
+        id: userId,
+        name: selectedUser.name,
+        email: selectedUser.email,
+        role: newRole,
+      })
+    );
   };
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap');
-        .um-root { font-family: 'Inter', sans-serif; }
+    <div className="min-h-screen bg-[#f5f5f7] px-4 py-10 font-['Inter'] sm:px-8">
+      <div className="mx-auto max-w-6xl">
 
-        .um-label {
-          display: block;
-          font-size: 9px;
-          font-weight: 600;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: #999;
-          margin-bottom: 6px;
-        }
+        {/* Header */}
+        <div className="mb-8">
+          <p className="mb-1 text-[9px] uppercase tracking-[0.3em] text-gray-400">
+            Admin
+          </p>
 
-        .um-input {
-          width: 100%;
-          padding: 9px 12px;
-          background: #f9f9fb;
-          border: 1px solid #e8e8ed;
-          border-radius: 6px;
-          font-family: 'Inter', sans-serif;
-          font-size: 12px;
-          color: #1a1a1a;
-          outline: none;
-          transition: border-color 0.2s ease, box-shadow 0.2s ease;
-          box-sizing: border-box;
-        }
-        .um-input:focus {
-          border-color: #6366f1;
-          box-shadow: 0 0 0 3px rgba(99,102,241,0.08);
-        }
+          <h1 className="font-['Space_Grotesk'] text-3xl font-semibold text-[#1a1a1a]">
+            User Management
+          </h1>
+        </div>
 
-        .um-select {
-          width: 100%;
-          padding: 9px 12px;
-          background: #f9f9fb;
-          border: 1px solid #e8e8ed;
-          border-radius: 6px;
-          font-family: 'Inter', sans-serif;
-          font-size: 12px;
-          color: #1a1a1a;
-          outline: none;
-          cursor: pointer;
-          transition: border-color 0.2s ease;
-          box-sizing: border-box;
-        }
-        .um-select:focus { border-color: #6366f1; }
+        {/* Loading & Error */}
+        {loading && (
+          <p className="mb-4 text-[11px] uppercase tracking-[0.2em] text-gray-400">
+            Loading...
+          </p>
+        )}
 
-        .um-submit-btn {
-          padding: 10px 24px;
-          background: #1a1a1a;
-          color: #fff;
-          border: none;
-          border-radius: 6px;
-          font-family: 'Inter', sans-serif;
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          cursor: pointer;
-          transition: background 0.2s ease;
-        }
-        .um-submit-btn:hover { background: #333; }
+        {error && (
+          <p className="mb-4 text-[11px] text-red-500">
+            Error: {error}
+          </p>
+        )}
 
-        .um-table { width: 100%; border-collapse: collapse; }
-        .um-table thead tr { border-bottom: 1px solid #e8e8ed; }
-        .um-table th {
-          text-align: left;
-          padding: 10px 16px;
-          font-size: 9px;
-          font-weight: 600;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: #aaa;
-        }
-        .um-table td {
-          padding: 12px 16px;
-          font-size: 12px;
-          color: #444;
-          border-bottom: 1px solid #f0f0f3;
-        }
-        .um-table tbody tr { transition: background 0.15s ease; }
-        .um-table tbody tr:hover { background: #f9f9fb; }
+        {/* Add User Form */}
+        <div className="mb-6 rounded-[10px] border border-[#e8e8ed] bg-white p-7">
+          <p className="mb-1 text-[9px] uppercase tracking-[0.3em] text-gray-400">
+            New Entry
+          </p>
 
-        .um-role-select {
-          padding: 4px 8px;
-          background: #f5f5f7;
-          border: 1px solid #e8e8ed;
-          border-radius: 4px;
-          font-family: 'Inter', sans-serif;
-          font-size: 11px;
-          color: #444;
-          outline: none;
-          cursor: pointer;
-        }
-        .um-role-select:focus { border-color: #6366f1; }
+          <h2 className="mb-5 font-['Space_Grotesk'] text-lg font-semibold text-[#1a1a1a]">
+            Add New User
+          </h2>
 
-        .um-delete-btn {
-          padding: 4px 12px;
-          background: rgba(239,68,68,0.08);
-          border: 1px solid rgba(239,68,68,0.2);
-          border-radius: 4px;
-          color: #ef4444;
-          font-family: 'Inter', sans-serif;
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          cursor: pointer;
-          transition: all 0.2s ease;
-        }
-        .um-delete-btn:hover {
-          background: rgba(239,68,68,0.15);
-          border-color: rgba(239,68,68,0.4);
-        }
-      `}</style>
+          <form onSubmit={handleSubmit}>
+            <div className="mb-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
 
-      <div className="um-root" style={{ background: "#f5f5f7", minHeight: "100vh", padding: "40px 32px" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+              {/* Name */}
+              <div>
+                <label className="mb-1.5 block text-[9px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+                  Name
+                </label>
 
-          {/* Header */}
-          <div style={{ marginBottom: 32 }}>
-            <p style={{ fontSize: 9, letterSpacing: "0.3em", textTransform: "uppercase", color: "#aaa", marginBottom: 6 }}>Admin</p>
-            <h1 style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 28, fontWeight: 600, color: "#1a1a1a", margin: 0 }}>
-              User Management
-            </h1>
-          </div>
-
-          {loading && <p style={{ fontSize: 11, color: "#999", letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 16 }}>Loading...</p>}
-          {error && <p style={{ fontSize: 11, color: "#ef4444", marginBottom: 16 }}>Error: {error}</p>}
-
-          {/* Add User Form */}
-          <div style={{ background: "#ffffff", border: "1px solid #e8e8ed", borderRadius: 10, padding: 28, marginBottom: 24 }}>
-            <p style={{ fontSize: 9, letterSpacing: "0.3em", textTransform: "uppercase", color: "#aaa", marginBottom: 6 }}>New Entry</p>
-            <h2 style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 16, fontWeight: 600, color: "#1a1a1a", marginBottom: 20 }}>
-              Add New User
-            </h2>
-
-            <form onSubmit={handleSubmit}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 20 }}>
-                <div>
-                  <label className="um-label">Name</label>
-                  <input type="text" name="name" value={formData.name} onChange={handleChange} required className="um-input" placeholder="Full name" />
-                </div>
-                <div>
-                  <label className="um-label">Email</label>
-                  <input type="email" name="email" value={formData.email} onChange={handleChange} required className="um-input" placeholder="Email address" />
-                </div>
-                <div>
-                  <label className="um-label">Password</label>
-                  <input type="password" name="password" value={formData.password} onChange={handleChange} required className="um-input" placeholder="Password" />
-                </div>
-                <div>
-                  <label className="um-label">Role</label>
-                  <select name="role" value={formData.role} onChange={handleChange} className="um-select">
-                    <option value="customer">Customer</option>
-                    <option value="admin">Admin</option>
-                  </select>
-                </div>
+                <input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  placeholder="Full name"
+                  className="w-full rounded-md border border-[#e8e8ed] bg-[#f9f9fb] px-3 py-2.5 text-sm text-[#1a1a1a] outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                />
               </div>
-              <button type="submit" className="um-submit-btn">Add User</button>
-            </form>
+
+              {/* Email */}
+              <div>
+                <label className="mb-1.5 block text-[9px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+                  Email
+                </label>
+
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  placeholder="Email address"
+                  className="w-full rounded-md border border-[#e8e8ed] bg-[#f9f9fb] px-3 py-2.5 text-sm text-[#1a1a1a] outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                />
+              </div>
+
+              {/* Password */}
+              <div>
+                <label className="mb-1.5 block text-[9px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+                  Password
+                </label>
+
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  placeholder="Password"
+                  className="w-full rounded-md border border-[#e8e8ed] bg-[#f9f9fb] px-3 py-2.5 text-sm text-[#1a1a1a] outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
+                />
+              </div>
+
+              {/* Role */}
+              <div>
+                <label className="mb-1.5 block text-[9px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+                  Role
+                </label>
+
+                <select
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                  className="w-full cursor-pointer rounded-md border border-[#e8e8ed] bg-[#f9f9fb] px-3 py-2.5 text-sm text-[#1a1a1a] outline-none transition-all duration-200 focus:border-indigo-500"
+                >
+                  <option value="customer">Customer</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="rounded-md bg-[#1a1a1a] px-6 py-2.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-white transition-all duration-200 hover:bg-[#333]"
+            >
+              Add User
+            </button>
+          </form>
+        </div>
+
+        {/* Users Table */}
+        <div className="overflow-hidden rounded-[10px] border border-[#e8e8ed] bg-white">
+
+          {/* Table Header */}
+          <div className="border-b border-[#f0f0f3] px-6 py-5">
+            <p className="mb-1 text-[9px] uppercase tracking-[0.3em] text-gray-400">
+              Directory
+            </p>
+
+            <h2 className="font-['Space_Grotesk'] text-lg font-semibold text-[#1a1a1a]">
+              All Users
+            </h2>
           </div>
 
-          {/* Users Table */}
-          <div style={{ background: "#ffffff", border: "1px solid #e8e8ed", borderRadius: 10, overflow: "hidden" }}>
-            <div style={{ padding: "20px 24px", borderBottom: "1px solid #f0f0f3" }}>
-              <p style={{ fontSize: 9, letterSpacing: "0.3em", textTransform: "uppercase", color: "#aaa", marginBottom: 4 }}>Directory</p>
-              <h2 style={{ fontFamily: "Space Grotesk, sans-serif", fontSize: 16, fontWeight: 600, color: "#1a1a1a", margin: 0 }}>All Users</h2>
-            </div>
-            <table className="um-table">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+
               <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Actions</th>
+                <tr className="border-b border-[#e8e8ed]">
+                  <th className="px-4 py-3 text-left text-[9px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+                    Name
+                  </th>
+
+                  <th className="px-4 py-3 text-left text-[9px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+                    Email
+                  </th>
+
+                  <th className="px-4 py-3 text-left text-[9px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+                    Role
+                  </th>
+
+                  <th className="px-4 py-3 text-left text-[9px] font-semibold uppercase tracking-[0.2em] text-gray-400">
+                    Actions
+                  </th>
                 </tr>
               </thead>
+
               <tbody>
                 {users.length > 0 ? (
                   users.map((item) => (
-                    <tr key={item._id}>
-                      <td style={{ color: "#1a1a1a", fontWeight: 500 }}>{item.name}</td>
-                      <td style={{ color: "#888", fontSize: 11 }}>{item.email}</td>
-                      <td>
+                    <tr
+                      key={item._id}
+                      className="border-b border-[#f0f0f3] transition-all duration-150 hover:bg-[#f9f9fb]"
+                    >
+                      <td className="px-4 py-3 text-sm font-medium text-[#1a1a1a]">
+                        {item.name}
+                      </td>
+
+                      <td className="px-4 py-3 text-[11px] text-gray-500">
+                        {item.email}
+                      </td>
+
+                      <td className="px-4 py-3">
                         <select
                           value={item.role}
-                          onChange={(e) => handleRoleChange(item._id, e.target.value)}
-                          className="um-role-select"
+                          onChange={(e) =>
+                            handleRoleChange(
+                              item._id,
+                              e.target.value
+                            )
+                          }
+                          className="cursor-pointer rounded border border-[#e8e8ed] bg-[#f5f5f7] px-2 py-1 text-[11px] text-gray-700 outline-none focus:border-indigo-500"
                         >
-                          <option value="customer">Customer</option>
-                          <option value="admin">Admin</option>
+                          <option value="customer">
+                            Customer
+                          </option>
+
+                          <option value="admin">
+                            Admin
+                          </option>
                         </select>
                       </td>
-                      <td>
-                        <button onClick={() => handleDelete(item._id)} className="um-delete-btn">
+
+                      <td className="px-4 py-3">
+                        <button
+                          onClick={() =>
+                            handleDelete(item._id)
+                          }
+                          className="rounded border border-red-200 bg-red-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-red-500 transition-all duration-200 hover:border-red-400 hover:bg-red-100"
+                        >
                           Delete
                         </button>
                       </td>
@@ -255,18 +272,21 @@ const UserManagement = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} style={{ textAlign: "center", color: "#bbb", padding: 32, fontSize: 12, letterSpacing: "0.1em" }}>
+                    <td
+                      colSpan={4}
+                      className="px-4 py-8 text-center text-sm tracking-[0.1em] text-gray-400"
+                    >
                       No users found
                     </td>
                   </tr>
                 )}
               </tbody>
+
             </table>
           </div>
-
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

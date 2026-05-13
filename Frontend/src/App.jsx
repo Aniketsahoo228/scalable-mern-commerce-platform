@@ -28,14 +28,13 @@ const App = () => {
     <BrowserRouter future={{ v7_startTransition: true , v7_relativeSplatPath : true}}>
     <Toaster position="top-right" />
       <Routes>
-        <Route path="login" element={<Login/>} />
-        <Route path="register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
         <Route path = "/" element = {<UserLayout />}>
-        <Route element={<ProtectedRoute><Home /></ProtectedRoute>} index />
+        <Route index element={<Home />} />
         <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="collections/:collection" element={<ProtectedRoute><CollectionPages /></ProtectedRoute>} />
         <Route path ="product/:id" element={<ProtectedRoute><ProductDetails /></ProtectedRoute>} />
-        <Route path="products/:id" element={<ProtectedRoute><ProductDetails /></ProtectedRoute>} />
         <Route path ="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
         <Route path ="order-confirmation" element ={<ProtectedRoute><OrderConfirmationPage /></ProtectedRoute>} /> 
         <Route path ="order/:id" element ={<ProtectedRoute><OrderDetailsPage /></ProtectedRoute>} />

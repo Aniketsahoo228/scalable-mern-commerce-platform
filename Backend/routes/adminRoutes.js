@@ -66,7 +66,7 @@ router.put("/:id", protect, admin, async (req, res) => {
 
     user.name = name || user.name;
     user.email = email || user.email;
-    user.role = role || user.role;
+    user.role = role !== undefined ? role : user.role;
     const updatedUser = await user.save();
     return res.json({ message: "User updated successfully", user: updatedUser });
 
