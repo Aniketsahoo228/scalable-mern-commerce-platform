@@ -69,6 +69,7 @@ The codebase is organized as a split frontend/backend application, with Redux To
 ```text
 full_mern_stack_Ecommerce_Project-main/
 +-- Backend/
+
 ¦   +-- config/
 ¦   ¦   +-- db.js
 ¦   +-- data/
@@ -178,6 +179,9 @@ full_mern_stack_Ecommerce_Project-main/
 ¦   +-- package.json
 ¦   +-- tailwind.config.js
 ¦   +-- vite.config.js
+
++-- Frontend/
+
 +-- README.md
 ```
 
@@ -341,23 +345,23 @@ VITE_PAYPAL_CLIENT_ID=your_paypal_client_id
 
 The main frontend pages currently live under the following routes:
 
-| Page | Route |
-|---|---|
-| Home | `/` |
-| Login | `/login` |
-| Register | `/register` |
-| Profile | `/profile` |
-| Collections | `/collections/all` |
-| Product Details | `/product/:id` |
-| Cart | `/cart` |
-| Checkout | `/checkout` |
+| Page               | Route                 |
+| ------------------ | --------------------- |
+| Home               | `/`                   |
+| Login              | `/login`              |
+| Register           | `/register`           |
+| Profile            | `/profile`            |
+| Collections        | `/collections/all`    |
+| Product Details    | `/product/:id`        |
+| Cart               | `/cart`               |
+| Checkout           | `/checkout`           |
 | Order Confirmation | `/order-confirmation` |
-| My Orders | `/my-orders` |
-| Order Details | `/order/:id` |
-| Admin Dashboard | `/admin` |
-| Admin Users | `/admin/users` |
-| Admin Products | `/admin/products` |
-| Admin Orders | `/admin/orders` |
+| My Orders          | `/my-orders`          |
+| Order Details      | `/order/:id`          |
+| Admin Dashboard    | `/admin`              |
+| Admin Users        | `/admin/users`        |
+| Admin Products     | `/admin/products`     |
+| Admin Orders       | `/admin/orders`       |
 
 ## Deployment Order
 
@@ -442,39 +446,39 @@ For the smoothest production setup:
 
 ## API Documentation
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/users/register` | Register a new user |
-| `POST` | `/api/users/login` | Authenticate a user and return a JWT |
-| `GET` | `/api/users/profile` | Get the authenticated user profile |
-| `GET` | `/api/products` | Fetch products with optional filters |
-| `GET` | `/api/products/:id` | Fetch a single product |
-| `GET` | `/api/products/new-arrivals` | Fetch the latest products |
-| `GET` | `/api/products/best-seller` | Fetch the top-rated product |
-| `GET` | `/api/products/similar/:id` | Fetch similar products |
-| `POST` | `/api/products` | Create a product (admin) |
-| `PUT` | `/api/products/:id` | Update a product (admin) |
-| `DELETE` | `/api/products/:id` | Delete a product (admin) |
-| `GET` | `/api/cart` | Fetch a guest or user cart |
-| `POST` | `/api/cart` | Add an item to the cart |
-| `PUT` | `/api/cart` | Update item quantity in the cart |
-| `DELETE` | `/api/cart` | Remove an item from the cart |
-| `POST` | `/api/cart/merge` | Merge guest cart into authenticated cart |
-| `POST` | `/api/checkout` | Create a checkout session |
-| `PUT` | `/api/checkout/:id/pay` | Mark checkout as paid |
-| `POST` | `/api/checkout/:id/finalize` | Convert checkout into an order |
-| `GET` | `/api/orders/my-orders` | Get current user order history |
-| `GET` | `/api/orders/:id` | Get order details |
-| `POST` | `/api/upload` | Upload an image to Cloudinary |
-| `POST` | `/api/subscribe` | Add a newsletter subscriber |
-| `GET` | `/api/admin/users` | List all users (admin) |
-| `POST` | `/api/admin/users` | Create a user (admin) |
-| `PUT` | `/api/admin/users/:id` | Update a user (admin) |
-| `DELETE` | `/api/admin/users/:id` | Delete a user (admin) |
-| `GET` | `/api/admin/products` | List all products (admin) |
-| `GET` | `/api/admin/orders` | List all orders (admin) |
-| `PUT` | `/api/admin/orders/:id` | Update order status (admin) |
-| `DELETE` | `/api/admin/orders/:id` | Delete an order (admin) |
+| Method   | Endpoint                     | Description                              |
+| -------- | ---------------------------- | ---------------------------------------- |
+| `POST`   | `/api/users/register`        | Register a new user                      |
+| `POST`   | `/api/users/login`           | Authenticate a user and return a JWT     |
+| `GET`    | `/api/users/profile`         | Get the authenticated user profile       |
+| `GET`    | `/api/products`              | Fetch products with optional filters     |
+| `GET`    | `/api/products/:id`          | Fetch a single product                   |
+| `GET`    | `/api/products/new-arrivals` | Fetch the latest products                |
+| `GET`    | `/api/products/best-seller`  | Fetch the top-rated product              |
+| `GET`    | `/api/products/similar/:id`  | Fetch similar products                   |
+| `POST`   | `/api/products`              | Create a product (admin)                 |
+| `PUT`    | `/api/products/:id`          | Update a product (admin)                 |
+| `DELETE` | `/api/products/:id`          | Delete a product (admin)                 |
+| `GET`    | `/api/cart`                  | Fetch a guest or user cart               |
+| `POST`   | `/api/cart`                  | Add an item to the cart                  |
+| `PUT`    | `/api/cart`                  | Update item quantity in the cart         |
+| `DELETE` | `/api/cart`                  | Remove an item from the cart             |
+| `POST`   | `/api/cart/merge`            | Merge guest cart into authenticated cart |
+| `POST`   | `/api/checkout`              | Create a checkout session                |
+| `PUT`    | `/api/checkout/:id/pay`      | Mark checkout as paid                    |
+| `POST`   | `/api/checkout/:id/finalize` | Convert checkout into an order           |
+| `GET`    | `/api/orders/my-orders`      | Get current user order history           |
+| `GET`    | `/api/orders/:id`            | Get order details                        |
+| `POST`   | `/api/upload`                | Upload an image to Cloudinary            |
+| `POST`   | `/api/subscribe`             | Add a newsletter subscriber              |
+| `GET`    | `/api/admin/users`           | List all users (admin)                   |
+| `POST`   | `/api/admin/users`           | Create a user (admin)                    |
+| `PUT`    | `/api/admin/users/:id`       | Update a user (admin)                    |
+| `DELETE` | `/api/admin/users/:id`       | Delete a user (admin)                    |
+| `GET`    | `/api/admin/products`        | List all products (admin)                |
+| `GET`    | `/api/admin/orders`          | List all orders (admin)                  |
+| `PUT`    | `/api/admin/orders/:id`      | Update order status (admin)              |
+| `DELETE` | `/api/admin/orders/:id`      | Delete an order (admin)                  |
 
 ## Engineering Highlights
 
@@ -504,4 +508,3 @@ For the smoothest production setup:
 
 - GitHub: [Aniketsahoo228](https://github.com/Aniketsahoo228)
 - LinkedIn: [Aniket Sahoo](https://www.linkedin.com/in/aniket-sahoo-b17496299/)
-
