@@ -34,9 +34,14 @@ export const fetchProfile = createAsyncThunk(
       );
 
       localStorage.setItem("userInfo", JSON.stringify(response.data));
+
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Failed to fetch profile" });
+      return rejectWithValue(
+        error.response?.data || {
+          message: "Failed to fetch profile",
+        }
+      );
     }
   }
 );
@@ -56,9 +61,14 @@ export const updateProfileImage = createAsyncThunk(
       );
 
       localStorage.setItem("userInfo", JSON.stringify(response.data));
+
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Failed to update profile image" });
+      return rejectWithValue(
+        error.response?.data || {
+          message: "Failed to update profile image",
+        }
+      );
     }
   }
 );
@@ -73,12 +83,23 @@ export const loginUser = createAsyncThunk(
         userData
       );
 
-      localStorage.setItem("userInfo", JSON.stringify(response.data.user));
-      localStorage.setItem("userToken", response.data.token);
+      localStorage.setItem(
+        "userInfo",
+        JSON.stringify(response.data.user)
+      );
+
+      localStorage.setItem(
+        "userToken",
+        response.data.token
+      );
 
       return response.data.user;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: "Login failed" });
+      return rejectWithValue(
+        error.response?.data || {
+          message: "Login failed",
+        }
+      );
     }
   }
 );
@@ -93,11 +114,17 @@ export const registerUser = createAsyncThunk(
         userData
       );
 
-      localStorage.setItem("userInfo", JSON.stringify(response.data.user));
-      localStorage.setItem("userToken", response.data.token);
+      localStorage.setItem(
+        "userInfo",
+        JSON.stringify(response.data.user)
+      );
 
-      return response.data.user; // Return the user object
+      localStorage.setItem(
+        "userToken",
+        response.data.token
+      );
 
+      return response.data.user;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
@@ -108,19 +135,49 @@ export const registerUser = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState,
+
   reducers: {
     logout: (state) => {
       state.user = null;
-      state.guestId = `guest_${new Date().getTime()}`; // Reset guest ID on logout
+
+      state.guestId = `guest_${new Date().getTime()}`;
 
       localStorage.removeItem("userInfo");
       localStorage.removeItem("userToken");
 
-      localStorage.setItem("guestId", state.guestId); // Set new guest ID
+      localStorage.setItem(
+        "guestId",
+        state.guestId
+      );
     },
+
     generateNewGuestId: (state) => {
       state.guestId = `guest_${new Date().getTime()}`;
-      localStorage.setItem("guestId", state.guestId);
+
+      localStorage.setItem(
+        "guestId",
+        state.guestId
+      );
+    },
+
+    // NEW: Sync updated admin changes instantly
+    syncUserFromAdmin: (state, action) => {
+      const updatedUser = action.payload;
+
+      if (
+        state.user &&
+        state.user._id === updatedUser._id
+      ) {
+        state.user = {
+          ...state.user,
+          ...updatedUser,
+        };
+
+        localStorage.setItem(
+          "userInfo",
+          JSON.stringify(state.user)
+        );
+      }
     },
   },
 
@@ -130,52 +187,85 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
+
       .addCase(loginUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
       })
+
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || "Login failed";
+
+        state.error =
+          action.payload?.message || "Login failed";
       })
+
       .addCase(registerUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
+
       .addCase(registerUser.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
       })
+
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || "Registration failed";
+
+        state.error =
+          action.payload?.message ||
+          "Registration failed";
       })
+
       .addCase(fetchProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
+
       .addCase(fetchProfile.fulfilled, (state, action) => {
         state.loading = false;
         state.user = action.payload;
       })
+
       .addCase(fetchProfile.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || "Failed to fetch profile";
+
+        state.error =
+          action.payload?.message ||
+          "Failed to fetch profile";
       })
+
       .addCase(updateProfileImage.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateProfileImage.fulfilled, (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-      })
-      .addCase(updateProfileImage.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload?.message || "Failed to update profile image";
-      });
-  }
+
+      .addCase(
+        updateProfileImage.fulfilled,
+        (state, action) => {
+          state.loading = false;
+          state.user = action.payload;
+        }
+      )
+
+      .addCase(
+        updateProfileImage.rejected,
+        (state, action) => {
+          state.loading = false;
+
+          state.error =
+            action.payload?.message ||
+            "Failed to update profile image";
+        }
+      );
+  },
 });
 
-export const { logout, generateNewGuestId } = authSlice.actions;
+export const {
+  logout,
+  generateNewGuestId,
+  syncUserFromAdmin,
+} = authSlice.actions;
+
 export default authSlice.reducer;

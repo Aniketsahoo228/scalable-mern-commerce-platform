@@ -1,53 +1,99 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+
 import MyOrdersPage from "../components/Products/MyOrderPage";
-import { fetchProfile, logout, updateProfileImage } from "../redux/slices/authSlice";
+
+import {
+  fetchProfile,
+  logout,
+  updateProfileImage,
+} from "../redux/slices/authSlice";
+
+import { fetchUserOrders } from "../redux/slices/orderSlice";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("orders");
   const [mounted, setMounted] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+
   const fileInputRef = useRef(null);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { user } = useSelector((state) => state.auth);
   const { orders } = useSelector((state) => state.order);
 
+  // Redirect if not logged in
   useEffect(() => {
     if (!user) navigate("/login");
   }, [navigate, user]);
 
+  // ALWAYS fetch fresh profile + orders from DB
   useEffect(() => {
-    if (user && !user.createdAt) dispatch(fetchProfile());
-  }, [dispatch, user]);
+    dispatch(fetchProfile());
+    dispatch(fetchUserOrders());
+  }, [dispatch]);
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 50);
+
     return () => clearTimeout(t);
   }, []);
 
   const profileStats = useMemo(() => {
-    const totalOrders = Array.isArray(orders) ? orders.length : 0;
-    const totalSpent = Array.isArray(orders)
-      ? orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0)
+    const totalOrders = Array.isArray(orders)
+      ? orders.length
       : 0;
+
+    const totalSpent = Array.isArray(orders)
+      ? orders.reduce(
+          (sum, order) =>
+            sum + (order.totalPrice || 0),
+          0
+        )
+      : 0;
+
     return [
-      { label: "Total Orders", value: String(totalOrders) },
-      { label: "Total Spent", value: `$${totalSpent}` },
-      { label: "Role", value: user?.role || "-" },
+      {
+        label: "Total Orders",
+        value: String(totalOrders),
+      },
+      {
+        label: "Total Spent",
+        value: `$${totalSpent}`,
+      },
+      {
+        label: "Role",
+        value: user?.role || "-",
+      },
     ];
   }, [orders, user]);
 
   const profileDetails = [
-    { label: "Full Name", value: user?.name || "-" },
-    { label: "Email", value: user?.email || "-" },
-    { label: "Role", value: user?.role || "-" },
+    {
+      label: "Full Name",
+      value: user?.name || "-",
+    },
+    {
+      label: "Email",
+      value: user?.email || "-",
+    },
+    {
+      label: "Role",
+      value: user?.role || "-",
+    },
     {
       label: "Member Since",
       value: user?.createdAt
-        ? new Date(user.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long" })
+        ? new Date(user.createdAt).toLocaleDateString(
+            "en-US",
+            {
+              year: "numeric",
+              month: "long",
+            }
+          )
         : "-",
     },
   ];
@@ -63,437 +109,243 @@ const Profile = () => {
 
   const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
+
     if (!file) return;
+
     const localUrl = URL.createObjectURL(file);
+
     setPreviewImage(localUrl);
+
     await dispatch(updateProfileImage(localUrl));
   };
 
   const handleRemoveImage = async () => {
     setPreviewImage(null);
+
     await dispatch(updateProfileImage(null));
   };
 
-  const displayImage = previewImage || user?.profileImage;
+  const displayImage =
+    previewImage || user?.profileImage;
 
   const getInitials = (name = "") => {
-    const parts = name.trim().split(/\s+/).filter(Boolean);
+    const parts = name
+      .trim()
+      .split(/\s+/)
+      .filter(Boolean);
+
     if (parts.length === 0) return "?";
-    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
-    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+
+    if (parts.length === 1) {
+      return parts[0]
+        .charAt(0)
+        .toUpperCase();
+    }
+
+    return (
+      parts[0].charAt(0) +
+      parts[parts.length - 1].charAt(0)
+    ).toUpperCase();
   };
 
   const initials = getInitials(user?.name);
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap');
+    <div className="relative min-h-screen overflow-hidden bg-[#111] font-[Montserrat] text-white">
 
-        .pr-root { font-family: 'Montserrat', sans-serif; }
-        .pr-brand { font-family: 'Cormorant Garamond', serif; }
+      {/* TOP LINE */}
+      <div className="absolute top-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-[#c9a96e] to-transparent animate-pulse" />
 
-        .pr-page {
-          opacity: 0;
-          transform: translateY(16px);
-          transition: opacity 0.8s ease, transform 0.8s ease;
-        }
-        .pr-page.in { opacity: 1; transform: translateY(0); }
+      {/* HIDDEN FILE INPUT */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
 
-        .pr-fade {
-          opacity: 0;
-          transform: translateY(20px);
-          transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        .pr-page.in .pr-fade { opacity: 1; transform: translateY(0); }
-        .pr-page.in .pr-fade:nth-child(1) { transition-delay: 0.1s; }
-        .pr-page.in .pr-fade:nth-child(2) { transition-delay: 0.2s; }
-        .pr-page.in .pr-fade:nth-child(3) { transition-delay: 0.3s; }
-        .pr-page.in .pr-fade:nth-child(4) { transition-delay: 0.4s; }
-        .pr-page.in .pr-fade:nth-child(5) { transition-delay: 0.5s; }
-
-        @keyframes ring-pulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(201,169,110,0.4); }
-          50%       { box-shadow: 0 0 0 8px rgba(201,169,110,0); }
-        }
-
-        .pr-avatar-wrap {
-          position: relative;
-          width: 88px;
-          height: 88px;
-          margin: 0 auto 20px;
-          cursor: pointer;
-          border-radius: 50%;
-        }
-
-        .pr-avatar {
-          width: 88px;
-          height: 88px;
-          border-radius: 50%;
-          background: rgba(201,169,110,0.08);
-          border: 1px solid rgba(201,169,110,0.35);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-          animation: ring-pulse 3s ease-in-out infinite;
-          transition: border-color 0.3s ease;
-        }
-        .pr-avatar-wrap:hover .pr-avatar {
-          border-color: rgba(201,169,110,0.7);
-        }
-        .pr-avatar img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .pr-initials {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 26px;
-          font-weight: 400;
-          color: #c9a96e;
-          letter-spacing: 0.08em;
-          user-select: none;
-        }
-
-        .pr-avatar-overlay {
-          position: absolute;
-          inset: 0;
-          border-radius: 50%;
-          background: rgba(0,0,0,0.65);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 5px;
-          opacity: 0;
-          transition: opacity 0.3s ease;
-        }
-        .pr-avatar-wrap:hover .pr-avatar-overlay { opacity: 1; }
-
-        .pr-camera-icon {
-          width: 18px;
-          height: 18px;
-          border: 1.5px solid #c9a96e;
-          border-radius: 3px;
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          pointer-events: none;
-        }
-        .pr-camera-icon::before {
-          content: '';
-          width: 7px; height: 7px;
-          border-radius: 50%;
-          border: 1.5px solid #c9a96e;
-        }
-        .pr-camera-icon::after {
-          content: '';
-          position: absolute;
-          top: -4px; left: 50%;
-          transform: translateX(-50%);
-          width: 5px; height: 3px;
-          border-radius: 2px 2px 0 0;
-          border: 1.5px solid #c9a96e;
-          border-bottom: none;
-        }
-
-        .pr-overlay-text {
-          font-size: 8px;
-          font-weight: 600;
-          letter-spacing: 0.15em;
-          text-transform: uppercase;
-          color: #c9a96e;
-          background: none;
-          border: none;
-          cursor: pointer;
-          padding: 0;
-          line-height: 1;
-        }
-
-        .pr-overlay-divider {
-          width: 20px;
-          height: 1px;
-          background: rgba(201,169,110,0.2);
-        }
-
-        .pr-overlay-remove {
-          font-size: 7px;
-          font-weight: 600;
-          letter-spacing: 0.1em;
-          text-transform: uppercase;
-          color: rgba(239,100,100,0.55);
-          background: none;
-          border: none;
-          cursor: pointer;
-          padding: 0;
-          line-height: 1;
-          transition: color 0.2s ease;
-        }
-        .pr-overlay-remove:hover { color: rgba(239,100,100,0.9); }
-
-        @keyframes shimmer {
-          0%   { background-position: -400px 0; }
-          100% { background-position: 400px 0; }
-        }
-        .pr-name {
-          background: linear-gradient(90deg, #c9a96e 30%, #f0d898 50%, #c9a96e 70%);
-          background-size: 400px 100%;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: shimmer 4s linear infinite;
-        }
-
-        @keyframes scan {
-          0%   { background-position: -100% 0; }
-          100% { background-position: 200% 0; }
-        }
-        .pr-topline {
-          height: 1px;
-          background: linear-gradient(90deg, transparent 0%, #c9a96e 50%, transparent 100%);
-          background-size: 200% 100%;
-          animation: scan 3s linear infinite;
-        }
-
-        .pr-stat {
-          background: rgba(255,255,255,0.03);
-          border: 1px solid rgba(201,169,110,0.12);
-          border-radius: 2px;
-          text-align: center;
-          padding: 24px 16px;
-          cursor: default;
-          transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
-          position: relative;
-          overflow: hidden;
-        }
-        .pr-stat::before {
-          content: '';
-          position: absolute;
-          bottom: 0; left: 0;
-          width: 100%; height: 1px;
-          background: #c9a96e;
-          transform: scaleX(0);
-          transform-origin: left;
-          transition: transform 0.4s ease;
-        }
-        .pr-stat:hover { transform: translateY(-4px); border-color: rgba(201,169,110,0.35); background: rgba(201,169,110,0.04); }
-        .pr-stat:hover::before { transform: scaleX(1); }
-
-        .pr-tab {
-          position: relative;
-          padding-bottom: 12px;
-          margin-right: 32px;
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.25em;
-          text-transform: uppercase;
-          background: none;
-          border: none;
-          cursor: pointer;
-          transition: color 0.3s ease;
-        }
-        .pr-tab::after {
-          content: '';
-          position: absolute;
-          bottom: 0; left: 0;
-          width: 100%; height: 1px;
-          background: #c9a96e;
-          transform: scaleX(0);
-          transform-origin: left;
-          transition: transform 0.35s ease;
-        }
-        .pr-tab.active::after { transform: scaleX(1); }
-
-        .pr-detail-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 20px 24px;
-          transition: background 0.25s ease;
-        }
-        .pr-detail-row:hover { background: rgba(201,169,110,0.04); }
-
-        .pr-tab-content { animation: tabIn 0.4s ease both; }
-        @keyframes tabIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-
-        .pr-logout {
-          width: 100%;
-          margin-top: 40px;
-          padding: 16px;
-          background: transparent;
-          border: 1px solid rgba(239,68,68,0.2);
-          color: rgba(239,68,68,0.5);
-          font-family: 'Montserrat', sans-serif;
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.3em;
-          text-transform: uppercase;
-          cursor: pointer;
-          position: relative;
-          overflow: hidden;
-          transition: color 0.3s ease, border-color 0.3s ease;
-        }
-        .pr-logout::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: rgba(239,68,68,0.06);
-          transform: translateX(-100%);
-          transition: transform 0.4s ease;
-        }
-        .pr-logout:hover { color: #f87171; border-color: rgba(239,68,68,0.45); }
-        .pr-logout:hover::after { transform: translateX(0); }
-        .pr-logout span { position: relative; z-index: 1; }
-
-        @keyframes float-up {
-          0%   { transform: translateY(0) translateX(0); opacity: 0; }
-          10%  { opacity: 0.6; }
-          90%  { opacity: 0.2; }
-          100% { transform: translateY(-120px) translateX(20px); opacity: 0; }
-        }
-        .pr-particle {
-          position: absolute;
-          width: 2px; height: 2px;
-          border-radius: 50%;
-          background: #c9a96e;
-          animation: float-up linear infinite;
-          pointer-events: none;
-        }
-      `}</style>
-
-      <div className="pr-root" style={{ background: "#111", minHeight: "100vh", position: "relative", overflow: "hidden" }}>
-
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          style={{ display: "none" }}
-          onChange={handleFileChange}
-        />
-
-        {[...Array(8)].map((_, i) => (
-          <div key={i} className="pr-particle" style={{
+      {/* PARTICLES */}
+      {[...Array(8)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute h-[2px] w-[2px] rounded-full bg-[#c9a96e] animate-bounce opacity-20"
+          style={{
             left: `${10 + i * 12}%`,
             bottom: `${10 + (i % 3) * 8}%`,
             animationDuration: `${4 + i * 0.8}s`,
             animationDelay: `${i * 0.6}s`,
-            opacity: 0,
-          }} />
-        ))}
+          }}
+        />
+      ))}
 
-        <div className="pr-topline" />
+      <div
+        className={`mx-auto max-w-[780px] px-6 py-16 transition-all duration-700 ${
+          mounted
+            ? "translate-y-0 opacity-100"
+            : "translate-y-4 opacity-0"
+        }`}
+      >
 
-        <div className={`pr-page ${mounted ? "in" : ""}`} style={{ maxWidth: 780, margin: "0 auto", padding: "64px 24px" }}>
+        {/* HEADER */}
+        <div className="mb-12 text-center">
 
-          {/* Header */}
-          <div className="pr-fade" style={{ textAlign: "center", marginBottom: 48 }}>
+          {/* AVATAR */}
+          <div
+            className="group relative mx-auto mb-5 h-[88px] w-[88px] cursor-pointer rounded-full"
+            onClick={handleAvatarClick}
+            title="Change profile photo"
+          >
 
-            <div className="pr-avatar-wrap" onClick={handleAvatarClick} title="Change profile photo">
-              <div className="pr-avatar">
-                {displayImage ? (
-                  <img src={displayImage} alt={user?.name || "Profile"} />
-                ) : (
-                  <span className="pr-initials">{initials}</span>
-                )}
-              </div>
-              <div className="pr-avatar-overlay">
-                <div className="pr-camera-icon" />
-                <button className="pr-overlay-text" onClick={handleAvatarClick}>
-                  Change
-                </button>
-                {displayImage && (
-                  <>
-                    <div className="pr-overlay-divider" />
-                    <button
-                      className="pr-overlay-remove"
-                      onClick={(e) => { e.stopPropagation(); handleRemoveImage(); }}
-                    >
-                      Remove
-                    </button>
-                  </>
-                )}
-              </div>
+            <div className="flex h-full w-full items-center justify-center overflow-hidden rounded-full border border-[#c9a96e59] bg-[#c9a96e14] transition-all duration-300 group-hover:border-[#c9a96eb3]">
+
+              {displayImage ? (
+                <img
+                  src={displayImage}
+                  alt={user?.name || "Profile"}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span className="font-[Cormorant_Garamond] text-[26px] tracking-[0.08em] text-[#c9a96e]">
+                  {initials}
+                </span>
+              )}
             </div>
 
-            <p style={{ fontSize: 9, letterSpacing: "0.4em", color: "#c9a96e", textTransform: "uppercase", marginBottom: 12 }}>
-              Member Profile
-            </p>
-            <h1 className="pr-brand pr-name" style={{ fontSize: 56, fontWeight: 300, letterSpacing: "0.04em", margin: "0 0 12px" }}>
-              {user?.name || "Member"}
-            </h1>
-            <div style={{ width: 32, height: 1, background: "#c9a96e", margin: "0 auto 12px" }} />
-            <p style={{ fontSize: 11, letterSpacing: "0.2em", color: "rgba(255,255,255,0.3)" }}>
-              {user?.email || "-"}
-            </p>
-          </div>
+            {/* OVERLAY */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-full bg-black/70 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
 
-          {/* Stats */}
-          <div className="pr-fade" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 12, marginBottom: 40 }}>
-            {profileStats.map((stat, i) => (
-              <div key={stat.label} className="pr-stat" style={{ transitionDelay: `${0.05 * i}s` }}>
-                <p className="pr-brand" style={{ fontSize: 40, fontWeight: 300, color: "#fff", marginBottom: 6 }}>
-                  {stat.value}
-                </p>
-                <p style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}>
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Tabs */}
-          <div className="pr-fade" style={{ display: "flex", borderBottom: "1px solid rgba(255,255,255,0.07)", marginBottom: 28 }}>
-            {["orders", "details"].map((tab) => (
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`pr-tab ${activeTab === tab ? "active" : ""}`}
-                style={{ color: activeTab === tab ? "#c9a96e" : "rgba(255,255,255,0.3)" }}
+                className="text-[8px] font-semibold uppercase tracking-[0.15em] text-[#c9a96e]"
+                onClick={handleAvatarClick}
               >
-                {tab}
+                Change
               </button>
-            ))}
+
+              {displayImage && (
+                <>
+                  <div className="h-[1px] w-5 bg-[#c9a96e33]" />
+
+                  <button
+                    className="text-[7px] font-semibold uppercase tracking-[0.1em] text-red-400/60 transition hover:text-red-400"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveImage();
+                    }}
+                  >
+                    Remove
+                  </button>
+                </>
+              )}
+            </div>
           </div>
 
-          {/* Tab content */}
-          <div className="pr-fade">
-            {activeTab === "orders" && (
-              <div key="orders" className="pr-tab-content" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", padding: 24 }}>
-                <MyOrdersPage />
-              </div>
-            )}
-            {activeTab === "details" && (
-              <div key="details" className="pr-tab-content" style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.02)" }}>
-                {profileDetails.map((item, i, arr) => (
-                  <div key={item.label} className="pr-detail-row" style={{ borderBottom: i < arr.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none" }}>
-                    <span style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.25em", textTransform: "uppercase", color: "rgba(255,255,255,0.3)" }}>
-                      {item.label}
-                    </span>
-                    <span style={{ fontSize: 13, letterSpacing: "0.05em", color: "#fff" }}>
-                      {item.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          <p className="mb-3 text-[9px] uppercase tracking-[0.4em] text-[#c9a96e]">
+            Member Profile
+          </p>
 
-          {/* Logout */}
-          <div className="pr-fade">
-            <button className="pr-logout" onClick={handleLogout}>
-              <span>Logout</span>
+          <h1 className="mb-3 font-[Cormorant_Garamond] text-[56px] font-light tracking-[0.04em] text-[#c9a96e]">
+            {user?.name || "Member"}
+          </h1>
+
+          <div className="mx-auto mb-3 h-[1px] w-8 bg-[#c9a96e]" />
+
+          <p className="text-[11px] tracking-[0.2em] text-white/30">
+            {user?.email || "-"}
+          </p>
+        </div>
+
+        {/* STATS */}
+        <div className="mb-10 grid grid-cols-1 gap-3 md:grid-cols-3">
+
+          {profileStats.map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-sm border border-[#c9a96e1f] bg-white/[0.03] px-4 py-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-[#c9a96e59] hover:bg-[#c9a96e0a]"
+            >
+              <p className="mb-1 font-[Cormorant_Garamond] text-[40px] font-light text-white">
+                {stat.value}
+              </p>
+
+              <p className="text-[9px] font-semibold uppercase tracking-[0.25em] text-white/30">
+                {stat.label}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* TABS */}
+        <div className="mb-7 flex border-b border-white/10">
+
+          {["orders", "details"].map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`relative mr-8 pb-3 text-[10px] font-semibold uppercase tracking-[0.25em] transition-colors duration-300 ${
+                activeTab === tab
+                  ? "text-[#c9a96e]"
+                  : "text-white/30"
+              }`}
+            >
+              {tab}
+
+              {activeTab === tab && (
+                <span className="absolute bottom-0 left-0 h-[1px] w-full bg-[#c9a96e]" />
+              )}
             </button>
-          </div>
+          ))}
+        </div>
 
+        {/* TAB CONTENT */}
+        <div className="transition-all duration-300">
+
+          {activeTab === "orders" && (
+            <div className="border border-white/10 bg-white/[0.02] p-6">
+              <MyOrdersPage />
+            </div>
+          )}
+
+          {activeTab === "details" && (
+            <div className="border border-white/10 bg-white/[0.02]">
+
+              {profileDetails.map((item, i, arr) => (
+                <div
+                  key={item.label}
+                  className={`flex items-center justify-between px-6 py-5 transition-colors duration-300 hover:bg-[#c9a96e0a] ${
+                    i < arr.length - 1
+                      ? "border-b border-white/10"
+                      : ""
+                  }`}
+                >
+                  <span className="text-[9px] font-semibold uppercase tracking-[0.25em] text-white/30">
+                    {item.label}
+                  </span>
+
+                  <span className="text-[13px] tracking-[0.05em] text-white">
+                    {item.value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* LOGOUT */}
+        <div className="mt-10">
+
+          <button
+            className="group relative w-full overflow-hidden border border-red-400/20 px-4 py-4 text-[10px] font-semibold uppercase tracking-[0.3em] text-red-400/50 transition-all duration-300 hover:border-red-400/50 hover:text-red-400"
+            onClick={handleLogout}
+          >
+            <span className="relative z-10">
+              Logout
+            </span>
+
+            <span className="absolute inset-0 -translate-x-full bg-red-400/10 transition-transform duration-300 group-hover:translate-x-0" />
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

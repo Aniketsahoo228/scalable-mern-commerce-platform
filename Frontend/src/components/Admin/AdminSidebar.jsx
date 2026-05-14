@@ -1,4 +1,6 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/slices/authSlice";
 import {
   FaBoxOpen,
   FaChartLine,
@@ -10,9 +12,12 @@ import {
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handelLogout = () => {
-    navigate("/");
+    dispatch(logout());
+    localStorage.removeItem("userToken");
+    navigate("/login");
   };
 
   return (

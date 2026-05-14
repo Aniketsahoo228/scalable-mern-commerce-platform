@@ -4,16 +4,25 @@ import { logout } from "./authSlice";
 
 const handleAuthFailure = (error, rejectWithValue, dispatch) => {
   const message = error.response?.data?.message;
+
   if (
     error.response?.status === 401 &&
-    (message === "Not authorized, token failed" || message === "Not authorized, no token")
+    (
+      message === "Not authorized, token failed" ||
+      message === "Not authorized, no token"
+    )
   ) {
     dispatch(logout());
   }
-  return rejectWithValue(error.response?.data || { message: "Request failed" });
+
+  return rejectWithValue(
+    error.response?.data || {
+      message: "Request failed",
+    }
+  );
 };
 
-// Fetch all orders (admin only)
+// Fetch all orders (Admin only)
 export const fetchAllOrders = createAsyncThunk(
   "adminOrders/fetchAllOrders",
   async (_, { rejectWithValue, dispatch }) => {
@@ -26,15 +35,20 @@ export const fetchAllOrders = createAsyncThunk(
           },
         }
       );
-      return response.data;
-    } catch (error) {
-        return handleAuthFailure(error, rejectWithValue, dispatch);
 
+      return response.data;
+
+    } catch (error) {
+      return handleAuthFailure(
+        error,
+        rejectWithValue,
+        dispatch
+      );
     }
   }
 );
 
-// update order delivery status
+// Update order status
 export const updateOrderStatus = createAsyncThunk(
   "adminOrders/updateOrderStatus",
   async ({ id, status }, { rejectWithValue, dispatch }) => {
@@ -50,13 +64,18 @@ export const updateOrderStatus = createAsyncThunk(
       );
 
       return response.data;
+
     } catch (error) {
-      return handleAuthFailure(error, rejectWithValue, dispatch);
+      return handleAuthFailure(
+        error,
+        rejectWithValue,
+        dispatch
+      );
     }
   }
 );
 
-// Delete an order
+// Delete order
 export const deleteOrder = createAsyncThunk(
   "adminOrders/deleteOrder",
   async (id, { rejectWithValue, dispatch }) => {
@@ -71,14 +90,20 @@ export const deleteOrder = createAsyncThunk(
       );
 
       return id;
+
     } catch (error) {
-      return handleAuthFailure(error, rejectWithValue, dispatch);
+      return handleAuthFailure(
+        error,
+        rejectWithValue,
+        dispatch
+      );
     }
   }
 );
 
 const adminOrderSlice = createSlice({
   name: "adminOrders",
+
   initialState: {
     orders: [],
     totalOrders: 0,
@@ -86,60 +111,94 @@ const adminOrderSlice = createSlice({
     loading: false,
     error: null,
   },
+
   reducers: {},
+
   extraReducers: (builder) => {
     builder
+
       // Fetch all orders
       .addCase(fetchAllOrders.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
+
       .addCase(fetchAllOrders.fulfilled, (state, action) => {
         state.loading = false;
+
         state.orders = action.payload;
-        state.totalOrders = Array.isArray(action.payload) ? action.payload.length : 0;
+
+        state.totalOrders = Array.isArray(action.payload)
+          ? action.payload.length
+          : 0;
+
         state.totalSales = Array.isArray(action.payload)
-          ? action.payload.reduce((sum, order) => sum + (order.totalPrice || 0), 0)
+          ? action.payload.reduce(
+              (sum, order) => sum + (order.totalPrice || 0),
+              0
+            )
           : 0;
       })
+
       .addCase(fetchAllOrders.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || "Failed to fetch orders";
+
+        state.error =
+          action.payload?.message ||
+          "Failed to fetch orders";
       })
+
       // Update order status
       .addCase(updateOrderStatus.pending, (state) => {
-        state.loading = true;
+        // FIX: removed loading=true to prevent table flicker
         state.error = null;
       })
+
       .addCase(updateOrderStatus.fulfilled, (state, action) => {
-        state.loading = false;
         const updatedOrder = action.payload;
-        const index = state.orders.findIndex((order) => order._id === updatedOrder._id);
+
+        const index = state.orders.findIndex(
+          (order) => order._id === updatedOrder._id
+        );
+
         if (index !== -1) {
           state.orders[index] = updatedOrder;
         }
       })
+
       .addCase(updateOrderStatus.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload?.message || "Failed to update order";
+        state.error =
+          action.payload?.message ||
+          "Failed to update order";
       })
+
       // Delete order
       .addCase(deleteOrder.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
+
       .addCase(deleteOrder.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders = state.orders.filter((order) => order._id !== action.payload);
+
+        state.orders = state.orders.filter(
+          (order) => order._id !== action.payload
+        );
+
         state.totalOrders = state.orders.length;
+
         state.totalSales = state.orders.reduce(
           (sum, order) => sum + (order.totalPrice || 0),
           0
         );
       })
+
       .addCase(deleteOrder.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || "Failed to delete order";
+
+        state.error =
+          action.payload?.message ||
+          "Failed to delete order";
       });
   },
 });

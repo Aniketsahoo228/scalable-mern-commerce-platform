@@ -13,6 +13,8 @@ const EditProductPage = () => {
     (state) => state.products
   );
 
+  const [isUpdating, setIsUpdating] = useState(false);
+
   const [productData, setProductData] = useState({
     name: "",
     description: "",
@@ -35,9 +37,9 @@ const EditProductPage = () => {
     }
   }, [dispatch, id]);
 
+  // Prevent Redux pollution / stale product flashing
   useEffect(() => {
-  if (selectedProduct && selectedProduct._id === id) {
-    setTimeout(() => {
+    if (selectedProduct && selectedProduct._id === id) {
       setProductData({
         name: selectedProduct.name || "",
         description: selectedProduct.description || "",
@@ -53,17 +55,16 @@ const EditProductPage = () => {
         gender: selectedProduct.gender || "",
         images: selectedProduct.images || [],
       });
-    }, 0);
-  }
-}, [selectedProduct, id]);
+    }
+  }, [selectedProduct, id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setProductData({
-      ...productData,
+    setProductData((prev) => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
   const handleArrayToggle = (field, value) => {
@@ -73,62 +74,82 @@ const EditProductPage = () => {
       ? current.filter((v) => v !== value)
       : [...current, value];
 
-    setProductData({
-      ...productData,
+    setProductData((prev) => ({
+      ...prev,
       [field]: updated,
-    });
+    }));
   };
 
+  // Safe image upload with validation + base64
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
 
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
+    if (!file) return;
 
-      setProductData({
-        ...productData,
+    // Only images
+    if (!file.type.startsWith("image/")) {
+      alert("Please upload a valid image file.");
+      return;
+    }
+
+    // Max 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      alert("Image size must be under 5MB.");
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setProductData((prev) => ({
+        ...prev,
         images: [
-          ...productData.images,
+          ...(prev.images || []),
           {
-            url: imageUrl,
-            altText: file.name,
+            url: reader.result,
+            altText: file.name || "Product Image",
           },
         ],
-      });
-    }
+      }));
+
+      // reset input
+      e.target.value = "";
+    };
+
+    reader.readAsDataURL(file);
   };
 
   const handleRemoveImage = (indexToRemove) => {
-    setProductData({
-      ...productData,
-      images: productData.images.filter(
+    setProductData((prev) => ({
+      ...prev,
+      images: prev.images.filter(
         (_, index) => index !== indexToRemove
       ),
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await dispatch(
-      updateAdminProduct({
-        id,
-        productData,
-      })
-    );
+    try {
+      setIsUpdating(true);
 
-    navigate("/admin/products");
+      await dispatch(
+        updateAdminProduct({
+          id,
+          productData,
+        })
+      );
+
+      navigate("/admin/products");
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
-  const sizes = [
-    "XS",
-    "S",
-    "M",
-    "L",
-    "XL",
-    "XXL",
-    "XXXL",
-  ];
+  const sizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
   const colors = [
     "Red",
@@ -140,16 +161,9 @@ const EditProductPage = () => {
     "Gray",
   ];
 
-  const genders = [
-    "Men",
-    "Women",
-    "Unisex",
-  ];
+  const genders = ["Men", "Women", "Unisex"];
 
-  const categories = [
-    "Top Wear",
-    "Bottom Wear",
-  ];
+  const categories = ["Top Wear", "Bottom Wear"];
 
   const materials = [
     "Cotton",
@@ -258,6 +272,7 @@ const EditProductPage = () => {
                   value={productData.price}
                   onChange={handleChange}
                   required
+                  min="0"
                   className="w-full rounded-md border border-[#e8e8ed] bg-[#f9f9fb] px-3 py-2.5 text-sm outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                 />
               </div>
@@ -274,6 +289,7 @@ const EditProductPage = () => {
                   value={productData.countInStock}
                   onChange={handleChange}
                   required
+                  min="0"
                   className="w-full rounded-md border border-[#e8e8ed] bg-[#f9f9fb] px-3 py-2.5 text-sm outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                 />
               </div>
@@ -318,7 +334,7 @@ const EditProductPage = () => {
                   name="description"
                   value={productData.description}
                   onChange={handleChange}
-                  rows={3}
+                  rows={4}
                   className="w-full resize-none rounded-md border border-[#e8e8ed] bg-[#f9f9fb] px-3 py-2.5 text-sm outline-none transition-all duration-200 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100"
                 />
               </div>
@@ -351,15 +367,10 @@ const EditProductPage = () => {
                   onChange={handleChange}
                   className="w-full rounded-md border border-[#e8e8ed] bg-[#f9f9fb] px-3 py-2.5 text-sm outline-none transition-all duration-200 focus:border-indigo-500"
                 >
-                  <option value="">
-                    Select category
-                  </option>
+                  <option value="">Select category</option>
 
                   {categories.map((c) => (
-                    <option
-                      key={c}
-                      value={c}
-                    >
+                    <option key={c} value={c}>
                       {c}
                     </option>
                   ))}
@@ -378,15 +389,10 @@ const EditProductPage = () => {
                   onChange={handleChange}
                   className="w-full rounded-md border border-[#e8e8ed] bg-[#f9f9fb] px-3 py-2.5 text-sm outline-none transition-all duration-200 focus:border-indigo-500"
                 >
-                  <option value="">
-                    Select material
-                  </option>
+                  <option value="">Select material</option>
 
                   {materials.map((m) => (
-                    <option
-                      key={m}
-                      value={m}
-                    >
+                    <option key={m} value={m}>
                       {m}
                     </option>
                   ))}
@@ -405,15 +411,10 @@ const EditProductPage = () => {
                   onChange={handleChange}
                   className="w-full rounded-md border border-[#e8e8ed] bg-[#f9f9fb] px-3 py-2.5 text-sm outline-none transition-all duration-200 focus:border-indigo-500"
                 >
-                  <option value="">
-                    Select gender
-                  </option>
+                  <option value="">Select gender</option>
 
                   {genders.map((g) => (
-                    <option
-                      key={g}
-                      value={g}
-                    >
+                    <option key={g} value={g}>
                       {g}
                     </option>
                   ))}
@@ -439,14 +440,9 @@ const EditProductPage = () => {
                 <button
                   key={size}
                   type="button"
-                  onClick={() =>
-                    handleArrayToggle(
-                      "sizes",
-                      size
-                    )
-                  }
+                  onClick={() => handleArrayToggle("sizes", size)}
                   className={`rounded-md border px-4 py-2 text-[11px] font-semibold tracking-[0.05em] transition-all duration-200 ${
-                    productData.sizes.includes(size)
+                    productData.sizes?.includes(size)
                       ? "border-indigo-500 bg-indigo-500 text-white"
                       : "border-[#e8e8ed] bg-[#f9f9fb] text-gray-500 hover:border-indigo-500 hover:text-indigo-500"
                   }`}
@@ -474,16 +470,9 @@ const EditProductPage = () => {
                 <button
                   key={color}
                   type="button"
-                  onClick={() =>
-                    handleArrayToggle(
-                      "colors",
-                      color
-                    )
-                  }
+                  onClick={() => handleArrayToggle("colors", color)}
                   className={`flex items-center gap-2 rounded-md border px-3 py-2 text-[11px] transition-all duration-200 ${
-                    productData.colors.includes(
-                      color
-                    )
+                    productData.colors?.includes(color)
                       ? "border-indigo-500 bg-indigo-50 text-indigo-500"
                       : "border-[#e8e8ed] bg-[#f9f9fb] text-gray-500 hover:border-indigo-500"
                   }`}
@@ -491,8 +480,7 @@ const EditProductPage = () => {
                   <span
                     className="h-3 w-3 rounded-full border border-black/10"
                     style={{
-                      background:
-                        color.toLowerCase(),
+                      background: color.toLowerCase(),
                     }}
                   />
 
@@ -516,6 +504,7 @@ const EditProductPage = () => {
 
             <input
               type="file"
+              accept="image/*"
               onChange={handleImageUpload}
               className="mb-4 block text-[11px] text-gray-500 file:mr-4 file:rounded-md file:border file:border-[#e8e8ed] file:bg-[#f9f9fb] file:px-4 file:py-2 file:text-[10px] file:font-semibold file:uppercase file:tracking-[0.1em] file:text-gray-600 hover:file:border-indigo-500 hover:file:text-indigo-500"
             />
@@ -523,35 +512,29 @@ const EditProductPage = () => {
             {productData.images.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-4">
 
-                {productData.images.map(
-                  (image, index) => (
-                    <div
-                      key={index}
-                      className="flex flex-col items-center gap-2"
-                    >
-                      <img
-                        src={image.url}
-                        alt={
-                          image.altText ||
-                          "Product"
-                        }
-                        className="h-20 w-20 rounded-md border border-[#e8e8ed] object-cover"
-                      />
+                {productData.images.map((image, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col items-center gap-2"
+                  >
+                    <img
+                      src={
+                        image?.url ||
+                        "https://placehold.co/100x100?text=No+Image"
+                      }
+                      alt={image?.altText || "Product"}
+                      className="h-20 w-20 rounded-md border border-[#e8e8ed] object-cover"
+                    />
 
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleRemoveImage(
-                            index
-                          )
-                        }
-                        className="text-[9px] uppercase tracking-[0.1em] text-red-500 transition-all duration-200 hover:text-red-700"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  )
-                )}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(index)}
+                      className="text-[9px] uppercase tracking-[0.1em] text-red-500 transition-all duration-200 hover:text-red-700"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
 
               </div>
             )}
@@ -562,16 +545,15 @@ const EditProductPage = () => {
 
             <button
               type="submit"
-              className="rounded-md bg-[#1a1a1a] px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-white transition-all duration-200 hover:bg-[#333]"
+              disabled={isUpdating}
+              className="rounded-md bg-[#1a1a1a] px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-white transition-all duration-200 hover:bg-[#333] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Update Changes
+              {isUpdating ? "Updating..." : "Update Changes"}
             </button>
 
             <button
               type="button"
-              onClick={() =>
-                navigate("/admin/products")
-              }
+              onClick={() => navigate("/admin/products")}
               className="rounded-md border border-[#e8e8ed] bg-white px-7 py-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-gray-500 transition-all duration-200 hover:border-[#1a1a1a] hover:text-[#1a1a1a]"
             >
               Cancel

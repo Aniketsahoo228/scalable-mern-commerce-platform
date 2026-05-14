@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   createProduct,
   deleteProduct,
@@ -9,9 +9,6 @@ import {
 
 const ProductManagement = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const { user } = useSelector((state) => state.auth);
 
   const { products, loading, error } = useSelector(
     (state) => state.adminProducts
@@ -30,18 +27,8 @@ const ProductManagement = () => {
   });
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-
-    if (user.role !== "admin") {
-      navigate("/");
-      return;
-    }
-
     dispatch(fetchAdminProducts());
-  }, [dispatch, navigate, user]);
+  }, [dispatch]);
 
   const handleChange = (e) => {
     setFormData({

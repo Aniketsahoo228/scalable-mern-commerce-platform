@@ -7,25 +7,28 @@ import GenderCollectionSection from "../components/Products/GenderCollectionSect
 import NewArrivals from "../components/Products/NewArrivals";
 import ProductDetails from "../components/Products/ProductDetails";
 import ProductGrid from "../components/Products/ProductGrid";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchProductsByFilters } from "../redux/slices/productsSlice";
-
 
 const Home = () => {
-  const dispatch = useDispatch();
-  const { products, loading, error } = useSelector((state) => state.products);
   const [bestSellerProduct, setBestSellerProduct] = useState(null);
   const [bestSellerUnavailable, setBestSellerUnavailable] = useState(false);
+  const [homeProducts, setHomeProducts] = useState([]);
+  const [homeLoading, setHomeLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch products for a specific collection
-    dispatch(
-      fetchProductsByFilters({
-        gender: "Women",
-        category: "Bottom Wear",
-        limit: 8,
-      })
-    );
+    // Fetch home products locally (avoids polluting shared Redux products slice)
+    const fetchHome = async () => {
+      setHomeLoading(true);
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/products?gender=Women&category=Bottom%20Wear&limit=8`
+        );
+        setHomeProducts(res.data.products || res.data);
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setHomeLoading(false);
+      }
+    };
 
     // Fetch best seller product
     const fetchBestSeller = async () => {
@@ -43,9 +46,10 @@ const Home = () => {
       }
     };
 
+    fetchHome();
     fetchBestSeller();
-  }, [dispatch]);
-  
+  }, []);
+
   return (
     <div style={{ background: '#111' }}>
       <Hero />
@@ -65,13 +69,12 @@ const Home = () => {
             <div style={{ width: 32, height: 1, background: '#c9a96e', margin: '12px auto 0' }} />
           </div>
           {bestSellerProduct ? (
-            <ProductDetails productId={bestSellerProduct._id} />
+            <ProductDetails key={bestSellerProduct._id} productId={bestSellerProduct._id} />
           ) : (
             <p className="text-center" style={{ color: "#c9a96e" }}>
               {bestSellerUnavailable ? "Best seller not available right now." : "Loading best seller product ..."}
             </p>
           )}
-          
         </div>
       </section>
 
@@ -87,7 +90,7 @@ const Home = () => {
             </h2>
             <div style={{ width: 32, height: 1, background: '#c9a96e', margin: '12px auto 24px' }} />
           </div>
-          <ProductGrid products={products} loading ={loading} error= {error}/>
+          <ProductGrid products={homeProducts} loading={homeLoading} error={null} />
         </div>
       </section>
 

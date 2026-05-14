@@ -44,7 +44,6 @@ const Register = () => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
 
         .reg-root { font-family: 'Montserrat', sans-serif; }
         .brand-font { font-family: 'Cormorant Garamond', serif; }

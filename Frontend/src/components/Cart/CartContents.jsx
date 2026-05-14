@@ -28,7 +28,6 @@ const CartContents = ({ cart, userId, guestId }) => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap');
         .cc-brand { font-family: 'Cormorant Garamond', serif; }
         .cc-body  { font-family: 'Montserrat', sans-serif; }
 

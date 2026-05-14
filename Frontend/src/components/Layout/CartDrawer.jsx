@@ -22,7 +22,6 @@ const CartDrawer = ({ drawerOpen, toggleCartDrawer }) => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap');
         .cd-brand { font-family: 'Cormorant Garamond', serif; }
         .cd-body  { font-family: 'Montserrat', sans-serif; }
 

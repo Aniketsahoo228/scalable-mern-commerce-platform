@@ -11,7 +11,6 @@ const FeaturesSection = () => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&display=swap');
         .fs-body { font-family: 'Montserrat', sans-serif; }
 
         .fs-card {

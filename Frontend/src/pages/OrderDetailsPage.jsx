@@ -51,7 +51,6 @@ const OrderDetailsPage = () => {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500;600&display=swap');
         .od-brand { font-family: 'Cormorant Garamond', serif; }
         .od-body  { font-family: 'Montserrat', sans-serif; }
 
