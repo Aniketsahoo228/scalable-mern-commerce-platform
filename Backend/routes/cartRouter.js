@@ -166,10 +166,10 @@ router.get("/", async (req, res) => {
     const cart = await getCart(userId, guestId);
 
     if (cart) {
-      res.json(cart);
-    } else {
-    return res.status(404).json({ message: "Cart is not found" });
-    } 
+  res.json(cart);
+} else {
+  return res.status(200).json({ products: [], totalPrice: 0 });
+} 
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Server Error" });
@@ -182,6 +182,22 @@ router.get("/", async (req, res) => {
 // @access Private
 router.post("/merge", protect, async (req, res) => {
   const { guestId } = req.body;
+
+  // FIX: prevent undefined guestId queries
+  if (!guestId) {
+    const userCart = await Cart.findOne({
+      user: req.user._id,
+    });
+
+    return res.status(200).json(
+      userCart || {
+        user: req.user._id,
+        guestId: null,
+        products: [],
+        totalPrice: 0,
+      }
+    );
+  }
 
   try {
     // Find the guest cart and user cart

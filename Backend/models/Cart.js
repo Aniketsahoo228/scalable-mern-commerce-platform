@@ -7,39 +7,47 @@ const cartItemSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
+
     name: {
       type: String,
       required: true,
       trim: true,
     },
+
     image: {
       type: String,
       required: true,
       trim: true,
     },
+
     price: {
       type: Number,
       required: true,
       min: 0,
     },
+
     size: {
       type: String,
       trim: true,
       default: "",
     },
+
     color: {
       type: String,
       trim: true,
       default: "",
     },
+
     quantity: {
       type: Number,
+      required: true,
       default: 1,
       min: 1,
-      required: true,
     },
   },
-  { _id: false }
+  {
+    _id: false,
+  }
 );
 
 const cartSchema = new mongoose.Schema(
@@ -48,16 +56,21 @@ const cartSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
+      index: true,
     },
+
     guestId: {
       type: String,
       trim: true,
       default: null,
+      index: true,
     },
+
     products: {
       type: [cartItemSchema],
       default: [],
     },
+
     totalPrice: {
       type: Number,
       required: true,
@@ -65,7 +78,16 @@ const cartSchema = new mongoose.Schema(
       min: 0,
     },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
-module.exports = mongoose.model("Cart", cartSchema);
+// Additional indexes for faster cart lookups
+cartSchema.index({ user: 1 });
+cartSchema.index({ guestId: 1 });
+
+module.exports = mongoose.model(
+  "Cart",
+  cartSchema
+);
