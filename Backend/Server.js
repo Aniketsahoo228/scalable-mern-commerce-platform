@@ -99,27 +99,19 @@ app.get("/", (req, res) => {
    Production Frontend Serve
 ========================= */
 
-if (
-  process.env.NODE_ENV === "production"
-) {
+if (process.env.NODE_ENV === "production") {
 
   // Serve frontend build files
   app.use(
     express.static(
-      path.join(
-        __dirname,
-        "../Frontend/dist"
-      )
+      path.join(__dirname, "../Frontend/dist")
     )
   );
 
-  // SPA fallback
-  app.get("*", (req, res) => {
+  // SPA fallback — fixed wildcard syntax
+  app.get("/{*splat}", (req, res) => {
     res.sendFile(
-      path.join(
-        __dirname,
-        "../Frontend/dist/index.html"
-      )
+      path.join(__dirname, "../Frontend/dist/index.html")
     );
   });
 }
@@ -128,8 +120,7 @@ if (
    Start Server
 ========================= */
 
-const PORT =
-  process.env.PORT || 9000;
+const PORT = process.env.PORT || 9000;
 
 app.listen(PORT, () => {
   console.log(
